@@ -1,4 +1,9 @@
-
+/**
+ * Converts byte sequence numbers into String
+ * @param {*} buffer DataView buffer
+ * @param {*} offset Offset of the current DataView buffer
+ * @param {*} length Max size of the string
+ */
 export function getString(buffer, offset, length) {
     let str = '';
     for (let i = 0; i < length; i++) {

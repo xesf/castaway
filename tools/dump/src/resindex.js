@@ -5,14 +5,19 @@ import { getString } from './utils';
 const INDEX_HEADER_SIZE = 6;
 const INDEX_STRING_SIZE = 12;
 
-export function loadResourceIndex(filepath, filename) { // ArrayBuffer
-    // Read Resource Map Entries
+/**
+ * Load a Resource Index File
+ * @param {*} filepath Full path of the file
+ * @param {*} filename File name
+ */
+export function loadResourceIndex(filepath, filename) {
     const absFilename = path.join(filepath, filename);
 
     const fc = fs.readFileSync(absFilename);
     const buffer = fc.buffer.slice(fc.byteOffset, fc.byteOffset + fc.byteLength);
 
     let offset = 0; // current resource offest
+    let resources = []; // list of resource files
     const data = new DataView(buffer, offset, buffer.byteLength);
 
     const header = {
@@ -27,7 +32,6 @@ export function loadResourceIndex(filepath, filename) { // ArrayBuffer
 
     // Read resource files and entries
     // Read number of resource files (castaway only uses a single one)
-    let resources = [];
     for (let r = 0; r < header.numResources; r++) {
         let innerOffset = offset;
         let res = {
