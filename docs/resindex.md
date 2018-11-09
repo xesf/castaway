@@ -1,4 +1,4 @@
-# Resource Index File Format
+# Resource Index File Format [rev 0.0.1]
 
 Resource Map is a file containing index information about resources.
 
@@ -65,6 +65,9 @@ Note, to get the size of each of the compressed entries, you just need to calcul
 
 At the end of this implementation, you should be ready to parse the Resource files, which will be describe in a separate document file.
 
+# Document History
+- v0.0.1 2018-11-09: First document draft
+
 # Author
 Alexandre Fontoura aka xesf
 - xesfnet@gmail.com
@@ -73,6 +76,6 @@ Alexandre Fontoura aka xesf
 ## References
 - Hans Milling aka nivs1978 (github)
     - https://github.com/nivs1978/Johnny-Castaway-Open-Source/blob/master/JCOS/Map.cs
-    
+
 - Vasco Costa aka vcosta (github)
     - https://github.com/vcosta/scummvm/wiki
