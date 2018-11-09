@@ -6,11 +6,11 @@ const INDEX_HEADER_SIZE = 6;
 const INDEX_STRING_SIZE = 12;
 
 /**
- * Load a Resource Index File
+ * Load all Resource details based on index resource file
  * @param {*} filepath Full path of the file
  * @param {*} filename File name
  */
-export function loadResourceIndex(filepath, filename) {
+export function loadResources(filepath, filename) {
     const absFilename = path.join(filepath, filename);
 
     const fc = fs.readFileSync(absFilename);
@@ -37,7 +37,7 @@ export function loadResourceIndex(filepath, filename) {
         let res = {
             name: getString(data, innerOffset, INDEX_STRING_SIZE),
             numEntries: data.getUint16(innerOffset + 13, true),
-            fileSize: 0,
+            size: 0,
             entries: [],
         }
         resources.push(res);
@@ -47,18 +47,24 @@ export function loadResourceIndex(filepath, filename) {
         const resfn = path.join(filepath, res.name);
         const resfc = fs.readFileSync(resfn);
         const resbuffer = resfc.buffer.slice(resfc.byteOffset, resfc.byteOffset + resfc.byteLength);
-        res.fileSize = resbuffer.byteLength;
+        res.size = resbuffer.byteLength;
+        const resData = new DataView(resbuffer, 0, res.size);
 
         for (let e = 0; e < res.numEntries; e++) {
+            // from index
+            let entrySize = data.getUint16(innerOffset, true); // uncompressed size
+            let entryOffset = data.getUint32(innerOffset + 4, true);
+            // from resource
+            let entryCompressedSize = resData.getUint32(entryOffset + 13, true);
+
             let entry = {
-                length: data.getUint16(innerOffset, true), // uncompressed size
-                offset: data.getUint32(innerOffset + 4, true),
-                name: ''
+                name: getString(resData, entryOffset, INDEX_STRING_SIZE),
+                size: entrySize, // uncompressed size
+                offset: entryOffset,
+                compressedSize: entryCompressedSize,
+                data: new DataView(resbuffer, entryOffset + 17, entryCompressedSize),
             }
             innerOffset += 8;
-
-            const entryData = new DataView(resbuffer, entry.offset, INDEX_STRING_SIZE);
-            entry.name = getString(entryData, 0, INDEX_STRING_SIZE);
 
             res.entries.push(entry);
         }

@@ -1,7 +1,7 @@
 import path from 'path';
-import { loadResourceIndex } from './resindex';
+import { loadResources } from './resources';
 
 const filepath = path.join(__dirname,'../../../data');
-const resourceIndex = loadResourceIndex(filepath, "RESOURCE.MAP");
+const resources = loadResources(filepath, "RESOURCE.MAP");
 
-console.log(resourceIndex);
+console.log(resources);
