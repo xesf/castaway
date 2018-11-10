@@ -52,13 +52,15 @@ export function loadResources(filepath, filename) {
 
         for (let e = 0; e < res.numEntries; e++) {
             // from index
-            let entrySize = data.getUint16(innerOffset, true); // uncompressed size
-            let entryOffset = data.getUint32(innerOffset + 4, true);
+            const entrySize = data.getUint16(innerOffset, true); // uncompressed size
+            const entryOffset = data.getUint32(innerOffset + 4, true);
             // from resource
-            let entryCompressedSize = resData.getUint32(entryOffset + 13, true);
+            const entryCompressedSize = resData.getUint32(entryOffset + 13, true);
+            const name = getString(resData, entryOffset, INDEX_STRING_SIZE);
 
             let entry = {
-                name: getString(resData, entryOffset, INDEX_STRING_SIZE),
+                name,
+                type: name.split('.')[1],
                 size: entrySize, // uncompressed size
                 offset: entryOffset,
                 compressedSize: entryCompressedSize,
