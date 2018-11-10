@@ -87,6 +87,5 @@ export function loadResources(filepath, filename) {
 
 export function loadResourceEntry(entry) {
     const resType = ResourceType.find(r => r.type === entry.type);
-    console.log(resType);
     return resType.callback(entry);
 }
