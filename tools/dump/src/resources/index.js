@@ -1,11 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 
+import { INDEX_STRING_SIZE } from '../constants';
 import { getString } from '../utils';
+
 import { ResourceType } from './data/types';
 
 const INDEX_HEADER_SIZE = 6;
-const INDEX_STRING_SIZE = 12;
 
 /**
  * Load all Resource details based on index resource file
@@ -60,13 +61,17 @@ export function loadResources(filepath, filename) {
             const entryCompressedSize = resData.getUint32(entryOffset + 13, true);
             const name = getString(resData, entryOffset, INDEX_STRING_SIZE);
 
+            const startOffset = entryOffset + 17;
+            const endOffset = startOffset + entryCompressedSize;
+
             let entry = {
                 name,
                 type: name.split('.')[1],
                 size: entrySize, // uncompressed size
                 offset: entryOffset,
                 compressedSize: entryCompressedSize,
-                data: new DataView(resbuffer, entryOffset + 17, entryCompressedSize),
+                buffer: resfc.buffer.slice(startOffset, endOffset),
+                data: new DataView(resbuffer, startOffset, entryCompressedSize),
             }
             innerOffset += 8;
 

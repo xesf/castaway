@@ -1,3 +1,4 @@
+
 /**
  * Converts byte sequence numbers into String
  * @param {*} buffer DataView buffer
