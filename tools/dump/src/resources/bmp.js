@@ -1,5 +1,11 @@
 
 
 export function loadBMPResourceEntry(entry) {
-    return entry;
+    let bmp = {
+        name: '',
+        type: '',
+        data: []
+    }
+    
+    return bmp;
 }

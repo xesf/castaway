@@ -15,7 +15,7 @@ function dumpResourceEntriesCompressed(filepath, resindex) {
     const res = resindex.resources[0];
     for (let e = 0; e < res.numEntries; e++) {
         const entry = res.entries[e];
-        fs.writeFileSync(path.join(dumppath, entry.name), Buffer.from(entry.data.buffer, 0, entry.compressedSize) , 'utf-8');
+        fs.writeFileSync(path.join(dumppath, entry.name), Buffer.from(entry.data.buffer, entry.offset, entry.compressedSize) , 'utf-8');
     }
 } 
 
@@ -24,6 +24,6 @@ dumpResourceIndex(filepath, resindex);
 dumpResourceEntriesCompressed(filepath, resindex);
 
 const entry = loadResourceEntry(resindex.resources[0].entries[0]);
-// console.log(entry);
+console.log(entry);
 
 console.log('Dump Complete!!');
