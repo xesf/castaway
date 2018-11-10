@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { getString } from './utils';
+
+import { getString } from '../utils';
+import { ResourceType } from './data/types';
 
 const INDEX_HEADER_SIZE = 6;
 const INDEX_STRING_SIZE = 12;
@@ -76,4 +78,10 @@ export function loadResources(filepath, filename) {
         header,
         resources
     };
+}
+
+export function loadResourceEntry(entry) {
+    const resType = ResourceType.find(r => r.type === entry.type);
+    console.log(resType);
+    return resType.callback(entry);
 }

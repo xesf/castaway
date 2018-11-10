@@ -1,11 +1,29 @@
 import fs from 'fs';
 import path from 'path';
-import { loadResources } from './resources';
+import { loadResources, loadResourceEntry } from './resources';
 
 const filepath = path.join(__dirname,'../../../data');
-const resources = loadResources(filepath, "RESOURCE.MAP");
+const resindex = loadResources(filepath, "RESOURCE.MAP");
 
-console.log(resources);
+function dumpResourceIndex(filepath, resindex) {
+    const dumppath = path.join(filepath,'dump');
+    fs.writeFileSync(path.join(dumppath, 'resindex.json'), JSON.stringify(resindex, null, 2) , 'utf-8');    
+}
 
-const dumppath = path.join(__dirname,'../../../data/dump');
-fs.writeFileSync(path.join(dumppath, 'resources.json'), JSON.stringify(resources, null, 2) , 'utf-8');
+function dumpResourceEntriesCompressed(filepath, resindex) {
+    const dumppath = path.join(filepath,'dump/compressed');
+    const res = resindex.resources[0];
+    for (let e = 0; e < res.numEntries; e++) {
+        const entry = res.entries[e];
+        fs.writeFileSync(path.join(dumppath, entry.name), Buffer.from(entry.data.buffer, 0, entry.compressedSize) , 'utf-8');
+    }
+} 
+
+// Export Resource Index in JSON file
+dumpResourceIndex(filepath, resindex);
+dumpResourceEntriesCompressed(filepath, resindex);
+
+const entry = loadResourceEntry(resindex.resources[0].entries[0]);
+// console.log(entry);
+
+console.log('Dump Complete!!');
