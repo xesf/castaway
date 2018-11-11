@@ -1,5 +1,6 @@
 import { INDEX_STRING_SIZE } from '../constants';
 import { getString } from '../utils';
+import { decompress } from "../compression";
 
 export function loadBMPResourceEntry(entry) {
     let offset = 0;
@@ -46,7 +47,7 @@ export function loadBMPResourceEntry(entry) {
     blockSize -= 5; // take type and size out of the block
     const compressedData = entry.buffer.slice(offset, blockSize);
 
-    // TODO decompression
+    const data = decompress(compressionType, compressedData);
 
     return {
         type,
