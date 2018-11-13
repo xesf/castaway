@@ -1,6 +1,11 @@
 {
   "name": "root",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tools/*"
+  ],
   "devDependencies": {
     "lerna": "^3.4.3"
   }
