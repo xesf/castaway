@@ -29,16 +29,32 @@ function dumpAvailableTypes(filepath, resindex) {
     fs.writeFileSync(path.join(dumppath, 'restypes.json'), JSON.stringify({ types }, null, 2) , 'utf-8');
 }
 
+function dumpImages(filepath, resindex) {
+    const dumppath = path.join(filepath,'dump','images');
+    const res = resindex.resources[0];
+    for (let e = 0; e < 3; e++) { // res.numEntries
+        const entry = res.entries[e];
+        if (entry.type === 'BMP') {
+            const e = loadResourceEntry(entry);
+            for (let i = 0; i < e.numImages; i++) {
+                fs.writeFileSync(path.join(dumppath, `${e.name}_img_${i}.json`), JSON.stringify(e.images[i], null, 2) , 'utf-8');
+                fs.writeFileSync(path.join(dumppath, `${e.name}_img_${i}.raw`), Buffer.from(e.images[i].buffer));
+            }
+        }
+    }
+}
+
 
 const filepath = path.join(__dirname,'../../../data');
 const resindex = loadResources(filepath, "RESOURCE.MAP");
 
 // Export Resource Index in JSON file
-dumpResourceIndex(filepath, resindex);
-dumpResourceEntriesCompressed(filepath, resindex);
-dumpAvailableTypes(filepath, resindex);
+//dumpResourceIndex(filepath, resindex);
+//dumpResourceEntriesCompressed(filepath, resindex);
+//dumpAvailableTypes(filepath, resindex);
+dumpImages(filepath, resindex);
 
-const entry = loadResourceEntry(resindex.resources[0].entries[2]);
-console.log(entry);
+//const entry = loadResourceEntry(resindex.resources[0].entries[2]);
+//console.log(entry);
 
 console.log('Dump Complete!!');
