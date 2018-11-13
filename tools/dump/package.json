@@ -1,14 +1,17 @@
 {
-    "name": "castaway-dump",
+    "name": "@castaway/dump",
     "version": "0.0.1",
     "description": "Dynamix Johnny Castaway Screen Saver Resources Dump Tool",
     "main": "src/index.js",
     "scripts": {
       "build": "babel src -d dist",
-      "start": "nodemon --exec babel-node src/index.js"
+      "start": "nodemon ./src/index.js --exec babel-node -- --ignore .\/node_modules"
     },
     "author": "Alexandre Fontoura <xesfnet@gmail.com>",
     "license": "MIT",
+    "dependencies": {
+        "@castaway/lifeboat": "0.0.1"
+    },
     "devDependencies": {
         "@babel/cli": "^7.1.5",
         "@babel/core": "^7.1.5",

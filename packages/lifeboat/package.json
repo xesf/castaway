@@ -1,0 +1,17 @@
+{
+    "name": "@castaway/lifeboat",
+    "version": "0.0.1",
+    "description": "Lifeboat - Johnny Castaway Screen Saver Library",
+    "main": "src/index.js",
+    "scripts": {
+      "build": "babel src -d dist"
+    },
+    "author": "Alexandre Fontoura <xesfnet@gmail.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@babel/cli": "^7.1.5",
+        "@babel/core": "^7.1.5",
+        "@babel/node": "^7.0.0",
+        "@babel/preset-env": "^7.1.5"
+    }
+}

@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 import { INDEX_STRING_SIZE } from '../constants';
 import { getString } from '../utils';
 
@@ -13,12 +10,7 @@ const INDEX_HEADER_SIZE = 6;
  * @param {*} filepath Full path of the file
  * @param {*} filename File name
  */
-export function loadResources(filepath, filename) {
-    const absFilename = path.join(filepath, filename);
-
-    const fc = fs.readFileSync(absFilename);
-    const buffer = fc.buffer.slice(fc.byteOffset, fc.byteOffset + fc.byteLength);
-
+export function loadResources(buffer, resbuffer) {
     let offset = 0; // current resource offest
     let resources = []; // list of resource files
     const data = new DataView(buffer, offset, buffer.byteLength);
@@ -46,10 +38,7 @@ export function loadResources(filepath, filename) {
         resources.push(res);
         innerOffset += 15;
 
-        // read resource file to get extra content like name for easy identification of the asset
-        const resfn = path.join(filepath, res.name);
-        const resfc = fs.readFileSync(resfn);
-        const resbuffer = resfc.buffer.slice(resfc.byteOffset, resfc.byteOffset + resfc.byteLength);
+        // TODO do this differently with the buffer
         res.size = resbuffer.byteLength;
         const resData = new DataView(resbuffer, 0, res.size);
 
@@ -70,7 +59,7 @@ export function loadResources(filepath, filename) {
                 size: entrySize, // uncompressed size
                 offset: entryOffset,
                 compressedSize: entryCompressedSize,
-                buffer: resfc.buffer.slice(startOffset, endOffset),
+                buffer: resbuffer.slice(startOffset, endOffset),
                 data: new DataView(resbuffer, startOffset, entryCompressedSize),
             }
             innerOffset += 8;
