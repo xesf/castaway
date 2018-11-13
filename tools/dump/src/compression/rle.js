@@ -1,4 +1,4 @@
 
-export function decompressRLE(data) {
-    return data;
+export function decompressRLE(data, offset, length) {
+    throw 'Decompress Type RLE not implemented';
 }
