@@ -1,4 +1,4 @@
-import { INDEX_STRING_SIZE } from '../constants';
+import { INDEX_STRING_SIZE, PALETTE } from '../constants';
 import { getString } from '../utils';
 import { decompress } from "../compression";
 
@@ -27,7 +27,7 @@ export function loadBMPResourceEntry(entry) {
         const w = entry.data.getUint16(offset, true);
         offset += 2;
 
-        images.push({ width: w, height: 0, pixel: null });
+        images.push({ width: w, height: 0, pixels: [], buffer: [] });
     }
     // get height value for all images
     for (let i = 0; i < numImages; i++) {
@@ -45,16 +45,40 @@ export function loadBMPResourceEntry(entry) {
     const uncompressedSize = entry.data.getUint32(offset + 9, true);
     offset += 13;
     blockSize -= 5; // take type and size out of the block
-    const compressedData = entry.buffer.slice(offset, blockSize);
-
-    const data = decompress(compressionType, compressedData);
+    const compressedData = new DataView(entry.buffer.slice(offset, offset + blockSize));
+    const data = decompress(compressionType, compressedData, 0, compressedData.byteLength);
+    let dataIndex = 0;
+    let pixelIndex = 0;
+    for (let i = 0; i < numImages; i++) {
+        const image = images[i];
+        for (let h = 0; h < image.height; h++) {
+            for (let w = 0; w < image.width; w++) {
+                let c = data[dataIndex];
+                if (pixelIndex % 2 === 0) {
+                    c = c >> 4;
+                } else {
+                    c = (c & 0x0f);
+                    dataIndex++;
+                }
+                image.buffer[w + image.width * h] = c;
+                image.pixels[w + image.width * h] = { 
+                    index: c,
+                    a: PALETTE[c].a,
+                    r: PALETTE[c].r,
+                    g: PALETTE[c].g,
+                    b: PALETTE[c].b,
+                };
+                pixelIndex++;
+            }
+        }
+    }
 
     return {
+        name: entry.name,
         type,
         width,
         height,
         numImages,
         images,
-        data: []
     };
 }
