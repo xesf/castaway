@@ -16,7 +16,7 @@ export function preloadFileAsync(url, name) {
         };
         request.onload = () => {
             send('loaderend');
-            callback.call(request.response);
+            callback(null, request.response);
         };
         request.send();
     };
