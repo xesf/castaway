@@ -25,12 +25,7 @@ const ViewerApp = () => {
     });
 
     return (
-        <div style={{ height:'100%' }}>
-            <div className="viewer">
-                <header className="viewer-header">
-                    <h1 className="title">castaway-viewer</h1>
-                </header>
-            </div>
+        <div>
             {resindex && <ResourceList res={resindex} />}
         </div>
     );
