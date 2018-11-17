@@ -10,7 +10,8 @@ const ResourceList = ({ res }) => {
             <div className="menu">
                 {map(res.resources[0].entries, (entry) => {
                     if (entry.type === 'BMP' ||
-                        entry.type === 'PAL') {
+                        entry.type === 'PAL' ||
+                        entry.type === 'SCR') {
                         return (
                             <a key={entry.name} className="item" href={`/#entry=${entry.name}`}>
                                 {entry.name}

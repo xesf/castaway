@@ -48,3 +48,13 @@ export const drawPalette = (data, context) => {
         context.fillRect(p * 2, 0, 2, 480);
     }
 };
+
+export const drawScreen = (data, context) => {
+    context.fillStyle = 'white';
+    context.fillRect(0, 0, 640, 480);
+
+    context.canvas.width  = 640;
+    context.canvas.height = 480;
+
+    drawImage(data.images[0], context, 0, 0);
+};
