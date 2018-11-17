@@ -28,7 +28,7 @@ const ResourceContent = ({ res }) => {
     }, [res, name]);
 
     return (
-        <div className="ui segment">
+        <div className="ui basic segment">
             <div className="ui basic segment">
                 <b>{name}</b>
             </div>
