@@ -1,12 +1,12 @@
 import React, { useRef, useLayoutEffect } from 'react'
-import { drawAllImages } from '../resources/image';
+import { drawAllImages, drawPalette } from '../resources/image';
 
 const nop = () => {};
 
 export const ResourceType = [
     { type: 'ADS', callback: nop }, // Animation sequences
     { type: 'BMP', callback: drawAllImages }, // Various raw images
-    { type: 'PAL', callback: nop }, // VGA palette
+    { type: 'PAL', callback: drawPalette }, // VGA palette
     { type: 'SCR', callback: nop }, // Background raw images
     { type: 'TTM', callback: nop }, // Scripting macros
 ];

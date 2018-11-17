@@ -36,3 +36,15 @@ export const drawAllImages = (data, context) => {
         posX += image.width;
     }
 };
+
+
+export const drawPalette = (data, context) => {
+    context.fillStyle = 'white';
+    context.fillRect(0, 0, 640, 480);
+
+    for (let p = 0; p < data.palette.length; p++) {
+        const c = data.palette[p];
+        context.fillStyle = `rgb(${c.r},${c.g},${c.b})`;
+        context.fillRect(p * 2, 0, 2, 480);
+    }
+};
