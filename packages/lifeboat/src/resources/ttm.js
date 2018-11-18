@@ -11,7 +11,6 @@ export function loadTTMResourceEntry(entry) {
     const version = getString(entry.data, offset + 8, versionSize); // 4.09
     offset += 8;
     offset += versionSize;
-    console.log(version);
 
     let block = getString(entry.data, offset, 3);
     if (block !== 'PAG') {
@@ -34,9 +33,8 @@ export function loadTTMResourceEntry(entry) {
     blockSize -= 5; // take type and size out of the block
     const compressedData = new DataView(entry.buffer.slice(offset, offset + blockSize));
     offset += blockSize;
-    const data = decompress(compressionType, compressedData, 0, compressedData.byteLength);
-    
-    // TODO parse TTM scripting
+    let data = decompress(compressionType, compressedData, 0, compressedData.byteLength);
+    data = new DataView(new Int8Array(data).buffer);
 
     block = getString(entry.data, offset, 3);
     if (block !== 'TTI') {
@@ -69,6 +67,38 @@ export function loadTTMResourceEntry(entry) {
         offset += description.length - 1;
     }
 
+    let innerOffset = 0;
+    const scripts = [];
+    while (innerOffset < uncompressedSize) {
+        let opcode = data.getUint16(innerOffset, true);
+        innerOffset += 2;
+        const size = opcode & 0x000f;
+        opcode &= 0xfff0;
+        let command = {
+            opcode,
+            name: null,
+            tag: null,
+            params: []
+        }
+        if (opcode == 0x1110 && size === 1) {
+            const tagId = data.getUint16(innerOffset, true);
+            innerOffset += 2;
+            command.tag = tags.find(t => t.id === tagId);
+            if (command.tag !== undefined) {
+                command.name = command.tag.description;
+            }
+        } else if (size === 15) {
+            command.name = getString(data, innerOffset);
+            innerOffset += command.name.length;
+        } else {
+            for (let b = 0; b < size; b++) {
+                command.params.push(data.getUint16(innerOffset, true));
+                innerOffset += 2;
+            }
+        }
+        scripts.push(command);
+    }
+
     return {
         name: entry.name,
         type: entry.type,
@@ -78,5 +108,6 @@ export function loadTTMResourceEntry(entry) {
         ttiUnknown02,
         tags,
         data,
+        scripts,
     };
 }
