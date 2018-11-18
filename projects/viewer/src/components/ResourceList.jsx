@@ -9,9 +9,7 @@ const ResourceList = ({ res }) => {
             <div className="header">{res.resources[0].name}</div>
             <div className="menu">
                 {map(orderBy(res.resources[0].entries, ['type'], ['asc']), (entry) => {
-                    if (entry.type === 'BMP' ||
-                        entry.type === 'PAL' ||
-                        entry.type === 'SCR') {
+                    if (entry.type !== 'ADS') {
                         return (
                             <a key={entry.name} className="item" href={`/#entry=${entry.name}`}>
                                 {entry.name}

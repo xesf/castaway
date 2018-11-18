@@ -1,7 +1,7 @@
 import React, { useRef, useLayoutEffect } from 'react'
 import { drawAllImages, drawPalette, drawScreen } from '../resources/image';
 
-const nop = () => {};
+const nop = (data, context) => { };
 
 export const ResourceType = [
     { type: 'ADS', callback: nop }, // Animation sequences
@@ -9,10 +9,12 @@ export const ResourceType = [
     { type: 'PAL', callback: drawPalette }, // VGA palette
     { type: 'SCR', callback: drawScreen }, // Background raw images
     { type: 'TTM', callback: nop }, // Scripting macros
+    { type: 'VIN', callback: nop }, // preload files
 ];
 
 const ResourceView = ({ data }) => {
     const canvasRef = useRef();
+    // console.log(data);
     
     useLayoutEffect(() => {
         const context = canvasRef.current.getContext("2d");
