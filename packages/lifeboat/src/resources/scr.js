@@ -19,7 +19,7 @@ export function loadSCRResourceEntry(entry) {
     }
     let blockSize = entry.data.getUint32(offset + 4, true);
     const width = entry.data.getUint16(offset + 8, true);
-    const height = entry.data.getUint16(offset + 12, true);
+    const height = entry.data.getUint16(offset + 10, true);
     offset += 12;
 
     block = getString(entry.data, offset, 3);
@@ -32,9 +32,10 @@ export function loadSCRResourceEntry(entry) {
     const uncompressedSize = entry.data.getUint32(offset + 9, true);
     offset += 13;
     blockSize -= 5; // take type and size out of the block
+
     const compressedData = new DataView(entry.buffer.slice(offset, offset + blockSize));
     const data = decompress(compressionType, compressedData, 0, compressedData.byteLength);
-    
+
     const numImages = 1;
     const images = [{
         width,
@@ -54,13 +55,14 @@ export function loadSCRResourceEntry(entry) {
                 c = (c & 0x0f);
                 dataIndex++;
             }
+            const pal = PALETTE[c];
             image.buffer[w + image.width * h] = c;
             image.pixels[w + image.width * h] = { 
                 index: c,
-                a: PALETTE[c].a,
-                r: PALETTE[c].r,
-                g: PALETTE[c].g,
-                b: PALETTE[c].b,
+                a: pal.a,
+                r: pal.r,
+                g: pal.g,
+                b: pal.b,
             };
             pixelIndex++;
         }

@@ -16,7 +16,6 @@ const ResourceView = ({ data }) => {
     
     useLayoutEffect(() => {
         const context = canvasRef.current.getContext("2d");
-        
         const resType = ResourceType.find(r => r.type === data.type);
         resType.callback(data, context);
         
