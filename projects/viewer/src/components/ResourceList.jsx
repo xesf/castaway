@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { map } from 'lodash';
+import { map, orderBy } from 'lodash';
 
 
 const ResourceList = ({ res }) => {
@@ -8,7 +8,7 @@ const ResourceList = ({ res }) => {
         <div className="item">
             <div className="header">{res.resources[0].name}</div>
             <div className="menu">
-                {map(res.resources[0].entries, (entry) => {
+                {map(orderBy(res.resources[0].entries, ['type'], ['asc']), (entry) => {
                     if (entry.type === 'BMP' ||
                         entry.type === 'PAL' ||
                         entry.type === 'SCR') {
