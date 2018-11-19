@@ -72,11 +72,14 @@ function dumpMovieScripts(filepath, resindex) {
             for (let i = 0; i < e.scripts.length; i++) {
                 const c = e.scripts[i];
                 const type = TTMCommandType.find(ct => ct.opcode === c.opcode);
-                let command = `UNKNOWN `; // [0x${c.opcode.toString(16)}] 
+                let command = ''; // [0x${c.opcode.toString(16)}] 
                 if (type !== undefined) {
-                    command = `${type.command} `;
+                    if (type.command === 'SET_SCENE') {
+                        command += os.EOL;
+                    }
+                    command += `${type.command} `;
                 } else {
-                    console.log(command);
+                    comand = 'UNKNOWN ';
                 }
                 for (let p = 0; p < c.params.length; p++) {
                     command += `${c.params[p]} `;
