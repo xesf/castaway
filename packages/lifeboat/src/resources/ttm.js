@@ -86,6 +86,8 @@ export function loadTTMResourceEntry(entry) {
             command.tag = tags.find(t => t.id === tagId);
             if (command.tag !== undefined) {
                 command.name = command.tag.description;
+            } else {
+                command.name = ` tag(${tagId})`;
             }
         } else if (size === 15) {
             command.name = getString(data, innerOffset);

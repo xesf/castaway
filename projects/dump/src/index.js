@@ -81,7 +81,7 @@ function dumpMovieScripts(filepath, resindex) {
                     command += `${c.params[p]} `;
                 }
                 if (c.name) {
-                    command += command.name
+                    command += c.name
                 }
                 command += os.EOL;
                 fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), command);
