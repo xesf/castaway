@@ -87,11 +87,17 @@ export function loadTTMResourceEntry(entry) {
             if (command.tag !== undefined) {
                 command.name = command.tag.description;
             } else {
-                command.name = ` tag(${tagId})`;
+                command.name = ` tag[${tagId}]`;
             }
         } else if (size === 15) {
             command.name = getString(data, innerOffset);
             innerOffset += command.name.length;
+            if (data.getUint8(innerOffset, true) === 0) {
+                innerOffset++;
+            }
+            if (data.getUint8(innerOffset, true) === 0) {
+                innerOffset++;
+            }
         } else {
             for (let b = 0; b < size; b++) {
                 command.params.push(data.getUint16(innerOffset, true));
@@ -109,7 +115,7 @@ export function loadTTMResourceEntry(entry) {
         ttiUnknown01,
         ttiUnknown02,
         tags,
-        data,
+        buffer: data,
         scripts,
     };
 }

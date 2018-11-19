@@ -14,7 +14,7 @@ export const ResourceType = [
 
 const ResourceView = ({ data }) => {
     const canvasRef = useRef();
-    console.log(data);
+    // console.log(data);
     
     useLayoutEffect(() => {
         const context = canvasRef.current.getContext("2d");

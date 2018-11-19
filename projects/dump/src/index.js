@@ -68,10 +68,11 @@ function dumpMovieScripts(filepath, resindex) {
         if (entry.type === 'TTM') {
             const e = loadResourceEntry(entry);
             fs.writeFileSync(path.join(dumppath, `${e.name}_script.txt`), '');
+            fs.writeFileSync(path.join(dumppath, `${e.name}_script.raw`), Buffer.from(entry.buffer));
             for (let i = 0; i < e.scripts.length; i++) {
                 const c = e.scripts[i];
                 const type = TTMCommandType.find(ct => ct.opcode === c.opcode);
-                let command = `UNKNOWN (0x${c.opcode.toString(16)}) `;
+                let command = `UNKNOWN `; // [0x${c.opcode.toString(16)}] 
                 if (type !== undefined) {
                     command = `${type.command} `;
                 } else {
