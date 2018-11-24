@@ -9,17 +9,10 @@ const ResourceList = ({ res }) => {
             <div className="header">{res.resources[0].name}</div>
             <div className="menu">
                 {map(orderBy(res.resources[0].entries, ['type'], ['asc']), (entry) => {
-                    if (entry.type !== 'ADS') {
-                        return (
-                            <a key={entry.name} className="item" href={`/#entry=${entry.name}`}>
-                                {entry.name}
-                            </a>
-                        );
-                    }
                     return (
-                        <div key={entry.name} className="item" style={{ color: 'dimgray' }}>
+                        <a key={entry.name} className="item" href={`/#entry=${entry.name}`}>
                             {entry.name}
-                        </div>
+                        </a>
                     );
                 })}
             </div>

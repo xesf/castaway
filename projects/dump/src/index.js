@@ -4,7 +4,7 @@ import os from 'os';
 
 import { loadResources, loadResourceEntry } from '@castaway/lifeboat/src/resources';
 
-import { TTMCommandType } from '../../../node_modules/@castaway/lifeboat/src/resources/data/scripting';
+import { TTMCommandType, ADSCommandType } from '../../../node_modules/@castaway/lifeboat/src/resources/data/scripting';
 
 function dumpResourceIndex(filepath, resindex) {
     const dumppath = path.join(filepath,'dump');
@@ -94,6 +94,35 @@ function dumpMovieScripts(filepath, resindex) {
     }
 }
 
+function dumpADSScripts(filepath, resindex) {
+    const dumppath = path.join(filepath,'dump','scripts');
+    if (!fs.existsSync(dumppath)){
+        fs.mkdirSync(dumppath);
+    }
+    const res = resindex.resources[0];
+    for (let e = 0; e < res.numEntries; e++) { 
+        const entry = res.entries[e];
+        if (entry.type === 'ADS') {
+            const e = loadResourceEntry(entry);
+            fs.writeFileSync(path.join(dumppath, `${e.name}_script.txt`), '');
+            fs.writeFileSync(path.join(dumppath, `${e.name}_script.raw`), Buffer.from(entry.buffer));
+            for (let i = 0; i < e.scripts.length; i++) {
+                const c = e.scripts[i];
+                const type = ADSCommandType.find(ct => ct.opcode === c.opcode);
+                let command = ''; // [0x${c.opcode.toString(16)}] 
+                if (type !== undefined) {
+                    command += `${type.command} `;
+                }
+                for (let p = 0; p < c.params.length; p++) {
+                    command += `${c.params[p]} `;
+                }
+                command += os.EOL;
+                fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), command);
+            }
+        }
+    }
+}
+
 const filepath = path.join(__dirname,'../../../data');
 const fc = fs.readFileSync(path.join(filepath, 'RESOURCE.MAP'));
 const buffer = fc.buffer.slice(fc.byteOffset, fc.byteOffset + fc.byteLength);
@@ -110,6 +139,7 @@ dumpResourceIndex(filepath, resindex);
 dumpResourceEntriesCompressed(filepath, resindex);
 dumpAvailableTypes(filepath, resindex);
 // dumpImages(filepath, resindex);
-dumpMovieScripts(filepath, resindex);
+// dumpMovieScripts(filepath, resindex);
+dumpADSScripts(filepath, resindex);
 
 console.log('Dump Complete!!');
