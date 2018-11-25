@@ -86,12 +86,11 @@ export function loadADSResourceEntry(entry) {
     while (innerOffset < uncompressedSize) {
         let opcode = data.getUint16(innerOffset, true);
         innerOffset += 2;
-
+        let command = {
+            opcode,
+            params: []
+        }
         if (opcode > 0x100) {
-            let command = {
-                opcode,
-                params: []
-            }
             const c = ADSCommandType.find(ct => ct.opcode === opcode);
             
             if (c !== undefined) {
@@ -102,8 +101,8 @@ export function loadADSResourceEntry(entry) {
                     innerOffset += 2;
                 }
             }
-            scripts.push(command);
         }
+        scripts.push(command);
     }
 
     return {

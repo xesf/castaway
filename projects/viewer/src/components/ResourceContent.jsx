@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
 
-import ResourceView from './ResourceView'
+import PlayView from './PlayView';
+import ResourceView from './ResourceView';
 
 const ResourceContent = ({ res }) => {
     const [data, setData] = useState();
     const [name, setName] = useState(window.location.hash.split('=')[1]);
+    const isPlayMode = name === 'PLAY';
 
     const onHashChanged = () => {
         setName(window.location.hash.split('=')[1]);
@@ -21,8 +23,13 @@ const ResourceContent = ({ res }) => {
     
     useEffect(() => {
         if (name) {
-            const entry = res.resources[0].entries.find(f => f.name === name);
-            setData(loadResourceEntry(entry));
+            if (isPlayMode) {
+                const entries = res.resources[0].entries;
+                setData(entries);
+            } else {
+                const entry = res.resources[0].entries.find(f => f.name === name);
+                setData(loadResourceEntry(entry));
+            }
         }
         return () => {}
     }, [res, name]);
@@ -32,7 +39,8 @@ const ResourceContent = ({ res }) => {
             <div className="ui basic segment">
                 <b>{name}</b>
             </div>
-            {data && <ResourceView data={data} />}
+            {data &&  isPlayMode && <PlayView data={data} />}
+            {data && !isPlayMode && <ResourceView data={data} />}
             {!name && `No resource loaded. Please select one of the resources from the left menu.`}
         </div>
     );

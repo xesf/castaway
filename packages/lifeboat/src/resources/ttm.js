@@ -64,7 +64,7 @@ export function loadTTMResourceEntry(entry) {
             description
         });
         offset += 2;
-        offset += description.length - 1;
+        offset += description.length + 1;
     }
 
     let innerOffset = 0;
@@ -85,7 +85,7 @@ export function loadTTMResourceEntry(entry) {
             innerOffset += 2;
             command.tag = tags.find(t => t.id === tagId);
             if (command.tag !== undefined) {
-                command.name = command.tag.description;
+                command.name = `${tagId}:${command.tag.description}`;
             } else {
                 command.name = ` tag[${tagId}]`;
             }

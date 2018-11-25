@@ -69,6 +69,17 @@ function dumpMovieScripts(filepath, resindex) {
             const e = loadResourceEntry(entry);
             fs.writeFileSync(path.join(dumppath, `${e.name}_script.txt`), '');
             fs.writeFileSync(path.join(dumppath, `${e.name}_script.raw`), Buffer.from(entry.buffer));
+
+            fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), `[TAGS]:${os.EOL}`);
+            for (let i = 0; i < e.tags.length; i++) {
+                const t = e.tags[i];
+                fs.appendFileSync(
+                    path.join(dumppath, 
+                    `${e.name}_script.txt`), 
+                    `${t.id} ${t.description} ${os.EOL}`);
+            }
+
+            fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), `${os.EOL}[SCRIPTS]:${os.EOL}`);
             for (let i = 0; i < e.scripts.length; i++) {
                 const c = e.scripts[i];
                 const type = TTMCommandType.find(ct => ct.opcode === c.opcode);
@@ -106,17 +117,46 @@ function dumpADSScripts(filepath, resindex) {
             const e = loadResourceEntry(entry);
             fs.writeFileSync(path.join(dumppath, `${e.name}_script.txt`), '');
             fs.writeFileSync(path.join(dumppath, `${e.name}_script.raw`), Buffer.from(entry.buffer));
+
+
+            fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), `[RESOURCES]: ${os.EOL}`);
+            for (let i = 0; i < e.resources.length; i++) {
+                const r = e.resources[i];
+                fs.appendFileSync(
+                    path.join(dumppath, 
+                    `${e.name}_script.txt`), 
+                    `${r.id} ${r.name} ${os.EOL}`);
+            }
+            fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), `${os.EOL}[TAGS]:${os.EOL}`);
+            for (let i = 0; i < e.tags.length; i++) {
+                const t = e.tags[i];
+                fs.appendFileSync(
+                    path.join(dumppath, 
+                    `${e.name}_script.txt`), 
+                    `${t.id} ${t.description} ${os.EOL}`);
+            }
+
+            fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), `${os.EOL}[SCRIPTS]:${os.EOL}`);
+
             for (let i = 0; i < e.scripts.length; i++) {
                 const c = e.scripts[i];
-                const type = ADSCommandType.find(ct => ct.opcode === c.opcode);
                 let command = ''; // [0x${c.opcode.toString(16)}] 
-                if (type !== undefined) {
-                    command += `${type.command} `;
+                if (c.opcode > 0x100) {
+                    const type = ADSCommandType.find(ct => ct.opcode === c.opcode);
+                    if (type !== undefined) {
+                        command += `${type.command} `;
+                    }
+                    for (let p = 0; p < c.params.length; p++) {
+                        command += `${c.params[p]} `;
+                    }
+                    command += os.EOL;
+                    if (type.command === 'END') {
+                        command += os.EOL;
+                    }
+                } else {
+                    command += c.opcode;
+                    command += os.EOL;
                 }
-                for (let p = 0; p < c.params.length; p++) {
-                    command += `${c.params[p]} `;
-                }
-                command += os.EOL;
                 fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), command);
             }
         }
@@ -139,7 +179,7 @@ dumpResourceIndex(filepath, resindex);
 dumpResourceEntriesCompressed(filepath, resindex);
 dumpAvailableTypes(filepath, resindex);
 // dumpImages(filepath, resindex);
-// dumpMovieScripts(filepath, resindex);
+dumpMovieScripts(filepath, resindex);
 dumpADSScripts(filepath, resindex);
 
 console.log('Dump Complete!!');
