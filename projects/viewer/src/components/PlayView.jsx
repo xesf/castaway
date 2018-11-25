@@ -1,5 +1,16 @@
 import React, { useRef, useLayoutEffect } from 'react'
 
+/**
+ * TODO
+ * 8h full day cycle
+ *  - 6h Day
+ *  - 2h Night 
+ * By default night begins at 3pm (Day starts at 9am)
+ * Create random Ocean Background
+ * If day cicle ends, show Night Background
+ * Random island position (perhaps set via command?!)
+ */
+
 const PlayView = ({ data }) => {
     const canvasRef = useRef();
     

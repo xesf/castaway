@@ -1,4 +1,5 @@
-data
+/data
 dist
 node_modules
 build
+projects/viewer/public/data
