@@ -14,9 +14,9 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.1.5",
-        "@babel/core": "^7.1.5",
+        "@babel/core": "^7.1.6",
         "@babel/node": "^7.0.0",
-        "@babel/preset-env": "^7.1.5",
+        "@babel/preset-env": "^7.1.6",
         "mocha": "^5.2.0",
         "nodemon": "^1.17.5"
     }

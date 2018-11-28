@@ -14,13 +14,14 @@ export const ResourceType = [
 
 const ResourceView = ({ data }) => {
     const canvasRef = useRef();
-    // console.log(data);
     
     useLayoutEffect(() => {
         const context = canvasRef.current.getContext("2d");
         const resType = ResourceType.find(r => r.type === data.type);
-        resType.callback(data, context);
         
+        if (resType !== undefined) {
+            resType.callback(data, context);
+        }
         return () => {}
     });
 
