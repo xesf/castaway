@@ -38,7 +38,6 @@ export function loadResources(buffer, resbuffer) {
         resources.push(res);
         innerOffset += 15;
 
-        // TODO do this differently with the buffer
         res.size = resbuffer.byteLength;
         const resData = new DataView(resbuffer, 0, res.size);
 
@@ -47,9 +46,8 @@ export function loadResources(buffer, resbuffer) {
             const entrySize = data.getUint16(innerOffset, true); // uncompressed size
             const entryOffset = data.getUint32(innerOffset + 4, true);
             // from resource
-            const entryCompressedSize = resData.getUint32(entryOffset + 13, true);
             const name = getString(resData, entryOffset, INDEX_STRING_SIZE);
-
+            const entryCompressedSize = resData.getUint32(entryOffset + 13, true);
             const startOffset = entryOffset + 17;
             const endOffset = startOffset + entryCompressedSize;
 

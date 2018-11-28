@@ -90,7 +90,7 @@ function dumpMovieScripts(filepath, resindex) {
                     }
                     command += `${type.command} `;
                 } else {
-                    comand = 'UNKNOWN ';
+                    command = 'UNKNOWN ';
                 }
                 for (let p = 0; p < c.params.length; p++) {
                     command += `${c.params[p]} `;
