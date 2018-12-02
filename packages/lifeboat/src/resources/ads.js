@@ -88,6 +88,7 @@ export function loadADSResourceEntry(entry) {
         innerOffset += 2;
         let command = {
             opcode,
+            tag: null,
             params: []
         }
         if (opcode > 0x100) {
@@ -101,6 +102,8 @@ export function loadADSResourceEntry(entry) {
                     innerOffset += 2;
                 }
             }
+        } else {
+            command.tag = tags.find(t => t.id === command.opcode);
         }
         scripts.push(command);
     }

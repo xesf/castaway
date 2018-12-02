@@ -154,7 +154,7 @@ function dumpADSScripts(filepath, resindex) {
                         command += os.EOL;
                     }
                 } else {
-                    command += c.opcode;
+                    command += `${c.opcode}:${c.tag.description}`;
                     command += os.EOL;
                 }
                 fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), command);
