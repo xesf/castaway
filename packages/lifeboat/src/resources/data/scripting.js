@@ -29,7 +29,7 @@ export const TTMCommandType = [
     { opcode: 0xA510, command: 'DRAW_SPRITE1' },
     { opcode: 0xA520, command: 'DRAW_SPRITE2' },
     { opcode: 0xA530, command: 'DRAW_SPRITE3' },
-    { opcode: 0xA600, command: 'UNKNOWN_7' },
+    { opcode: 0xA600, command: 'CLEAR_SCREEN' },
     { opcode: 0xB600, command: 'DRAW_SCREEN' },
     { opcode: 0xC020, command: 'LOAD_SOUND' },
     { opcode: 0xC030, command: 'SELECT_SOUND' },
@@ -57,8 +57,8 @@ export const ADSCommandType = [
     { opcode: 0x3010, paramSize: 0, command: 'RANDOM_START' },
     { opcode: 0x3020, paramSize: 1, command: 'RANDOM_UNKNOWN_0' },
     { opcode: 0x30ff, paramSize: 0, command: 'RANDOM_END' },
-    { opcode: 0x4000, paramSize: 0, command: 'UNKNOWN_6' },
-    { opcode: 0xf010, paramSize: 0, command: 'UNKNOWN_7' },
+    { opcode: 0x4000, paramSize: 3, command: 'UNKNOWN_6' },
+    { opcode: 0xf010, paramSize: 0, command: 'FADE_OUT' },
     { opcode: 0xf200, paramSize: 1, command: 'UNKNOWN_8' }, // special jc stand init command ?? 
     { opcode: 0xffff, paramSize: 0, command: 'END' },
 ];
