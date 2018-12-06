@@ -1,6 +1,8 @@
 import { getString } from '../utils';
 import { decompress } from "../compression";
 
+import { TTMCommandType } from './data/scripting';
+
 export function loadTTMResourceEntry(entry) {
     let offset = 0;
     const type = getString(entry.data, offset, 3);
@@ -67,6 +69,7 @@ export function loadTTMResourceEntry(entry) {
         offset += description.length + 1;
     }
 
+    let lineNumber = 1;
     let innerOffset = 0;
     const scripts = [];
     while (innerOffset < uncompressedSize) {
@@ -76,6 +79,8 @@ export function loadTTMResourceEntry(entry) {
         opcode &= 0xfff0;
         let command = {
             opcode,
+            lineNumber,
+            line: null,
             name: null,
             tag: null,
             params: []
@@ -104,6 +109,22 @@ export function loadTTMResourceEntry(entry) {
                 innerOffset += 2;
             }
         }
+
+        const type = TTMCommandType.find(ct => ct.opcode === command.opcode);
+        command.line = ''; // [0x${c.opcode.toString(16)}] 
+        if (type !== undefined) {
+            command.line += `${type.command} `;
+        } else {
+            command.line = 'UNKNOWN ';
+        }
+        for (let p = 0; p < command.params.length; p++) {
+            command.line += `${command.params[p]} `;
+        }
+        if (command.name) {
+            command.line += command.name
+        }
+
+        lineNumber++;
         scripts.push(command);
     }
 

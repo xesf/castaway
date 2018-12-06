@@ -81,6 +81,7 @@ export function loadADSResourceEntry(entry) {
         offset += description.length + 1;
     }
 
+    let lineNumber = 1;
     let innerOffset = 0;
     const scripts = [];
     while (innerOffset < uncompressedSize) {
@@ -88,6 +89,8 @@ export function loadADSResourceEntry(entry) {
         innerOffset += 2;
         let command = {
             opcode,
+            lineNumber,
+            line: '',
             tag: null,
             params: []
         }
@@ -96,15 +99,22 @@ export function loadADSResourceEntry(entry) {
             
             if (c !== undefined) {
                 const size = c.paramSize;
+                command.line += `${c.command} `;
 
                 for (let b = 0; b < size; b++) {
-                    command.params.push(data.getUint16(innerOffset, true));
+                    const param = data.getUint16(innerOffset, true);
+                    command.params.push(param);
                     innerOffset += 2;
+
+                    command.line += `${param} `;
                 }
             }
         } else {
             command.tag = tags.find(t => t.id === command.opcode);
+            command.line += `${command.tag.description}`;
         }
+
+        lineNumber++;
         scripts.push(command);
     }
 
