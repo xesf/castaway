@@ -28,7 +28,6 @@ export function loadSCRResourceEntry(entry) {
     }
     blockSize = entry.data.getUint32(offset + 4, true);
     const compressionType = entry.data.getUint8(offset + 8, true);
-    console.log(compressionType);
     const uncompressedSize = entry.data.getUint32(offset + 9, true);
     offset += 13;
     blockSize -= 5; // take type and size out of the block
