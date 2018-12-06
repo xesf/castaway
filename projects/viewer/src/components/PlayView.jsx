@@ -1,5 +1,7 @@
 import React, { useRef, useLayoutEffect } from 'react'
 
+import ScriptCode from './ScriptCode';
+
 /**
  * TODO
  * 8h full day cycle
@@ -25,6 +27,16 @@ const PlayView = ({ data }) => {
     return (
         <div style={{ display: 'block', width: '100%', overflowX: 'auto'}}>
             <canvas ref={canvasRef} width="640" height="480" />
+
+            {data.scripts &&
+                <div style={{
+                    height:'350px',
+                    width: '640px',
+                    overflowY: 'scroll'
+                }}>
+                    <ScriptCode scripts={data.scripts} />
+                </div>
+            }
         </div>
     );
 };

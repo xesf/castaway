@@ -1,7 +1,15 @@
 import React, { useRef, useLayoutEffect } from 'react'
-import { drawAllImages, drawPalette, drawScreen } from '../resources/image';
 
-const nop = (data, context) => { };
+import { drawAllImages, drawPalette, drawScreen } from '../resources/image';
+import ScriptCode from './ScriptCode';
+
+const nop = (data, context) => {
+    context.canvas.width  = 640;
+    context.canvas.height = 480;
+
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, 640, 480);
+};
 
 export const ResourceType = [
     { type: 'ADS', callback: nop }, // Animation sequences
@@ -26,9 +34,20 @@ const ResourceView = ({ data }) => {
     });
 
     return (
-        <div style={{ display: 'block', width: '100%', overflowX: 'auto'}}>
-            <canvas ref={canvasRef} width="640" height="480" />
-        </div>
+        <React.Fragment>
+            <div style={{ display: 'block', width: '100%', overflowX: 'auto'}}>
+                <canvas ref={canvasRef} width="640" height="480" />
+            </div>
+            {data.scripts &&
+                <div style={{
+                    height:'350px',
+                    width: '640px',
+                    overflowY: 'scroll'
+                }}>
+                    <ScriptCode scripts={data.scripts} />
+                </div>
+            }
+        </React.Fragment>
     );
 };
 
