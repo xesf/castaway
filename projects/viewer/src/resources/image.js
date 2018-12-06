@@ -39,6 +39,9 @@ export const drawAllImages = (data, context) => {
 
 
 export const drawPalette = (data, context) => {
+    context.canvas.width  = 640;
+    context.canvas.height = 480;
+
     context.fillStyle = 'white';
     context.fillRect(0, 0, 640, 480);
 
