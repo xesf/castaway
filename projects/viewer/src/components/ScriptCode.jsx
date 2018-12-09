@@ -24,7 +24,8 @@ const ScriptLine = ({ script }) => {
                 </td>
                 <td style={{
                     fontWeight: (script.tag) ? 'bold' : 'none',
-                    color: (script.tag) ? 'red' : 'white'
+                    color: (script.tag) ? 'red' : 'white',
+                    paddingLeft: `${script.indent * 20}px`,
                 }}>
                     {script.line}
                 </td>

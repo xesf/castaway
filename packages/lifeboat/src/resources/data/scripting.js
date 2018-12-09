@@ -42,23 +42,23 @@ export const TTMCommandType = [
 ];
 
 export const ADSCommandType = [
-    { opcode: 0x1070, paramSize: 2, command: 'UNKNOWN_0' },
-    { opcode: 0x1330, paramSize: 2, command: 'UNKNOWN_1' },
-    { opcode: 0x1350, paramSize: 2, command: 'SKIP_NEXT_IF' },
-    { opcode: 0x1360, paramSize: 2, command: 'SKIP_NEXT_IF2' },
-    { opcode: 0x1370, paramSize: 2, command: 'UNKNOWN_2' },
-    { opcode: 0x1420, paramSize: 0, command: 'UNKNOWN_3' },
-    { opcode: 0x1430, paramSize: 0, command: 'OR' },
-    { opcode: 0x1510, paramSize: 0, command: 'PLAY_SEQUENCES' },
-    { opcode: 0x1520, paramSize: 5, command: 'PLAY_SEQUENCES2' },
-    { opcode: 0x2005, paramSize: 4, command: 'ADD_TTM' },
-    { opcode: 0x2010, paramSize: 3, command: 'UNKNOWN_4' },
-    { opcode: 0x2014, paramSize: 0, command: 'UNKNOWN_5' },
-    { opcode: 0x3010, paramSize: 0, command: 'RANDOM_START' },
-    { opcode: 0x3020, paramSize: 1, command: 'RANDOM_UNKNOWN_0' },
-    { opcode: 0x30ff, paramSize: 0, command: 'RANDOM_END' },
-    { opcode: 0x4000, paramSize: 3, command: 'UNKNOWN_6' },
-    { opcode: 0xf010, paramSize: 0, command: 'FADE_OUT' },
-    { opcode: 0xf200, paramSize: 1, command: 'UNKNOWN_8' }, // special jc stand init command ?? 
+    { opcode: 0x1070, paramSize: 2, command: 'UNKNOWN_0', indent: null },
+    { opcode: 0x1330, paramSize: 2, command: 'IF_UNKNOWN_1', indent: 1 },
+    { opcode: 0x1350, paramSize: 2, command: 'IF_LASTPLAYED', indent: 1 }, // SKIP_NEXT_IF
+    { opcode: 0x1360, paramSize: 2, command: 'IF_SKIP_NEXT2', indent: 1 },
+    { opcode: 0x1370, paramSize: 2, command: 'IF_UNKNOWN_2', indent: 1 },
+    { opcode: 0x1420, paramSize: 0, command: 'OR_UNKNOWN_3', indent: null },
+    { opcode: 0x1430, paramSize: 0, command: 'OR', indent: null },
+    { opcode: 0x1510, paramSize: 0, command: 'PLAY_SEQUENCES', indent: 0 },
+    { opcode: 0x1520, paramSize: 5, command: 'PLAY_SEQUENCES2', indent: 0 },
+    { opcode: 0x2005, paramSize: 4, command: 'ADD_TTM', indent: null },
+    { opcode: 0x2010, paramSize: 3, command: 'ADD_TTM_UNKNOWN_4', indent: null },
+    { opcode: 0x2014, paramSize: 0, command: 'UNKNOWN_5', indent: null },
+    { opcode: 0x3010, paramSize: 0, command: 'RANDOM_START', indent: 1 },
+    { opcode: 0x3020, paramSize: 1, command: 'RANDOM_UNKNOWN_0', indent: null },
+    { opcode: 0x30ff, paramSize: 0, command: 'RANDOM_END', indent: -1 },
+    { opcode: 0x4000, paramSize: 3, command: 'UNKNOWN_6', indent: null },
+    { opcode: 0xf010, paramSize: 0, command: 'FADE_OUT', indent: 0 },
+    { opcode: 0xf200, paramSize: 1, command: 'UNKNOWN_8', indent: 0 }, // special jc stand init command ?? 
     { opcode: 0xffff, paramSize: 0, command: 'END' },
 ];

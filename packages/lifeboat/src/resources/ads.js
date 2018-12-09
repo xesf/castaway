@@ -82,6 +82,7 @@ export function loadADSResourceEntry(entry) {
     }
 
     let lineNumber = 1;
+    let indent = 0;
     let innerOffset = 0;
     const scripts = [];
     while (innerOffset < uncompressedSize) {
@@ -91,23 +92,44 @@ export function loadADSResourceEntry(entry) {
             opcode,
             lineNumber,
             line: '',
+            indent: 0,
             tag: null,
             params: []
         }
-        if (opcode > 0x100) {
-            const c = ADSCommandType.find(ct => ct.opcode === opcode);
-            
-            if (c !== undefined) {
-                const size = c.paramSize;
-                command.line += `${c.command} `;
+        const c = ADSCommandType.find(ct => ct.opcode === opcode);
+        if (c !== undefined && opcode > 0x100) {
+            const size = c.paramSize;
+            command.line += `${c.command} `;
 
-                for (let b = 0; b < size; b++) {
-                    const param = data.getUint16(innerOffset, true);
-                    command.params.push(param);
-                    innerOffset += 2;
+            for (let b = 0; b < size; b++) {
+                const param = data.getUint16(innerOffset, true);
+                command.params.push(param);
+                innerOffset += 2;
 
-                    command.line += `${param} `;
+                command.line += `${param} `;
+            }
+
+            command.indent = indent;
+            if (c.indent !== null) {
+                indent += c.indent;
+            }
+            if (c.indent < 0) {
+                command.indent = indent;
+            }
+            if (c.indent === 0) {
+                command.indent = 0;
+                while (indent--) {
+                    scripts.push({
+                        opcode: 0xfff0,
+                        lineNumber: lineNumber++,
+                        line: 'END_IF',
+                        indent,
+                        tag: null,
+                        params: []
+                    });
                 }
+                indent = 0;
+                command.lineNumber = lineNumber; 
             }
         } else {
             command.tag = tags.find(t => t.id === command.opcode);
