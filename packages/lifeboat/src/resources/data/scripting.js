@@ -61,4 +61,6 @@ export const ADSCommandType = [
     { opcode: 0xf010, paramSize: 0, command: 'FADE_OUT', indent: 0 },
     { opcode: 0xf200, paramSize: 1, command: 'UNKNOWN_8', indent: 0 }, // special jc stand init command ?? 
     { opcode: 0xffff, paramSize: 0, command: 'END' },
+    // Add for text script
+    { opcode: 0xfff0, paramSize: 0, command: 'END_IF' },
 ];

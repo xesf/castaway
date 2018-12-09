@@ -134,6 +134,8 @@ export function loadADSResourceEntry(entry) {
         } else {
             command.tag = tags.find(t => t.id === command.opcode);
             command.line += `${command.tag.description}`;
+            command.indent = 0;
+            indent = 0;
         }
 
         lineNumber++;

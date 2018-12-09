@@ -143,6 +143,9 @@ function dumpADSScripts(filepath, resindex) {
                 let command = ''; // [0x${c.opcode.toString(16)}] 
                 if (c.opcode > 0x100) {
                     const type = ADSCommandType.find(ct => ct.opcode === c.opcode);
+                    for (let id = 0; id < c.indent; id++) {
+                        command += '  ';
+                    }
                     if (type !== undefined) {
                         command += `${type.command} `;
                     }
