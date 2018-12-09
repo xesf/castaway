@@ -95,9 +95,9 @@ function dumpMovieScripts(filepath, resindex) {
                 for (let p = 0; p < c.params.length; p++) {
                     command += `${c.params[p]} `;
                 }
-                if (c.name) {
+                /*if (c.name) {
                     command += c.name
-                }
+                }*/
                 command += os.EOL;
                 fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), command);
             }
@@ -143,9 +143,7 @@ function dumpADSScripts(filepath, resindex) {
                 let command = ''; // [0x${c.opcode.toString(16)}] 
                 if (c.opcode > 0x100) {
                     const type = ADSCommandType.find(ct => ct.opcode === c.opcode);
-                    for (let id = 0; id < c.indent; id++) {
-                        command += '  ';
-                    }
+                    command = command.padStart(c.indent * 2, ' ');
                     if (type !== undefined) {
                         command += `${type.command} `;
                     }

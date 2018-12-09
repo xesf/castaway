@@ -103,6 +103,7 @@ export function loadTTMResourceEntry(entry) {
             if (data.getUint8(innerOffset, true) === 0) {
                 innerOffset++;
             }
+            command.params.push(command.name);
         } else {
             for (let b = 0; b < size; b++) {
                 command.params.push(data.getUint16(innerOffset, true));
@@ -120,9 +121,9 @@ export function loadTTMResourceEntry(entry) {
         for (let p = 0; p < command.params.length; p++) {
             command.line += `${command.params[p]} `;
         }
-        if (command.name) {
+        /*if (command.name) {
             command.line += command.name
-        }
+        }*/
 
         lineNumber++;
         scripts.push(command);

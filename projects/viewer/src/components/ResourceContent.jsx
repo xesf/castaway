@@ -39,7 +39,7 @@ const ResourceContent = ({ res }) => {
             <div className="ui basic segment">
                 <b>{name}</b>
             </div>
-            {data &&  isPlayMode && <PlayView data={data} />}
+            {data &&  isPlayMode && <PlayView entries={data} />}
             {data && !isPlayMode && <ResourceView data={data} />}
             {!name && `No resource loaded. Please select one of the resources from the left menu.`}
         </div>
