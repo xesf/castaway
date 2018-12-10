@@ -22,6 +22,10 @@ let state = {
     res: null,
     slot: 0,
     images: [],
+    // this should be for multiple running scripts
+    reentry: 0,
+    elapsed: 0,
+    continue: true,
 };
 
 // TTM COMMANDS
@@ -29,11 +33,19 @@ const SAVE_BACKGROUND = (state) => { };
 const DRAW_BACKGROUND = (state) => { };
 const PURGE = (state) => { };
 const UPDATE = (state) => { };
-const DELAY = (state) => { };
+const DELAY = (state, delay) => {
+    state.continue = false;
+    if (!state.elapsed) {
+        state.elapsed = (delay * 20) + Date.now();
+    }
+    if (Date.now() > state.elapsed) {
+        state.elapsed = 0;
+        state.continue = true;
+    }
+};
 
 const SLOT_IMAGE = (state, slot) => {
     state.slot = slot;
-    console.log(`SLOT_IMAGE ${slot}`)
 };
 
 const SLOT_PALETTE = (state) => { };
@@ -68,8 +80,7 @@ const PLAY_SOUND = (state) => { };
 const STOP_SOUND = (state) => { };
 const LOAD_SCREEN = (state) => { };
 
-const LOAD_IMAGE = (state, name) => { 
-    console.log(name);
+const LOAD_IMAGE = (state, name) => {
     const image = state.entries.find(e => e.name === name);
     if (image !== undefined) {
         state.images[state.slot] = image;
@@ -170,11 +181,21 @@ const CommandType = [
 const runScript = () => {
     console.log('runscript');
     const scripts = state.res.scripts;
-    for (let i = 0; i < scripts.length; i++) {
+    for (let i = state.reentry; i < scripts.length; i++) {
         const c = scripts[i];
         const type = CommandType.find(ct => ct.opcode === c.opcode);
+        console.log(c.line);
         type.callback(state, ...c.params);
+        state.reentry = i;
+        if (!state.continue) {
+            break;
+        }
     }
+    if (state.reentry === scripts.length - 1) {
+        state.reentry = 0;
+        return true; // stop script for now
+    }
+    return false;
 };
 
 export const startProcess = (initialState, resourceName) => {
@@ -187,7 +208,8 @@ export const startProcess = (initialState, resourceName) => {
         const entry = state.entries.find(e => e.name === resourceName);
         state.res = loadResourceEntry(entry);
 
-        runScript(); //mainloop();
+        // runScript();
+        mainloop();
     }
 };
 
@@ -198,7 +220,7 @@ window.requestAnimationFrame = window.requestAnimationFrame
     || ((f) => setTimeout(f, 1000/60));
 
 const mainloop = () => {
-    requestAnimationFrame(mainloop);
+    const frame = requestAnimationFrame(mainloop);
 
     tick = Date.now();
     elapsed = tick - prevTick;
@@ -207,5 +229,7 @@ const mainloop = () => {
         prevTick = tick - (elapsed % fps);
     }
 
-    runScript();
+    if (runScript()) {
+        cancelAnimationFrame(frame);
+    }
  }
