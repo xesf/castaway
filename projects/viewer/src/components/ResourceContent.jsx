@@ -7,6 +7,7 @@ import ResourceView from './ResourceView';
 
 const ResourceContent = ({ res }) => {
     const [data, setData] = useState();
+    const [entries, setEntries] = useState();
     const [name, setName] = useState(window.location.hash.split('=')[1]);
     const isPlayMode = name === 'PLAY';
 
@@ -23,10 +24,9 @@ const ResourceContent = ({ res }) => {
     
     useEffect(() => {
         if (name) {
-            if (isPlayMode) {
-                const entries = res.resources[0].entries;
-                setData(entries);
-            } else {
+            const e = res.resources[0].entries;
+            setEntries(e);
+            if (!isPlayMode) {
                 const entry = res.resources[0].entries.find(f => f.name === name);
                 setData(loadResourceEntry(entry));
             }
@@ -39,8 +39,8 @@ const ResourceContent = ({ res }) => {
             <div className="ui basic segment">
                 <b>{name}</b>
             </div>
-            {data &&  isPlayMode && <PlayView entries={data} />}
-            {data && !isPlayMode && <ResourceView data={data} />}
+            {data &&  isPlayMode && <PlayView entries={entries} />}
+            {data && !isPlayMode && <ResourceView entries={entries} data={data} />}
             {!name && `No resource loaded. Please select one of the resources from the left menu.`}
         </div>
     );

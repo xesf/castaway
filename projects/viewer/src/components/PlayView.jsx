@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 
+import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
 import { startProcess } from './scripting/process';
 
 const PlayView = ({ entries }) => {
@@ -12,10 +13,14 @@ const PlayView = ({ entries }) => {
                 context.fillStyle = 'black';
                 context.fillRect(0, 0, 640, 480);
                 
+                const entry = entries.find(e => e.name === 'MJJOG.TTM');
+                const data = loadResourceEntry(entry);
+
                 startProcess({
                     context,
+                    data,
                     entries,
-                }, 'MJJOG.TTM');
+                });
             }
 
             return () => {}

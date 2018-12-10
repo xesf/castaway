@@ -1,4 +1,3 @@
-import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
 
 /**
  * TODO
@@ -17,7 +16,7 @@ let elapsed = null;
 const fps = 1000 / 60;
 
 let state = {
-    entries: null,
+    data: null,
     context: null,
     res: null,
     slot: 0,
@@ -180,7 +179,7 @@ const CommandType = [
 
 const runScript = () => {
     console.log('runscript');
-    const scripts = state.res.scripts;
+    const scripts = state.data.scripts;
     for (let i = state.reentry; i < scripts.length; i++) {
         const c = scripts[i];
         const type = CommandType.find(ct => ct.opcode === c.opcode);
@@ -198,19 +197,14 @@ const runScript = () => {
     return false;
 };
 
-export const startProcess = (initialState, resourceName) => {
+export const startProcess = (initialState) => {
     state = {
         ...state,
         ...initialState,
     };
 
-    if (state.entries !== undefined) {
-        const entry = state.entries.find(e => e.name === resourceName);
-        state.res = loadResourceEntry(entry);
-
-        // runScript();
-        mainloop();
-    }
+    // runScript();
+    mainloop();
 };
 
 window.requestAnimationFrame = window.requestAnimationFrame

@@ -1,7 +1,9 @@
-import React, { useRef, useLayoutEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 
 import { drawAllImages, drawPalette, drawScreen } from '../resources/image';
 import ScriptCode from './ScriptCode';
+
+import { startProcess } from './scripting/process';
 
 const nop = (data, context) => {
     context.canvas.width  = 640;
@@ -20,19 +22,36 @@ export const ResourceType = [
     { type: 'VIN', callback: nop }, // preload files
 ];
 
-const ResourceView = ({ data }) => {
+const ResourceView = ({ entries, data }) => {
     const canvasRef = useRef();
-    
-    useLayoutEffect(() => {
-        const context = canvasRef.current.getContext("2d");
-        const resType = ResourceType.find(r => r.type === data.type);
-        
-        if (resType !== undefined) {
-            resType.callback(data, context);
-        }
-        return () => {}
-    });
 
+    useEffect(
+        () => {
+            if (data !== undefined) {
+                const context = canvasRef.current.getContext("2d");
+                context.fillStyle = 'black';
+                context.fillRect(0, 0, 640, 480);
+                
+                const resType = ResourceType.find(r => r.type === data.type);    
+                if (resType !== undefined) {
+                    resType.callback(data, context);
+                
+                    if (resType.type === 'ADS' ||
+                        resType.type === 'TTM') {
+                        startProcess({
+                            context,
+                            data,
+                            entries,
+                        });
+                    }
+                }
+            }
+
+            return () => {}
+        },
+        [data]
+    );
+    
     return (
         <React.Fragment>
             <div style={{ display: 'block', width: '100%', overflowX: 'auto'}}>
