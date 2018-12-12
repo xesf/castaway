@@ -1,10 +1,10 @@
 
 export const TTMCommandType = [
-    { opcode: 0x0020, command: 'SAVE_BACKGROUND' },
+    { opcode: 0x0020, command: 'SAVE_BACKGROUND' }, // not used
     { opcode: 0x0080, command: 'DRAW_BACKGROUND' },
     { opcode: 0x0110, command: 'PURGE' },
     { opcode: 0x0FF0, command: 'UPDATE' },
-    { opcode: 0x1020, command: 'DELAY' },
+    { opcode: 0x1020, command: 'SET_DELAY' },
     { opcode: 0x1050, command: 'SLOT_IMAGE' },
     { opcode: 0x1060, command: 'SLOT_PALETTE' },
     { opcode: 0x1100, command: 'UNKNOWN_0' }, // Scene related?
@@ -25,10 +25,10 @@ export const TTMCommandType = [
     { opcode: 0xA0A0, command: 'DRAW_WHITE_LINE' },
     { opcode: 0xA100, command: 'SET_WINDOW0' },
     { opcode: 0xA400, command: 'DRAW_BUBBLE' },
-    { opcode: 0xA500, command: 'DRAW_SPRITE0' },
-    { opcode: 0xA510, command: 'DRAW_SPRITE1' },
-    { opcode: 0xA520, command: 'DRAW_SPRITE2' },
-    { opcode: 0xA530, command: 'DRAW_SPRITE3' },
+    { opcode: 0xA500, command: 'DRAW_SPRITE' },
+    { opcode: 0xA510, command: 'DRAW_SPRITE1' }, // not used
+    { opcode: 0xA520, command: 'DRAW_SPRITE_FLIP' },
+    { opcode: 0xA530, command: 'DRAW_SPRITE3' }, // not used
     { opcode: 0xA600, command: 'CLEAR_SCREEN' },
     { opcode: 0xB600, command: 'DRAW_SCREEN' },
     { opcode: 0xC020, command: 'LOAD_SOUND' },
