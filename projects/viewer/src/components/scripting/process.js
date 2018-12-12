@@ -80,9 +80,9 @@ const STOP_SOUND = (state) => { };
 const LOAD_SCREEN = (state) => { };
 
 const LOAD_IMAGE = (state, name) => {
-    const image = state.entries.find(e => e.name === name);
-    if (image !== undefined) {
-        state.images[state.slot] = image;
+    const entry = state.entries.find(e => e.name === name);
+    if (entry !== undefined) {
+        state.res[state.slot] = loadResourceEntry(entry);
     }
 };
 
