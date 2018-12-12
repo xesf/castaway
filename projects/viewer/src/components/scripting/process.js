@@ -199,12 +199,29 @@ const runScript = () => {
 
 export const startProcess = (initialState) => {
     state = {
-        ...state,
+        data: null,
+        context: null,
+        slot: 0,
+        res: [],
+        // this should be for multiple running scripts
+        reentry: 0,
+        elapsed: 0,
+        delay: 0,
+        continue: true,
+        frameId: null,
         ...initialState,
     };
 
     // runScript();
     mainloop();
+
+    return state;
+};
+
+export const stopProcess = () => {
+    if (state && state.frameId) {
+        cancelAnimationFrame(state.frameId);
+    }
 };
 
 window.requestAnimationFrame = window.requestAnimationFrame
@@ -214,7 +231,7 @@ window.requestAnimationFrame = window.requestAnimationFrame
     || ((f) => setTimeout(f, 1000/60));
 
 const mainloop = () => {
-    const frame = requestAnimationFrame(mainloop);
+    state.frameId = requestAnimationFrame(mainloop);
 
     tick = Date.now();
     elapsed = tick - prevTick;
@@ -224,6 +241,6 @@ const mainloop = () => {
     }
 
     if (runScript()) {
-        cancelAnimationFrame(frame);
+        cancelAnimationFrame(state.frameId);
     }
  }
