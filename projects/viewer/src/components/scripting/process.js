@@ -1,4 +1,8 @@
 
+import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
+
+import { drawImage } from "../../resources/image";
+
 /**
  * TODO
  * 8h full day cycle
@@ -15,32 +19,32 @@ let elapsed = null;
 // let startTime = prevTick;
 const fps = 1000 / 60;
 
-let state = {
-    data: null,
-    context: null,
-    res: null,
-    slot: 0,
-    images: [],
-    // this should be for multiple running scripts
-    reentry: 0,
-    elapsed: 0,
-    continue: true,
-};
+let state = null;
 
 // TTM COMMANDS
 const SAVE_BACKGROUND = (state) => { };
 const DRAW_BACKGROUND = (state) => { };
 const PURGE = (state) => { };
-const UPDATE = (state) => { };
-const DELAY = (state, delay) => {
-    state.continue = false;
-    if (!state.elapsed) {
-        state.elapsed = (delay * 20) + Date.now();
+const UPDATE = (state) => { 
+    if (state.continue) {
+        // TODO update function here before the delay
+        // update will run once only inside this if
+        if (!state.delay) {
+            return;
+        }
+        state.continue = false;
     }
+    if (!state.elapsed) {
+        state.elapsed = state.delay + Date.now();
+    }
+
     if (Date.now() > state.elapsed) {
         state.elapsed = 0;
         state.continue = true;
     }
+};
+const SET_DELAY = (state, delay) => {
+    state.delay = (delay * 20); // FIXME validate this value
 };
 
 const SLOT_IMAGE = (state, slot) => {
@@ -66,11 +70,29 @@ const TTM_UNKNOWN_6 = (state) => { };
 const DRAW_WHITE_LINE = (state) => { };
 const SET_WINDOW0 = (state) => { };
 const DRAW_BUBBLE = (state) => { };
-const DRAW_SPRITE0 = (state) => { };
+
+const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => { 
+    const image = state.res[slot].images[index];
+    drawImage(image, state.context, offsetX, offsetY);
+};
+
+const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => { 
+    const image = state.res[slot].images[index];
+    state.context.save();
+    state.context.scale(-1, 1);
+    drawImage(image, state.context, offsetX, offsetY);
+    state.context.restore();
+};
+
 const DRAW_SPRITE1 = (state) => { };
-const DRAW_SPRITE2 = (state) => { };
 const DRAW_SPRITE3 = (state) => { };
-const CLEAR_SCREEN = (state) => { };
+const CLEAR_SCREEN = (state) => {
+    state.context.canvas.width  = 640;
+    state.context.canvas.height = 480;
+
+    state.context.fillStyle = 'black';
+    state.context.fillRect(0, 0, 640, 480);
+};
 const DRAW_SCREEN = (state) => { };
 const LOAD_SOUND = (state) => { };
 const SELECT_SOUND = (state) => { };
@@ -118,7 +140,7 @@ const CommandType = [
     { opcode: 0x0080, callback: DRAW_BACKGROUND },
     { opcode: 0x0110, callback: PURGE },
     { opcode: 0x0FF0, callback: UPDATE },
-    { opcode: 0x1020, callback: DELAY },
+    { opcode: 0x1020, callback: SET_DELAY },
     { opcode: 0x1050, callback: SLOT_IMAGE },
     { opcode: 0x1060, callback: SLOT_PALETTE },
     { opcode: 0x1100, callback: TTM_UNKNOWN_0 },
@@ -139,9 +161,9 @@ const CommandType = [
     { opcode: 0xA0A0, callback: DRAW_WHITE_LINE },
     { opcode: 0xA100, callback: SET_WINDOW0 },
     { opcode: 0xA400, callback: DRAW_BUBBLE },
-    { opcode: 0xA500, callback: DRAW_SPRITE0 },
+    { opcode: 0xA500, callback: DRAW_SPRITE },
     { opcode: 0xA510, callback: DRAW_SPRITE1 },
-    { opcode: 0xA520, callback: DRAW_SPRITE2 },
+    { opcode: 0xA520, callback: DRAW_SPRITE_FLIP },
     { opcode: 0xA530, callback: DRAW_SPRITE3 },
     { opcode: 0xA600, callback: CLEAR_SCREEN },
     { opcode: 0xB600, callback: DRAW_SCREEN },
