@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 
 import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
-import { startProcess } from './scripting/process';
+import { startProcess, stopProcess } from './scripting/process';
 
 const PlayView = ({ entries }) => {
     const canvasRef = useRef();
@@ -9,6 +9,8 @@ const PlayView = ({ entries }) => {
     useEffect(
         () => {
             if (entries !== undefined) {
+                stopProcess();
+
                 const context = canvasRef.current.getContext("2d");
                 context.fillStyle = 'black';
                 context.fillRect(0, 0, 640, 480);

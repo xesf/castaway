@@ -1,12 +1,16 @@
 import React from 'react';
 import { map } from 'lodash';
 
-const ScriptLine = ({ script }) => {
+const ScriptLine = ({ script, current }) => {
+    const isCurrentLineStyle = (current) ? {
+        backgroundColor: 'rgb(0, 136, 253)',
+    } : {};
+
     return (
         <React.Fragment>
             {(script.opcode === 0x1110) &&
                 <tr>
-                    <td style={{ width: '40px' }}>
+                    <td style={{ ...isCurrentLineStyle, width: '40px' }}>
                         &nbsp;
                     </td>
                     <td>
@@ -15,15 +19,18 @@ const ScriptLine = ({ script }) => {
             }
             <tr>
                 <td style={{
+                    ...isCurrentLineStyle,
                     width: '40px',
                     paddingRight: '8px',
                     color: 'gray',
                     textAlign: 'right',
                 }}>
+                    <a name="1" href={`/#$script.lineNumber`} style={{display: 'none'}}>{!script.tag && script.lineNumber}</a>
                     {!script.tag && script.lineNumber}
                 </td>
                 <td style={{
-                    fontWeight: (script.tag) ? 'bold' : 'none',
+                    ...isCurrentLineStyle,
+                    fontWeight: (script.tag) ? 'bold' : 'normal',
                     color: (script.tag) ? 'red' : 'white',
                     paddingLeft: (script.indent) ? `${script.indent * 20}px` : '0px',
                 }}>
@@ -32,7 +39,7 @@ const ScriptLine = ({ script }) => {
             </tr>
             {(script.opcode === 0xffff) &&
                 <tr>
-                    <td style={{ width: '40px' }}>
+                    <td style={{ ...isCurrentLineStyle, width: '40px' }}>
                     &nbsp;
                     </td>
                     <td>
@@ -53,7 +60,7 @@ const ScriptCode = (props) => {
         }}>
             <tbody>
                 {map(props.scripts, (s) =>
-                    <ScriptLine key={s+s.lineNumber} script={s} />
+                    <ScriptLine key={s.lineNumber} script={s} current={(props.current) ? props.current.lineNumber === s.lineNumber : false} />
                 )}
             </tbody>
         </table>

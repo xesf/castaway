@@ -1,9 +1,9 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 
 import { drawAllImages, drawPalette, drawScreen } from '../resources/image';
 import ScriptCode from './ScriptCode';
 
-import { startProcess } from './scripting/process';
+import { startProcess, stopProcess } from './scripting/process';
 
 const nop = (data, context) => {
     context.canvas.width  = 640;
@@ -24,10 +24,17 @@ export const ResourceType = [
 
 const ResourceView = ({ entries, data }) => {
     const canvasRef = useRef();
+    const [script, setScript] = useState();
+
+    const updateScriptLine = (s) => {
+        setScript(s);
+    }
 
     useEffect(
         () => {
             if (data !== undefined) {
+                stopProcess();
+
                 const context = canvasRef.current.getContext("2d");
                 context.fillStyle = 'black';
                 context.fillRect(0, 0, 640, 480);
@@ -42,6 +49,7 @@ const ResourceView = ({ entries, data }) => {
                             context,
                             data,
                             entries,
+                            callback: updateScriptLine
                         });
                     }
                 }
@@ -63,7 +71,7 @@ const ResourceView = ({ entries, data }) => {
                     width: '640px',
                     overflowY: 'scroll'
                 }}>
-                    <ScriptCode scripts={data.scripts} />
+                    <ScriptCode scripts={data.scripts} current={script} />
                 </div>
             }
         </React.Fragment>
