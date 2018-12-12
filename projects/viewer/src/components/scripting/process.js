@@ -178,12 +178,15 @@ const CommandType = [
 ];
 
 const runScript = () => {
-    console.log('runscript');
     const scripts = state.data.scripts;
     for (let i = state.reentry; i < scripts.length; i++) {
         const c = scripts[i];
+        // setTimeout(state.callback(c), 0); // set current script command
         const type = CommandType.find(ct => ct.opcode === c.opcode);
         console.log(c.line);
+        if (!type) {
+            continue;
+        }
         type.callback(state, ...c.params);
         state.reentry = i;
         if (!state.continue) {
