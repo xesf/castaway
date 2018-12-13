@@ -21,6 +21,11 @@ const fps = 1000 / 60;
 
 let state = null;
 
+const clearTempContext = () => {
+    state.tmpContext.fillStyle = 'black';
+    state.tmpContext.fillRect(0, 0, 640, 480);
+}
+
 // TTM COMMANDS
 const SAVE_BACKGROUND = (state) => { };
 const DRAW_BACKGROUND = (state) => { };
@@ -44,7 +49,7 @@ const UPDATE = (state) => {
     }
 };
 const SET_DELAY = (state, delay) => {
-    state.delay = (delay * 20); // FIXME validate this value
+    state.delay = (delay * 15); // FIXME validate this value
 };
 
 const SLOT_IMAGE = (state, slot) => {
@@ -73,14 +78,18 @@ const DRAW_BUBBLE = (state) => { };
 
 const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => { 
     const image = state.res[slot].images[index];
-    drawImage(image, state.context, offsetX, offsetY);
+    clearTempContext();
+    drawImage(image, state.tmpContext, 0, 0);
+    state.context.drawImage(state.tmpContext.canvas, offsetX, offsetY);
 };
 
 const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => { 
     const image = state.res[slot].images[index];
+    clearTempContext();
+    drawImage(image, state.tmpContext, 0, 0);
     state.context.save();
     state.context.scale(-1, 1);
-    drawImage(image, state.context, offsetX, offsetY);
+    state.context.drawImage(state.tmpContext.canvas, offsetX, offsetY);
     state.context.restore();
 };
 
@@ -92,6 +101,8 @@ const CLEAR_SCREEN = (state) => {
 
     state.context.fillStyle = 'black';
     state.context.fillRect(0, 0, 640, 480);
+
+    clearTempContext();
 };
 const DRAW_SCREEN = (state) => { };
 const LOAD_SOUND = (state) => { };
@@ -226,6 +237,7 @@ export const startProcess = (initialState) => {
     state = {
         data: null,
         context: null,
+        tmpContext: null,
         slot: 0,
         res: [],
         // this should be for multiple running scripts
@@ -236,6 +248,12 @@ export const startProcess = (initialState) => {
         frameId: null,
         ...initialState,
     };
+
+    // temp canvas
+    const tmpCanvas = document.createElement("canvas");
+    tmpCanvas.width = 640;
+    tmpCanvas.height = 480;  
+    state.tmpContext = tmpCanvas.getContext('2d');
 
     // runScript();
     mainloop();
