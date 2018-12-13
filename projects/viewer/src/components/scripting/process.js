@@ -49,7 +49,7 @@ const UPDATE = (state) => {
     }
 };
 const SET_DELAY = (state, delay) => {
-    state.delay = (delay * 15); // FIXME validate this value
+    state.delay = (delay * 20); // FIXME validate this value
 };
 
 const SLOT_IMAGE = (state, slot) => {
