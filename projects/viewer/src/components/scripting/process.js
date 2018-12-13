@@ -88,8 +88,9 @@ const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
     clearTempContext();
     drawImage(image, state.tmpContext, 0, 0);
     state.context.save();
+    state.context.translate(image.width, 0);
     state.context.scale(-1, 1);
-    state.context.drawImage(state.tmpContext.canvas, offsetX, offsetY);
+    state.context.drawImage(state.tmpContext.canvas, -offsetX, offsetY);
     state.context.restore();
 };
 
