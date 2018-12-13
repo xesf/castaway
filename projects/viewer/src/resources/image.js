@@ -36,7 +36,7 @@ export const drawAllImages = (data, context) => {
         }
     }
 
-    context.fillStyle = 'white';
+    context.fillStyle = 'black';
     context.fillRect(0, 0, totalWidth, maxHeight);
 
     context.canvas.width  = totalWidth;
@@ -54,7 +54,7 @@ export const drawPalette = (data, context) => {
     context.canvas.width  = 640;
     context.canvas.height = 480;
 
-    context.fillStyle = 'white';
+    context.fillStyle = 'black';
     context.fillRect(0, 0, 640, 480);
 
     for (let p = 0; p < data.palette.length; p++) {
@@ -65,7 +65,7 @@ export const drawPalette = (data, context) => {
 };
 
 export const drawScreen = (data, context) => {
-    context.fillStyle = 'white';
+    context.fillStyle = 'black';
     context.fillRect(0, 0, 640, 480);
 
     context.canvas.width  = 640;
