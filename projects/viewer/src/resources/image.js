@@ -59,7 +59,7 @@ export const drawPalette = (data, context) => {
 
     for (let p = 0; p < data.palette.length; p++) {
         const c = data.palette[p];
-        context.fillStyle = `rgb(${c.r},${c.g},${c.b})`;
+        context.fillStyle = getPaletteColor(c);
         context.fillRect(p * 2, 0, 2, 480);
     }
 };
@@ -73,3 +73,7 @@ export const drawScreen = (data, context) => {
 
     drawImage(data.images[0], context, 0, 0);
 };
+
+export const getPaletteColor = (c) => {
+    return `rgb(${c.r},${c.g},${c.b})`;
+}

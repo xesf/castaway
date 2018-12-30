@@ -21,9 +21,11 @@ const fps = 1000 / 60;
 
 let state = null;
 
-const clearTempContext = () => {
-    state.tmpContext.fillStyle = 'black';
-    state.tmpContext.fillRect(0, 0, 640, 480);
+const clearContext = (context) => {
+    context.canvas.width = 640;
+    context.canvas.height = 480;
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, 640, 480);
 }
 
 // TTM COMMANDS
@@ -78,32 +80,25 @@ const DRAW_BUBBLE = (state) => { };
 
 const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => { 
     const image = state.res[slot].images[index];
-    clearTempContext();
     drawImage(image, state.tmpContext, 0, 0);
-    state.context.drawImage(state.tmpContext.canvas, offsetX, offsetY);
+    state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
 };
 
 const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => { 
     const image = state.res[slot].images[index];
-    clearTempContext();
     drawImage(image, state.tmpContext, 0, 0);
     state.context.save();
     state.context.translate(image.width, 0);
     state.context.scale(-1, 1);
-    state.context.drawImage(state.tmpContext.canvas, -offsetX, offsetY);
+    state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, -offsetX, offsetY, image.width, image.height);
     state.context.restore();
 };
 
 const DRAW_SPRITE1 = (state) => { };
 const DRAW_SPRITE3 = (state) => { };
 const CLEAR_SCREEN = (state) => {
-    state.context.canvas.width  = 640;
-    state.context.canvas.height = 480;
-
-    state.context.fillStyle = 'black';
-    state.context.fillRect(0, 0, 640, 480);
-
-    clearTempContext();
+    clearContext(state.context);
+    clearContext(state.tmpContext);
 };
 const DRAW_SCREEN = (state) => { };
 const LOAD_SOUND = (state) => { };
