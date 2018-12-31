@@ -2,6 +2,8 @@
 
 The aim of this project is to provide a complete re-implemtation of the Johnny Castaway Screen Saver created by Dynamix using Javascript.
 
+![alt text](castaway.png "Dynamix Johnny Castaway Screen Saver")
+
 ## Purpose
 - Re-implementation of the Johnny Castaway Screen Saver;
 
