@@ -3,10 +3,20 @@
 The aim of this project is to provide a complete re-implemtation of the Johnny Castaway Screen Saver created by Dynamix using Javascript.
 
 ## Purpose
-- Learn the Dynamix Game Development System (DGDS)
+- Re-implementation of the Johnny Castaway Screen Saver;
 
-- Build tools using NodeJS
+- Learn the Dynamix Game Development System (DGDS);
 
-- Focus on taking advantage of the modern web development languages and frameworks like Javascript and React. 
+- Document the files format used;
 
-- Use as a sandbox to try new features of those frameworks during the process
+- Build tools using NodeJS;
+
+- Focus on taking advantage of the modern web development languages and frameworks like Javascript and React;
+
+- Use as a sandbox to try new features of those frameworks during the process;
+
+- Have fun implementing it!!
+
+## Documents
+
+[Resource Index File Format](docs/resindex.md)
