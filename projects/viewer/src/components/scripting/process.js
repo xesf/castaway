@@ -74,7 +74,14 @@ const SAVE_IMAGE1 = (state) => { };
 const TTM_UNKNOWN_4 = (state) => { };
 const TTM_UNKNOWN_5 = (state) => { };
 const TTM_UNKNOWN_6 = (state) => { };
-const DRAW_WHITE_LINE = (state) => { };
+const DRAW_WHITE_LINE = (state, x1, y1, x2, y2) => {
+    state.context.beginPath();
+    state.context.moveTo(x1, y1);
+    state.context.lineTo(x2, y2);
+    state.context.strokeStyle = 'white';
+    state.context.stroke();
+};
+
 const SET_WINDOW0 = (state) => { };
 const DRAW_BUBBLE = (state) => { };
 
