@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { map, /*orderBy*/ } from 'lodash';
+import { map, orderBy } from 'lodash';
 
 
 const ResourceList = ({ res }) => {
@@ -16,7 +16,7 @@ const ResourceList = ({ res }) => {
             <div className="item">
                 <div className="header">{res.resources[0].name}</div>
                 <div className="menu">
-                    {map(res.resources[0].entries, // orderBy(res.resources[0].entries, ['type'], ['asc']), 
+                    {map(orderBy(res.resources[0].entries, ['type'], ['asc']), 
                     (entry) => {
                         return (
                             <a key={entry.name} className="item" href={`/#entry=${entry.name}`}>
