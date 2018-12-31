@@ -1,7 +1,7 @@
 
 import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
 
-import { drawImage } from "../../resources/image";
+import { drawImage, drawScreen } from "../../resources/image";
 
 /**
  * TODO
@@ -99,14 +99,25 @@ const DRAW_SPRITE3 = (state) => { };
 const CLEAR_SCREEN = (state) => {
     clearContext(state.context);
     clearContext(state.tmpContext);
+    if (state.bkgScreen) {
+        drawScreen(state.bkgScreen, state.context);
+    }
 };
+
 const DRAW_SCREEN = (state) => { };
+
 const LOAD_SOUND = (state) => { };
 const SELECT_SOUND = (state) => { };
 const DESELECT_SOUND = (state) => { };
 const PLAY_SOUND = (state) => { };
 const STOP_SOUND = (state) => { };
-const LOAD_SCREEN = (state) => { };
+
+const LOAD_SCREEN = (state, name) => {
+    const entry = state.entries.find(e => e.name === name);
+    if (entry !== undefined) {
+        state.bkgScreen = loadResourceEntry(entry);
+    }
+};
 
 const LOAD_IMAGE = (state, name) => {
     const entry = state.entries.find(e => e.name === name);
@@ -197,7 +208,7 @@ const CommandType = [
     { opcode: 0x2014, callback: ADS_UNKNOWN_5 },
     { opcode: 0x3010, callback: RANDOM_START },
     { opcode: 0x3020, callback: RANDOM_UNKNOWN_0 },
-    { opcode: 0x30ff, callback: RANDOM_END, indent: -1 },
+    { opcode: 0x30ff, callback: RANDOM_END },
     { opcode: 0x4000, callback: ADS_UNKNOWN_6 },
     { opcode: 0xf010, callback: ADS_FADE_OUT },
     { opcode: 0xf200, callback: ADS_UNKNOWN_8 }, 
@@ -236,6 +247,7 @@ export const startProcess = (initialState) => {
         tmpContext: null,
         slot: 0,
         res: [],
+        bkgScreen: null,
         // this should be for multiple running scripts
         reentry: 0,
         elapsed: 0,
