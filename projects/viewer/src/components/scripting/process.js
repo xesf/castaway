@@ -83,7 +83,18 @@ const DRAW_WHITE_LINE = (state, x1, y1, x2, y2) => {
 };
 
 const SET_WINDOW0 = (state) => { };
-const DRAW_BUBBLE = (state) => { };
+
+const DRAW_BUBBLE = (state, x, y, width, height) => {
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = width / 2;
+    state.context.beginPath();
+    state.context.arc(x + centerX, y + centerY, radius, 0, 2 * Math.PI, false);
+    state.context.fillStyle = 'white';
+    state.context.fill();
+    state.context.strokeStyle = 'black';
+    state.context.stroke();
+};
 
 const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => { 
     const image = state.res[slot].images[index];
