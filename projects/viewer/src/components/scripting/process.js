@@ -2,6 +2,7 @@
 import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
 
 import { drawImage, drawScreen } from "../../resources/image";
+import { createAudioManager } from "../../resources/audio";
 
 /**
  * TODO
@@ -124,11 +125,18 @@ const CLEAR_SCREEN = (state) => {
 
 const DRAW_SCREEN = (state) => { };
 
-const LOAD_SOUND = (state) => { };
-const SELECT_SOUND = (state) => { };
-const DESELECT_SOUND = (state) => { };
-const PLAY_SOUND = (state) => { };
-const STOP_SOUND = (state) => { };
+const LOAD_SAMPLE = (state) => { };
+const SELECT_SAMPLE = (state) => { };
+const DESELECT_SAMPLE = (state) => { };
+
+const PLAY_SAMPLE = (state, index) => {
+    const sampleSource = state.audioManager.getSoundFxSource();
+    sampleSource.load(index, () => {
+        sampleSource.play();
+    });
+};
+
+const STOP_SAMPLE = (state) => { };
 
 const LOAD_SCREEN = (state, name) => {
     const entry = state.entries.find(e => e.name === name);
@@ -263,6 +271,7 @@ export const startProcess = (initialState) => {
         data: null,
         context: null,
         tmpContext: null,
+        audioManager: null,
         slot: 0,
         res: [],
         bkgScreen: null,
@@ -280,6 +289,8 @@ export const startProcess = (initialState) => {
     tmpCanvas.width = 640;
     tmpCanvas.height = 480;  
     state.tmpContext = tmpCanvas.getContext('2d');
+
+    state.audioManager = createAudioManager({ soundFxVolume: 0.50 });
 
     // runScript();
     mainloop();
