@@ -37,9 +37,17 @@ const drawBackground = (state) => {
     }
     if (state.drawIsland) {
         // Draw island
-        if (state.bkgRes) {
+        if (state.bkgRes) {            
+            // Draw clouds (random and animated)
+            // const cloudIdx = Math.floor((Math.random() * 3) + 15);
+            // const x = Math.floor((Math.random() * 640));
+            // const y = Math.floor((Math.random() * 80));
+            let image = state.bkgRes.images[17];
+            drawImage(image, state.tmpContext, 0, 0);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 120, 40, image.width, image.height);
+
             // isle
-            let image = state.bkgRes.images[0];
+            image = state.bkgRes.images[0];
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 288, 280, image.width, image.height);
 
