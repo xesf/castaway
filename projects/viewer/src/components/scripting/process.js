@@ -325,4 +325,4 @@ const mainloop = () => {
     if (runScript()) {
         cancelAnimationFrame(state.frameId);
     }
- }
+}
