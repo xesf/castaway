@@ -46,6 +46,11 @@ const drawBackground = (state) => {
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 120, 40, image.width, image.height);
 
+            // Draw raft based on state
+            image = state.bkgRaft.images[3];
+            drawImage(image, state.tmpContext, 0, 0);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 510, 268, image.width, image.height);
+
             // isle
             image = state.bkgRes.images[0];
             drawImage(image, state.tmpContext, 0, 0);
@@ -71,14 +76,11 @@ const drawBackground = (state) => {
             image = state.bkgRes.images[10];
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 518, 303, image.width, image.height);
-            
-            // Draw clouds (random and animated)
+
             // Draw low tide
-            // Draw raft based on state
         }
     }
 }
-
 
 // TTM COMMANDS
 const SAVE_BACKGROUND = (state) => { };
@@ -223,6 +225,12 @@ const LOAD_SCREEN = (state, name) => {
             entry = state.entries.find(e => e.name === 'NIGHT.SCR');
             if (entry !== undefined) {
                 state.bkgOcean.push(loadResourceEntry(entry));
+            }
+        }
+        if (!state.bkgRaft) {
+            const entry = state.entries.find(e => e.name === 'MRAFT.BMP');
+            if (entry !== undefined) {
+                state.bkgRaft = loadResourceEntry(entry);
             }
         }
 
@@ -374,6 +382,7 @@ export const startProcess = (initialState) => {
         bkgScreen: null,
         bkgRes: null,
         bkgOcean: [],
+        bkgRaft: null,
         drawIsland: false,
         ...initialState,
     };
