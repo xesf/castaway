@@ -4,6 +4,8 @@ List of New Features to add to Johnny Castaway experience:
 * Accelarate time
 * Day/Night loop in 24h instead of 8h
 * Day/Night based on user location sunrise and sunset
+* Moving cloulds
+* Add waves like the static screen
 * Tides based on user locations with real time coutry low tide info
 * Play Story Only
 * Choose single activities to play
