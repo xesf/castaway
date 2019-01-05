@@ -29,6 +29,49 @@ const clearContext = (context) => {
     context.fillRect(0, 0, 640, 480);
 }
 
+// FIXME Improve this code repetition
+const drawBackground = (state) => {
+    // Draw background / ocean / night
+    if (state.bkgScreen) {
+        drawScreen(state.bkgScreen, state.context);
+    }
+    if (state.drawIsland) {
+        // Draw island
+        if (state.bkgRes) {
+            // isle
+            let image = state.bkgRes.images[0];
+            drawImage(image, state.tmpContext, 0, 0);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 288, 280, image.width, image.height);
+
+            // palm tree
+            image = state.bkgRes.images[14];
+            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 396, 280, image.width, image.height);
+            image = state.bkgRes.images[13];
+            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 442, 148, image.width, image.height);
+            image = state.bkgRes.images[12];
+            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 365, 122, image.width, image.height);
+            
+            // Draw shore with animations
+            image = state.bkgRes.images[3];
+            drawImage(image, state.tmpContext, 0, 0);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 275, 305, image.width, image.height);
+
+            image = state.bkgRes.images[6];
+            drawImage(image, state.tmpContext, 0, 0);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 364, 320, image.width, image.height);
+
+            image = state.bkgRes.images[10];
+            drawImage(image, state.tmpContext, 0, 0);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 518, 303, image.width, image.height);
+            
+            // Draw clouds (random and animated)
+            // Draw low tide
+            // Draw raft based on state
+        }
+    }
+}
+
+
 // TTM COMMANDS
 const SAVE_BACKGROUND = (state) => { };
 const DRAW_BACKGROUND = (state) => { };
@@ -62,7 +105,8 @@ const SLOT_IMAGE = (state, slot) => {
 const SLOT_PALETTE = (state) => { };
 const TTM_UNKNOWN_0 = (state) => { };
 const SET_SCENE = (state) => { };
-const TTM_UNKNOWN_1 = (state) => { };
+const SET_BACKGROUND = (state) => { };
+
 const TTM_UNKNOWN_2 = (state) => { };
 const SET_FRAME0 = (state) => { };
 const SET_FRAME1 = (state) => { };
@@ -75,6 +119,7 @@ const SAVE_IMAGE1 = (state) => { };
 const TTM_UNKNOWN_4 = (state) => { };
 const TTM_UNKNOWN_5 = (state) => { };
 const TTM_UNKNOWN_6 = (state) => { };
+
 const DRAW_WHITE_LINE = (state, x1, y1, x2, y2) => {
     state.context.beginPath();
     state.context.moveTo(x1, y1);
@@ -120,9 +165,7 @@ const DRAW_SPRITE3 = (state) => { };
 const CLEAR_SCREEN = (state) => {
     clearContext(state.context);
     clearContext(state.tmpContext);
-    if (state.bkgScreen) {
-        drawScreen(state.bkgScreen, state.context);
-    }
+    drawBackground(state);
 };
 
 const DRAW_SCREEN = (state) => { };
@@ -144,6 +187,44 @@ const LOAD_SCREEN = (state, name) => {
     const entry = state.entries.find(e => e.name === name);
     if (entry !== undefined) {
         state.bkgScreen = loadResourceEntry(entry);
+    }
+
+    if (name === 'ISLETEMP.SCR' || name === 'ISLAND2.SCR') {
+        state.drawIsland = true;
+        // Load background assets if not loaded yet
+        if (!state.bkgRes) {
+            const entry = state.entries.find(e => e.name === 'BACKGRND.BMP');
+            if (entry !== undefined) {
+                state.bkgRes = loadResourceEntry(entry);
+            }
+        }
+        if (state.bkgOcean.length === 0) {
+            // FIXME shorten this code later
+            let entry = state.entries.find(e => e.name === 'OCEAN00.SCR');
+            if (entry !== undefined) {
+                state.bkgOcean.push(loadResourceEntry(entry));
+            }
+            entry = state.entries.find(e => e.name === 'OCEAN01.SCR');
+            if (entry !== undefined) {
+                state.bkgOcean.push(loadResourceEntry(entry));
+            }
+            entry = state.entries.find(e => e.name === 'OCEAN02.SCR');
+            if (entry !== undefined) {
+                state.bkgOcean.push(loadResourceEntry(entry));
+            }
+            entry = state.entries.find(e => e.name === 'NIGHT.SCR');
+            if (entry !== undefined) {
+                state.bkgOcean.push(loadResourceEntry(entry));
+            }
+        }
+
+        const isNight = false; // calculate night shift here
+        let oceanIdx = Math.floor((Math.random() * 4)); // 0 to 3 (adding night for now)
+        if (isNight) {
+            oceanIdx = 4;
+        }
+
+        state.bkgScreen = state.bkgOcean[oceanIdx];
     }
 };
 
@@ -191,7 +272,7 @@ const CommandType = [
     { opcode: 0x1060, callback: SLOT_PALETTE },
     { opcode: 0x1100, callback: TTM_UNKNOWN_0 },
     { opcode: 0x1110, callback: SET_SCENE },
-    { opcode: 0x1120, callback: TTM_UNKNOWN_1 },
+    { opcode: 0x1120, callback: SET_BACKGROUND },
     { opcode: 0x1200, callback: TTM_UNKNOWN_2 }, 
     { opcode: 0x2000, callback: SET_FRAME0 },
     { opcode: 0x2010, callback: SET_FRAME1 },
@@ -276,13 +357,16 @@ export const startProcess = (initialState) => {
         audioManager: null,
         slot: 0,
         res: [],
-        bkgScreen: null,
         // this should be for multiple running scripts
         reentry: 0,
         elapsed: 0,
         delay: 0,
         continue: true,
         frameId: null,
+        bkgScreen: null,
+        bkgRes: null,
+        bkgOcean: [],
+        drawIsland: false,
         ...initialState,
     };
 

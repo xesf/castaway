@@ -9,7 +9,7 @@ export const TTMCommandType = [
     { opcode: 0x1060, command: 'SLOT_PALETTE' },
     { opcode: 0x1100, command: 'UNKNOWN_0' }, // Scene related?
     { opcode: 0x1110, command: 'SET_SCENE' },
-    { opcode: 0x1120, command: 'UNKNOWN_1' }, // Scene related?
+    { opcode: 0x1120, command: 'SET_BACKGROUND' },
     { opcode: 0x1200, command: 'UNKNOWN_2' }, 
     { opcode: 0x2000, command: 'SET_FRAME0' },
     { opcode: 0x2010, command: 'SET_FRAME1' },
