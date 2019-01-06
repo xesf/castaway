@@ -23,11 +23,25 @@ The aim of this project is to provide a complete re-implemtation of the Johnny C
 
 - Have fun implementing it!!
 
+## Enhancements
+
+List of new features to add to Johnny Castaway experience:
+* Day/Night loop in 24h instead of 8h
+* Day/Night based on user location sunrise and sunset
+* Moving cloulds
+* Add waves like the static screen
+* Accelarate time
+* Tides based on user locations with real time coutry low tide info
+* Play Full Story Sequence
+    * Choose single activities to play
+* Number of full complete stories played worldwide
+* Total hours worldwide played
+* Statistics per Activity
+    * Total Jogging
+    * Fishing
+    * etc.
+* Extend festive days from the original - could be based on user location
+
 ## Documents
 
 [Resource Index File Format](docs/resindex.md)
-
-
-## New Features
-
-[List of new features to be added in future to enhance the project](NEW_FEATURES.md)
