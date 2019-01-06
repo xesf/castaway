@@ -263,7 +263,12 @@ const OR_UNKNOWN_3 = (state) => { };
 const OR = (state) => { };
 const PLAY_SCENE = (state) => { };
 const PLAY_SCENE_2 = (state) => { };
-const ADD_SCENE = (state) => { };
+
+const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
+    const scene = state.data.scenes.find(s => s.tagId === tagId);
+    state.scenes.push(scene);
+};
+
 const ADD_SCENE_UNKNOWN_4 = (state) => { };
 const ADS_UNKNOWN_5 = (state) => { };
 const RANDOM_START = (state) => { };
@@ -384,6 +389,7 @@ export const startProcess = (initialState) => {
         bkgOcean: [],
         bkgRaft: null,
         drawIsland: false,
+        scenes: [],
         ...initialState,
     };
 
