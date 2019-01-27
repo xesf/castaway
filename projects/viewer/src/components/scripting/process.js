@@ -118,10 +118,10 @@ const SET_SCENE = (state) => { };
 const SET_BACKGROUND = (state) => { };
 
 const TTM_UNKNOWN_2 = (state) => { };
-const SET_FRAME0 = (state) => { };
+const SET_COLORS = (state) => { };
 const SET_FRAME1 = (state) => { };
 const TTM_UNKNOWN_3 = (state) => { };
-const SET_WINDOW1 = (state) => { };
+const SET_CLIP_REGION = (state) => { };
 const FADE_OUT = (state) => { };
 const FADE_IN = (state) => { };
 const SAVE_IMAGE0 = (state) => { };
@@ -130,7 +130,7 @@ const TTM_UNKNOWN_4 = (state) => { };
 const TTM_UNKNOWN_5 = (state) => { };
 const TTM_UNKNOWN_6 = (state) => { };
 
-const DRAW_WHITE_LINE = (state, x1, y1, x2, y2) => {
+const DRAW_LINE = (state, x1, y1, x2, y2) => {
     state.context.beginPath();
     state.context.moveTo(x1, y1);
     state.context.lineTo(x2, y2);
@@ -139,7 +139,7 @@ const DRAW_WHITE_LINE = (state, x1, y1, x2, y2) => {
     state.context.stroke();
 };
 
-const SET_WINDOW0 = (state) => { };
+const DRAW_RECT = (state) => { };
 
 const DRAW_BUBBLE = (state, x, y, width, height) => {
     const centerX = width / 2;
@@ -265,7 +265,7 @@ const PLAY_SCENE = (state) => { };
 const PLAY_SCENE_2 = (state) => { };
 
 const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
-    const scene = state.data.scenes.find(s => s.tagId === tagId);
+    const scene = state.data.scripts.scenes.find(s => s.tagId === tagId);
     state.scenes.push(scene);
 };
 
@@ -295,10 +295,10 @@ const CommandType = [
     { opcode: 0x1110, callback: SET_SCENE },
     { opcode: 0x1120, callback: SET_BACKGROUND },
     { opcode: 0x1200, callback: TTM_UNKNOWN_2 }, 
-    { opcode: 0x2000, callback: SET_FRAME0 },
+    { opcode: 0x2000, callback: SET_COLORS },
     { opcode: 0x2010, callback: SET_FRAME1 },
     { opcode: 0x2020, callback: TTM_UNKNOWN_3 },
-    { opcode: 0x4000, callback: SET_WINDOW1 },
+    { opcode: 0x4000, callback: SET_CLIP_REGION },
     { opcode: 0x4110, callback: FADE_OUT },
     { opcode: 0x4120, callback: FADE_IN },
     { opcode: 0x4200, callback: SAVE_IMAGE0 },
@@ -306,8 +306,8 @@ const CommandType = [
     { opcode: 0xA000, callback: TTM_UNKNOWN_4 },
     { opcode: 0xA050, callback: TTM_UNKNOWN_5 },
     { opcode: 0xA060, callback: TTM_UNKNOWN_6 },
-    { opcode: 0xA0A0, callback: DRAW_WHITE_LINE },
-    { opcode: 0xA100, callback: SET_WINDOW0 },
+    { opcode: 0xA0A0, callback: DRAW_LINE },
+    { opcode: 0xA100, callback: DRAW_RECT },
     { opcode: 0xA400, callback: DRAW_BUBBLE },
     { opcode: 0xA500, callback: DRAW_SPRITE },
     { opcode: 0xA510, callback: DRAW_SPRITE1 },
