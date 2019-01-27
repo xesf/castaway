@@ -115,7 +115,7 @@ export function loadTTMResourceEntry(entry) {
             command.params.push(command.name);
         } else {
             for (let b = 0; b < size; b++) {
-                command.params.push(data.getUint16(innerOffset, true));
+                command.params.push(data.getInt16(innerOffset, true));
                 innerOffset += 2;
             }
         }
