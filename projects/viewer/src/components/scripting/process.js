@@ -1,8 +1,9 @@
 
 import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
 
-import { drawImage, drawScreen } from "../../resources/image";
+import { drawImage, drawScreen, getPaletteColor } from "../../resources/image";
 import { createAudioManager } from "../../resources/audio";
+import { PALETTE } from '../../../../../node_modules/@castaway/lifeboat/src/constants';
 
 /**
  * TODO
@@ -118,7 +119,12 @@ const SET_SCENE = (state) => { };
 const SET_BACKGROUND = (state) => { };
 
 const TTM_UNKNOWN_2 = (state) => { };
-const SET_COLORS = (state) => { };
+
+const SET_COLORS = (state, fc, bc) => {
+    state.foregroundColor = PALETTE[fc];
+    state.backgroundColor = PALETTE[bc];
+};
+
 const SET_FRAME1 = (state) => { };
 const TTM_UNKNOWN_3 = (state) => { };
 const SET_CLIP_REGION = (state) => { };
@@ -139,7 +145,10 @@ const DRAW_LINE = (state, x1, y1, x2, y2) => {
     state.context.stroke();
 };
 
-const DRAW_RECT = (state) => { };
+const DRAW_RECT = (state, x, y, width, height) => {
+    state.context.fillStyle = getPaletteColor(state.foregroundColor);
+    state.context.fillRect(x, y, width, height);
+};
 
 const DRAW_BUBBLE = (state, x, y, width, height) => {
     const centerX = width / 2;
@@ -390,6 +399,8 @@ export const startProcess = (initialState) => {
         bkgRaft: null,
         drawIsland: false,
         scenes: [],
+        foregroundColor: PALETTE[0],
+        backgroundColor: PALETTE[0],
         ...initialState,
     };
 
