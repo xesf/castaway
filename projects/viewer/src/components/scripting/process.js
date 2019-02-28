@@ -326,6 +326,9 @@ const LOAD_SCREEN = (state, name) => {
 };
 
 const LOAD_IMAGE = (state, name) => {
+    if (name === 'FLAME.BMP' || name === 'FLURRY.BMP') {
+        name = 'FIRE1.BMP';
+    }
     const entry = state.entries.find(e => e.name === name);
     if (entry !== undefined) {
         state.res[state.slot] = loadResourceEntry(entry);
