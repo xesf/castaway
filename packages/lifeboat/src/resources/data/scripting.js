@@ -11,10 +11,10 @@ export const TTMCommandType = [
     { opcode: 0x1110, command: 'SET_SCENE' },
     { opcode: 0x1120, command: 'SET_BACKGROUND' },
     { opcode: 0x1200, command: 'UNKNOWN_2' }, 
-    { opcode: 0x2000, command: 'SET_FRAME0' },
+    { opcode: 0x2000, command: 'SET_COLORS' },
     { opcode: 0x2010, command: 'SET_FRAME1' },
     { opcode: 0x2020, command: 'UNKNOWN_3' }, // SET_FRAME2 ???
-    { opcode: 0x4000, command: 'SET_WINDOW1' },
+    { opcode: 0x4000, command: 'SET_CLIP_REGION' },
     { opcode: 0x4110, command: 'FADE_OUT' },
     { opcode: 0x4120, command: 'FADE_IN' },
     { opcode: 0x4200, command: 'SAVE_IMAGE0' },
@@ -22,8 +22,8 @@ export const TTMCommandType = [
     { opcode: 0xA000, command: 'UNKNOWN_4' }, // Draw Line related?
     { opcode: 0xA050, command: 'UNKNOWN_5' }, // Draw Line related?
     { opcode: 0xA060, command: 'UNKNOWN_6' }, // Draw Line related?
-    { opcode: 0xA0A0, command: 'DRAW_WHITE_LINE' },
-    { opcode: 0xA100, command: 'SET_WINDOW0' },
+    { opcode: 0xA0A0, command: 'DRAW_LINE' },
+    { opcode: 0xA100, command: 'DRAW_RECT' },
     { opcode: 0xA400, command: 'DRAW_BUBBLE' },
     { opcode: 0xA500, command: 'DRAW_SPRITE' },
     { opcode: 0xA510, command: 'DRAW_SPRITE1' }, // not used

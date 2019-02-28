@@ -72,6 +72,9 @@ export function loadTTMResourceEntry(entry) {
     let lineNumber = 1;
     let innerOffset = 0;
     const scripts = [];
+    let prevTagId = 0;
+    const scenes = [];
+    let sceneScripts = [];
     while (innerOffset < uncompressedSize) {
         let opcode = data.getUint16(innerOffset, true);
         innerOffset += 2;
@@ -94,6 +97,12 @@ export function loadTTMResourceEntry(entry) {
             } else {
                 command.name = ` tag[${tagId}]`;
             }
+            scenes.push({
+                tagId: prevTagId,
+                script: sceneScripts
+            });
+            sceneScripts = []; // reset scene script
+            prevTagId = tagId;
         } else if (size === 15) {
             command.name = getString(data, innerOffset);
             innerOffset += command.name.length;
@@ -106,7 +115,7 @@ export function loadTTMResourceEntry(entry) {
             command.params.push(command.name);
         } else {
             for (let b = 0; b < size; b++) {
-                command.params.push(data.getUint16(innerOffset, true));
+                command.params.push(data.getInt16(innerOffset, true));
                 innerOffset += 2;
             }
         }
@@ -127,6 +136,7 @@ export function loadTTMResourceEntry(entry) {
 
         lineNumber++;
         scripts.push(command);
+        sceneScripts.push(command);
     }
 
     return {
@@ -139,5 +149,6 @@ export function loadTTMResourceEntry(entry) {
         tags,
         buffer: data,
         scripts,
+        scenes,
     };
 }
