@@ -228,24 +228,26 @@ const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => {
     if (state.res[slot] === undefined) {
         slot = state.slot;
     }
-
     const image = state.res[slot].images[index];
-    drawImage(image, state.tmpContext, 0, 0);
-    state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
+    if (image !== undefined) {
+        drawImage(image, state.tmpContext, 0, 0);
+        state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
+    }
 };
 
 const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
     if (state.res[slot] === undefined) {
         slot = state.slot;
     }
-
     const image = state.res[slot].images[index];
-    drawImage(image, state.tmpContext, 0, 0);
-    state.context.save();
-    state.context.translate(image.width, 0);
-    state.context.scale(-1, 1);
-    state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, -offsetX, offsetY, image.width, image.height);
-    state.context.restore();
+    if (image !== undefined) {
+        drawImage(image, state.tmpContext, 0, 0);
+        state.context.save();
+        state.context.translate(image.width, 0);
+        state.context.scale(-1, 1);
+        state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, -offsetX, offsetY, image.width, image.height);
+        state.context.restore();
+    }
 };
 
 const DRAW_SPRITE1 = (state) => { };
