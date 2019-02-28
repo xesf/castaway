@@ -137,8 +137,12 @@ const SET_BACKGROUND = (state, index) => {
 const TTM_UNKNOWN_2 = (state) => { };
 
 const SET_COLORS = (state, fc, bc) => {
-    state.foregroundColor = PALETTE[fc];
-    state.backgroundColor = PALETTE[bc];
+    if (fc < 16) {
+        state.foregroundColor = PALETTE[fc];
+    }
+    if (bc < 16) {
+        state.backgroundColor = PALETTE[bc];
+    }
 };
 
 const SET_FRAME1 = (state) => { };
