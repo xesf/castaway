@@ -30,6 +30,14 @@ const clearContext = (context) => {
     context.fillRect(0, 0, 640, 480);
 }
 
+const drawContext = (state, index) => {
+    const save = state.save[state.saveIndex];
+    if (save.canDraw) {
+        save.canDraw = false;
+        state.context.drawImage(save.context.canvas, 0, 0); //  save.x, save.y);
+    }
+}
+
 // FIXME Improve this code repetition
 const drawBackground = (state) => {
     // Draw background / ocean / night
@@ -87,6 +95,7 @@ const drawBackground = (state) => {
 const SAVE_BACKGROUND = (state) => { };
 const DRAW_BACKGROUND = (state) => { };
 const PURGE = (state) => { };
+
 const UPDATE = (state) => { 
     if (state.continue) {
         // TODO update function here before the delay
@@ -105,6 +114,7 @@ const UPDATE = (state) => {
         state.continue = true;
     }
 };
+
 const SET_DELAY = (state, delay) => {
     state.delay = (delay * 20); // FIXME validate this value
 };
@@ -115,8 +125,14 @@ const SLOT_IMAGE = (state, slot) => {
 
 const SLOT_PALETTE = (state) => { };
 const TTM_UNKNOWN_0 = (state) => { };
-const SET_SCENE = (state) => { };
-const SET_BACKGROUND = (state) => { };
+
+const SET_SCENE = (state) => {
+    drawBackground(state);
+};
+
+const SET_BACKGROUND = (state, index) => {
+    state.saveIndex = index;
+};
 
 const TTM_UNKNOWN_2 = (state) => { };
 
@@ -127,11 +143,50 @@ const SET_COLORS = (state, fc, bc) => {
 
 const SET_FRAME1 = (state) => { };
 const TTM_UNKNOWN_3 = (state) => { };
-const SET_CLIP_REGION = (state) => { };
+
+const SET_CLIP_REGION = (state, x, y, width, height) => {
+    state.clip = {
+        x,
+        y,
+        width,
+        height,
+    };
+    // state.context.beginPath();
+    // state.context.rect(x, y, width, height);
+    // state.context.clip();
+};
+
 const FADE_OUT = (state) => { };
 const FADE_IN = (state) => { };
-const SAVE_IMAGE0 = (state) => { };
-const SAVE_IMAGE1 = (state) => { };
+
+const SAVE_IMAGE0 = (state, x, y, width, height) => {
+    const save = state.save[state.saveIndex];
+    save.canDraw = true;
+    save.x = x;
+    save.y = y;
+    save.width = width;
+    save.height = height;
+    save.context.drawImage(
+        state.context.canvas,
+        x, y, width, height,
+        x, y, width, height,
+    );
+};
+
+const SAVE_IMAGE1 = (state, x, y, width, height) => {
+    const save = state.save[state.saveIndex];
+    save.canDraw = true;
+    save.x = x;
+    save.y = y;
+    save.width = width;
+    save.height = height;
+    save.context.drawImage(
+        state.context.canvas,
+        x, y, width, height,
+        x, y, width, height,
+    );
+};
+
 const TTM_UNKNOWN_4 = (state) => { };
 const TTM_UNKNOWN_5 = (state) => { };
 const TTM_UNKNOWN_6 = (state) => { };
@@ -169,7 +224,7 @@ const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => {
     state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
 };
 
-const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => { 
+const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
     const image = state.res[slot].images[index];
     drawImage(image, state.tmpContext, 0, 0);
     state.context.save();
@@ -181,10 +236,11 @@ const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
 
 const DRAW_SPRITE1 = (state) => { };
 const DRAW_SPRITE3 = (state) => { };
-const CLEAR_SCREEN = (state) => {
+const CLEAR_SCREEN = (state, index) => {
     clearContext(state.context);
     clearContext(state.tmpContext);
     drawBackground(state);
+    drawContext(state);
 };
 
 const DRAW_SCREEN = (state) => { };
@@ -384,6 +440,8 @@ export const startProcess = (initialState) => {
         data: null,
         context: null,
         tmpContext: null,
+        save: [],
+        saveIndex: 0,
         audioManager: null,
         slot: 0,
         res: [],
@@ -401,6 +459,7 @@ export const startProcess = (initialState) => {
         scenes: [],
         foregroundColor: PALETTE[0],
         backgroundColor: PALETTE[0],
+        clip: { x: 0, y: 0, width: 640, height: 480 },
         ...initialState,
     };
 
@@ -409,6 +468,20 @@ export const startProcess = (initialState) => {
     tmpCanvas.width = 640;
     tmpCanvas.height = 480;  
     state.tmpContext = tmpCanvas.getContext('2d');
+
+    for (let s = 0; s < 3; s += 1) {
+        const c = document.createElement("canvas");
+        c.width = 640;
+        c.height = 480;
+        state.save.push({
+            context: c.getContext('2d'),
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            canDraw: false,
+        });
+    }
 
     state.audioManager = createAudioManager({ soundFxVolume: 0.50 });
 
