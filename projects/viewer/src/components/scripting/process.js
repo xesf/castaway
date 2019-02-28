@@ -44,7 +44,9 @@ const drawBackground = (state) => {
     if (state.bkgScreen) {
         drawScreen(state.bkgScreen, state.context);
     }
-    if (state.drawIsland) {
+    if (state.island) {
+        const posX = (state.island === 1) ? 288 : 16;
+
         // Draw island
         if (state.bkgRes) {            
             // Draw clouds (random and animated)
@@ -58,33 +60,33 @@ const drawBackground = (state) => {
             // Draw raft based on state
             image = state.bkgRaft.images[3];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 510, 268, image.width, image.height);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 222, 268, image.width, image.height);
 
             // isle
             image = state.bkgRes.images[0];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 288, 280, image.width, image.height);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX, 280, image.width, image.height);
 
             // palm tree
             image = state.bkgRes.images[14];
-            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 396, 280, image.width, image.height);
+            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 108, 280, image.width, image.height);
             image = state.bkgRes.images[13];
-            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 442, 148, image.width, image.height);
+            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 154, 148, image.width, image.height);
             image = state.bkgRes.images[12];
-            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 365, 122, image.width, image.height);
+            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 77, 122, image.width, image.height);
             
             // Draw shore with animations
             image = state.bkgRes.images[3];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 275, 305, image.width, image.height);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX - 13, 305, image.width, image.height);
 
             image = state.bkgRes.images[6];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 364, 320, image.width, image.height);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 76, 320, image.width, image.height);
 
             image = state.bkgRes.images[10];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 518, 303, image.width, image.height);
+            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 230, 303, image.width, image.height);
 
             // Draw low tide
         }
@@ -137,8 +139,12 @@ const SET_BACKGROUND = (state, index) => {
 const TTM_UNKNOWN_2 = (state) => { };
 
 const SET_COLORS = (state, fc, bc) => {
-    state.foregroundColor = PALETTE[fc];
-    state.backgroundColor = PALETTE[bc];
+    if (fc < 16) {
+        state.foregroundColor = PALETTE[fc];
+    }
+    if (bc < 16) {
+        state.backgroundColor = PALETTE[bc];
+    }
 };
 
 const SET_FRAME1 = (state) => { };
@@ -219,19 +225,29 @@ const DRAW_BUBBLE = (state, x, y, width, height) => {
 };
 
 const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => { 
+    if (state.res[slot] === undefined) {
+        slot = state.slot;
+    }
     const image = state.res[slot].images[index];
-    drawImage(image, state.tmpContext, 0, 0);
-    state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
+    if (image !== undefined) {
+        drawImage(image, state.tmpContext, 0, 0);
+        state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
+    }
 };
 
 const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
+    if (state.res[slot] === undefined) {
+        slot = state.slot;
+    }
     const image = state.res[slot].images[index];
-    drawImage(image, state.tmpContext, 0, 0);
-    state.context.save();
-    state.context.translate(image.width, 0);
-    state.context.scale(-1, 1);
-    state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, -offsetX, offsetY, image.width, image.height);
-    state.context.restore();
+    if (image !== undefined) {
+        drawImage(image, state.tmpContext, 0, 0);
+        state.context.save();
+        state.context.translate(image.width, 0);
+        state.context.scale(-1, 1);
+        state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, -offsetX, offsetY, image.width, image.height);
+        state.context.restore();
+    }
 };
 
 const DRAW_SPRITE1 = (state) => { };
@@ -265,7 +281,7 @@ const LOAD_SCREEN = (state, name) => {
     }
 
     if (name === 'ISLETEMP.SCR' || name === 'ISLAND2.SCR') {
-        state.drawIsland = true;
+        state.island = (name === 'ISLETEMP.SCR') ? 1 : 2;
         // Load background assets if not loaded yet
         if (!state.bkgRes) {
             const entry = state.entries.find(e => e.name === 'BACKGRND.BMP');
@@ -310,6 +326,9 @@ const LOAD_SCREEN = (state, name) => {
 };
 
 const LOAD_IMAGE = (state, name) => {
+    if (name === 'FLAME.BMP' || name === 'FLURRY.BMP') {
+        name = 'FIRE1.BMP';
+    }
     const entry = state.entries.find(e => e.name === name);
     if (entry !== undefined) {
         state.res[state.slot] = loadResourceEntry(entry);
@@ -455,7 +474,7 @@ export const startProcess = (initialState) => {
         bkgRes: null,
         bkgOcean: [],
         bkgRaft: null,
-        drawIsland: false,
+        island: null,
         scenes: [],
         foregroundColor: PALETTE[0],
         backgroundColor: PALETTE[0],
