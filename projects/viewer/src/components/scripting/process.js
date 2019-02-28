@@ -150,16 +150,13 @@ const SET_COLORS = (state, fc, bc) => {
 const SET_FRAME1 = (state) => { };
 const TTM_UNKNOWN_3 = (state) => { };
 
-const SET_CLIP_REGION = (state, x, y, width, height) => {
+const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
     state.clip = {
-        x,
-        y,
-        width,
-        height,
+        x: x1,
+        y: y1,
+        width: x2 - x1,
+        height: y2 - y1,
     };
-    // state.context.beginPath();
-    // state.context.rect(x, y, width, height);
-    // state.context.clip();
 };
 
 const FADE_OUT = (state) => { };
@@ -230,6 +227,10 @@ const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => {
     }
     const image = state.res[slot].images[index];
     if (image !== undefined) {
+        state.context.beginPath();
+        state.context.rect(state.clip.x, state.clip.y, state.clip.width, state.clip.height);
+        state.context.clip();
+
         drawImage(image, state.tmpContext, 0, 0);
         state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
     }
@@ -241,6 +242,10 @@ const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
     }
     const image = state.res[slot].images[index];
     if (image !== undefined) {
+        state.context.beginPath();
+        state.context.rect(state.clip.x, state.clip.y, state.clip.width, state.clip.height);
+        state.context.clip();
+
         drawImage(image, state.tmpContext, 0, 0);
         state.context.save();
         state.context.translate(image.width, 0);
