@@ -226,7 +226,7 @@ const DRAW_BUBBLE = (state, x, y, width, height) => {
 
 const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => { 
     if (state.res[slot] === undefined) {
-        slot = state.slot;
+        return;
     }
     const image = state.res[slot].images[index];
     if (image !== undefined) {
@@ -237,7 +237,7 @@ const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => {
 
 const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
     if (state.res[slot] === undefined) {
-        slot = state.slot;
+        return;
     }
     const image = state.res[slot].images[index];
     if (image !== undefined) {
