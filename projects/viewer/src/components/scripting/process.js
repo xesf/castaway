@@ -1,8 +1,9 @@
 
 import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
 
-import { drawImage, drawScreen } from "../../resources/image";
+import { drawImage, drawScreen, getPaletteColor } from "../../resources/image";
 import { createAudioManager } from "../../resources/audio";
+import { PALETTE } from '../../../../../node_modules/@castaway/lifeboat/src/constants';
 
 /**
  * TODO
@@ -27,6 +28,14 @@ const clearContext = (context) => {
     context.canvas.height = 480;
     context.fillStyle = 'black';
     context.fillRect(0, 0, 640, 480);
+}
+
+const drawContext = (state, index) => {
+    const save = state.save[state.saveIndex];
+    if (save.canDraw) {
+        save.canDraw = false;
+        state.context.drawImage(save.context.canvas, 0, 0); //  save.x, save.y);
+    }
 }
 
 // FIXME Improve this code repetition
@@ -86,6 +95,7 @@ const drawBackground = (state) => {
 const SAVE_BACKGROUND = (state) => { };
 const DRAW_BACKGROUND = (state) => { };
 const PURGE = (state) => { };
+
 const UPDATE = (state) => { 
     if (state.continue) {
         // TODO update function here before the delay
@@ -104,6 +114,7 @@ const UPDATE = (state) => {
         state.continue = true;
     }
 };
+
 const SET_DELAY = (state, delay) => {
     state.delay = (delay * 20); // FIXME validate this value
 };
@@ -114,23 +125,73 @@ const SLOT_IMAGE = (state, slot) => {
 
 const SLOT_PALETTE = (state) => { };
 const TTM_UNKNOWN_0 = (state) => { };
-const SET_SCENE = (state) => { };
-const SET_BACKGROUND = (state) => { };
+
+const SET_SCENE = (state) => {
+    drawBackground(state);
+};
+
+const SET_BACKGROUND = (state, index) => {
+    state.saveIndex = index;
+};
 
 const TTM_UNKNOWN_2 = (state) => { };
-const SET_FRAME0 = (state) => { };
+
+const SET_COLORS = (state, fc, bc) => {
+    state.foregroundColor = PALETTE[fc];
+    state.backgroundColor = PALETTE[bc];
+};
+
 const SET_FRAME1 = (state) => { };
 const TTM_UNKNOWN_3 = (state) => { };
-const SET_WINDOW1 = (state) => { };
+
+const SET_CLIP_REGION = (state, x, y, width, height) => {
+    state.clip = {
+        x,
+        y,
+        width,
+        height,
+    };
+    // state.context.beginPath();
+    // state.context.rect(x, y, width, height);
+    // state.context.clip();
+};
+
 const FADE_OUT = (state) => { };
 const FADE_IN = (state) => { };
-const SAVE_IMAGE0 = (state) => { };
-const SAVE_IMAGE1 = (state) => { };
+
+const SAVE_IMAGE0 = (state, x, y, width, height) => {
+    const save = state.save[state.saveIndex];
+    save.canDraw = true;
+    save.x = x;
+    save.y = y;
+    save.width = width;
+    save.height = height;
+    save.context.drawImage(
+        state.context.canvas,
+        x, y, width, height,
+        x, y, width, height,
+    );
+};
+
+const SAVE_IMAGE1 = (state, x, y, width, height) => {
+    const save = state.save[state.saveIndex];
+    save.canDraw = true;
+    save.x = x;
+    save.y = y;
+    save.width = width;
+    save.height = height;
+    save.context.drawImage(
+        state.context.canvas,
+        x, y, width, height,
+        x, y, width, height,
+    );
+};
+
 const TTM_UNKNOWN_4 = (state) => { };
 const TTM_UNKNOWN_5 = (state) => { };
 const TTM_UNKNOWN_6 = (state) => { };
 
-const DRAW_WHITE_LINE = (state, x1, y1, x2, y2) => {
+const DRAW_LINE = (state, x1, y1, x2, y2) => {
     state.context.beginPath();
     state.context.moveTo(x1, y1);
     state.context.lineTo(x2, y2);
@@ -139,7 +200,10 @@ const DRAW_WHITE_LINE = (state, x1, y1, x2, y2) => {
     state.context.stroke();
 };
 
-const SET_WINDOW0 = (state) => { };
+const DRAW_RECT = (state, x, y, width, height) => {
+    state.context.fillStyle = getPaletteColor(state.foregroundColor);
+    state.context.fillRect(x, y, width, height);
+};
 
 const DRAW_BUBBLE = (state, x, y, width, height) => {
     const centerX = width / 2;
@@ -160,7 +224,7 @@ const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => {
     state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
 };
 
-const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => { 
+const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
     const image = state.res[slot].images[index];
     drawImage(image, state.tmpContext, 0, 0);
     state.context.save();
@@ -172,10 +236,11 @@ const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
 
 const DRAW_SPRITE1 = (state) => { };
 const DRAW_SPRITE3 = (state) => { };
-const CLEAR_SCREEN = (state) => {
+const CLEAR_SCREEN = (state, index) => {
     clearContext(state.context);
     clearContext(state.tmpContext);
     drawBackground(state);
+    drawContext(state);
 };
 
 const DRAW_SCREEN = (state) => { };
@@ -263,7 +328,12 @@ const OR_UNKNOWN_3 = (state) => { };
 const OR = (state) => { };
 const PLAY_SCENE = (state) => { };
 const PLAY_SCENE_2 = (state) => { };
-const ADD_SCENE = (state) => { };
+
+const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
+    const scene = state.data.scripts.scenes.find(s => s.tagId === tagId);
+    state.scenes.push(scene);
+};
+
 const ADD_SCENE_UNKNOWN_4 = (state) => { };
 const ADS_UNKNOWN_5 = (state) => { };
 const RANDOM_START = (state) => { };
@@ -290,10 +360,10 @@ const CommandType = [
     { opcode: 0x1110, callback: SET_SCENE },
     { opcode: 0x1120, callback: SET_BACKGROUND },
     { opcode: 0x1200, callback: TTM_UNKNOWN_2 }, 
-    { opcode: 0x2000, callback: SET_FRAME0 },
+    { opcode: 0x2000, callback: SET_COLORS },
     { opcode: 0x2010, callback: SET_FRAME1 },
     { opcode: 0x2020, callback: TTM_UNKNOWN_3 },
-    { opcode: 0x4000, callback: SET_WINDOW1 },
+    { opcode: 0x4000, callback: SET_CLIP_REGION },
     { opcode: 0x4110, callback: FADE_OUT },
     { opcode: 0x4120, callback: FADE_IN },
     { opcode: 0x4200, callback: SAVE_IMAGE0 },
@@ -301,8 +371,8 @@ const CommandType = [
     { opcode: 0xA000, callback: TTM_UNKNOWN_4 },
     { opcode: 0xA050, callback: TTM_UNKNOWN_5 },
     { opcode: 0xA060, callback: TTM_UNKNOWN_6 },
-    { opcode: 0xA0A0, callback: DRAW_WHITE_LINE },
-    { opcode: 0xA100, callback: SET_WINDOW0 },
+    { opcode: 0xA0A0, callback: DRAW_LINE },
+    { opcode: 0xA100, callback: DRAW_RECT },
     { opcode: 0xA400, callback: DRAW_BUBBLE },
     { opcode: 0xA500, callback: DRAW_SPRITE },
     { opcode: 0xA510, callback: DRAW_SPRITE1 },
@@ -370,6 +440,8 @@ export const startProcess = (initialState) => {
         data: null,
         context: null,
         tmpContext: null,
+        save: [],
+        saveIndex: 0,
         audioManager: null,
         slot: 0,
         res: [],
@@ -384,6 +456,10 @@ export const startProcess = (initialState) => {
         bkgOcean: [],
         bkgRaft: null,
         drawIsland: false,
+        scenes: [],
+        foregroundColor: PALETTE[0],
+        backgroundColor: PALETTE[0],
+        clip: { x: 0, y: 0, width: 640, height: 480 },
         ...initialState,
     };
 
@@ -392,6 +468,20 @@ export const startProcess = (initialState) => {
     tmpCanvas.width = 640;
     tmpCanvas.height = 480;  
     state.tmpContext = tmpCanvas.getContext('2d');
+
+    for (let s = 0; s < 3; s += 1) {
+        const c = document.createElement("canvas");
+        c.width = 640;
+        c.height = 480;
+        state.save.push({
+            context: c.getContext('2d'),
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            canDraw: false,
+        });
+    }
 
     state.audioManager = createAudioManager({ soundFxVolume: 0.50 });
 
