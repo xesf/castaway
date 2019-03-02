@@ -9,9 +9,9 @@
     "author": "Alexandre Fontoura <xesfnet@gmail.com>",
     "license": "MIT",
     "devDependencies": {
-        "@babel/cli": "^7.1.5",
-        "@babel/core": "^7.1.5",
-        "@babel/node": "^7.0.0",
-        "@babel/preset-env": "^7.1.5"
+        "@babel/cli": "7.2.3",
+        "@babel/core": "7.3.4",
+        "@babel/node": "7.2.2",
+        "@babel/preset-env": "7.3.4"
     }
 }

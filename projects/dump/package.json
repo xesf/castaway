@@ -13,11 +13,11 @@
         "@castaway/lifeboat": "0.0.1"
     },
     "devDependencies": {
-        "@babel/cli": "^7.1.5",
-        "@babel/core": "^7.1.6",
-        "@babel/node": "^7.0.0",
-        "@babel/preset-env": "^7.1.6",
-        "mocha": "^5.2.0",
-        "nodemon": "^1.17.5"
+        "@babel/cli": "7.2.3",
+        "@babel/core": "7.3.4",
+        "@babel/node": "7.2.2",
+        "@babel/preset-env": "7.3.4",
+        "mocha": "6.0.2",
+        "nodemon": "1.18.10"
     }
 }

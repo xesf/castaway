@@ -354,8 +354,8 @@ const PLAY_SCENE = (state) => { };
 const PLAY_SCENE_2 = (state) => { };
 
 const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
-    const scene = state.data.scripts.scenes.find(s => s.tagId === tagId);
-    state.scenes.push(scene);
+    // const scene = state.data.scripts.scenes.find(s => s.tagId === tagId);
+    // state.scenes.push(scene);
 };
 
 const ADD_SCENE_UNKNOWN_4 = (state) => { };
