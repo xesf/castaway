@@ -46,6 +46,7 @@ const ResourceView = ({ entries, data }) => {
                     if (resType.type === 'ADS' ||
                         resType.type === 'TTM') {
                         startProcess({
+                            type: resType.type,
                             context,
                             data,
                             entries,
