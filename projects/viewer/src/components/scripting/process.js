@@ -356,8 +356,10 @@ const PLAY_SCENE = (state) => {
     state.continue = false;
     state.scenes.forEach(s => {
         // console.log(s);
-        runScript(s.state, s.script);
-        canContinue &= s.state.reentry === 0;
+        if (!s.state.skip) {
+            s.state.skip = runScript(s.state, s.script);
+            canContinue &= s.skip;
+        }
     });
     state.continue = canContinue;
     if (state.continue) {
@@ -367,12 +369,17 @@ const PLAY_SCENE = (state) => {
 
 const PLAY_SCENE_2 = (state) => { };
 
-const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
+const initialState = { reentry: 0, continue: true, skip: false, };
+
+const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {    
     const ttm = state.scenesRes[sceneIdx - 1];
     const scene = ttm.scenes.find(s => s.tagId === tagId);
+
     for (let r = 0; r < retries; r += 1) {
         const s = Object.assign({}, scene);
-        s.state = Object.assign({}, state);
+        s.script.unshift(...ttm.scenes[0].script);
+        s.state = Object.assign({}, state, initialState);
+        console.log(s);
         state.scenes.push(s);
     }
 };
@@ -512,6 +519,7 @@ export const startProcess = (initialState) => {
         backgroundColor: PALETTE[0],
         clip: { x: 0, y: 0, width: 640, height: 480 },
         type: null,
+        skip: false,
         ...initialState,
     };
 
