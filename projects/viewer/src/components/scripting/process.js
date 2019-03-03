@@ -350,12 +350,31 @@ const IF_SKIP_NEXT2 = (state) => { };
 const IF_UNKNOWN_2 = (state) => { };
 const OR_UNKNOWN_3 = (state) => { };
 const OR = (state) => { };
-const PLAY_SCENE = (state) => { };
+
+const PLAY_SCENE = (state) => {
+    let canContinue = true;
+    state.continue = false;
+    state.scenes.forEach(s => {
+        // console.log(s);
+        runScript(s.state, s.script);
+        canContinue &= s.state.reentry === 0;
+    });
+    state.continue = canContinue;
+    if (state.continue) {
+        state.scenes = [];
+    }
+};
+
 const PLAY_SCENE_2 = (state) => { };
 
 const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
-    // const scene = state.data.scripts.scenes.find(s => s.tagId === tagId);
-    // state.scenes.push(scene);
+    const ttm = state.scenesRes[sceneIdx - 1];
+    const scene = ttm.scenes.find(s => s.tagId === tagId);
+    for (let r = 0; r < retries; r += 1) {
+        const s = Object.assign({}, scene);
+        s.state = Object.assign({}, state);
+        state.scenes.push(s);
+    }
 };
 
 const ADD_SCENE_UNKNOWN_4 = (state) => { };
@@ -436,13 +455,15 @@ const CommandType = [
     { opcode: 0xfff0, callback: END_IF },
 ];
 
-const runScript = () => {
-    const scripts = state.data.scripts;
-    for (let i = state.reentry; i < scripts.length; i++) {
-        const c = scripts[i];
+const runScript = (state, script) => {
+    if (script === undefined) {
+        return true;
+    }
+    for (let i = state.reentry; i < script.length; i++) {
+        const c = script[i];
         // setTimeout(state.callback(c), 0); // set current script command
         const type = CommandType.find(ct => ct.opcode === c.opcode);
-        console.log(c.line);
+        // console.log(c.line);
         if (!type) {
             continue;
         }
@@ -452,11 +473,15 @@ const runScript = () => {
             break;
         }
     }
-    if (state.reentry === scripts.length - 1) {
+    if (state.reentry === script.length - 1) {
         state.reentry = 0;
         return true; // stop script for now
     }
     return false;
+};
+
+const runScripts = () => {
+    return runScript(state, state.data.scripts);
 };
 
 export const startProcess = (initialState) => {
@@ -480,10 +505,13 @@ export const startProcess = (initialState) => {
         bkgOcean: [],
         bkgRaft: null,
         island: null,
+        scenesRes: [],
+        scenesState: [],
         scenes: [],
         foregroundColor: PALETTE[0],
         backgroundColor: PALETTE[0],
         clip: { x: 0, y: 0, width: 640, height: 480 },
+        type: null,
         ...initialState,
     };
 
@@ -509,7 +537,15 @@ export const startProcess = (initialState) => {
 
     state.audioManager = createAudioManager({ soundFxVolume: 0.50 });
 
-    // runScript();
+    if (state.type === 'ADS') {
+        state.data.resources.forEach(r => {
+            const entry = state.entries.find(e => e.name === r.name);
+            if (entry !== undefined) {
+                state.scenesRes.push(loadResourceEntry(entry));
+            }
+        });
+    }
+
     mainloop();
 
     return state;
@@ -537,7 +573,7 @@ const mainloop = () => {
         prevTick = tick - (elapsed % fps);
     }
 
-    if (runScript()) {
+    if (runScripts()) {
         cancelAnimationFrame(state.frameId);
     }
 }
