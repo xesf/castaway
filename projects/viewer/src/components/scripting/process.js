@@ -373,12 +373,23 @@ const initialState = { reentry: 0, continue: true, skip: false, };
 
 const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {    
     const ttm = state.scenesRes[sceneIdx - 1];
+    if (ttm === undefined || ttm.scenes === undefined) {
+        return;
+    }
     const scene = ttm.scenes.find(s => s.tagId === tagId);
 
     for (let r = 0; r < retries; r += 1) {
         const s = Object.assign({}, scene);
-        s.script.unshift(...ttm.scenes[0].script);
-        s.state = Object.assign({}, state, initialState);
+        if (s.script === undefined) {
+            console.log('script is null', scene);
+            continue;
+        }
+        if (!state.scenes.length) {
+            s.script.unshift(...ttm.scenes[0].script);
+            s.state = Object.assign({}, state, initialState);
+        } else {
+            s.state = Object.assign({}, state.scenes[0].state, initialState);
+        }
         console.log(s);
         state.scenes.push(s);
     }
@@ -386,9 +397,23 @@ const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
 
 const ADD_SCENE_UNKNOWN_4 = (state) => { };
 const ADS_UNKNOWN_5 = (state) => { };
-const RANDOM_START = (state) => { };
+
+const RANDOM_START = (state) => {
+    state.randomize = true;
+};
+
 const RANDOM_UNKNOWN_0 = (state) => { };
-const RANDOM_END = (state) => { };
+
+const RANDOM_END = (state) => {
+    const index = Math.floor((Math.random() * state.scenes.length));
+    const scene = state.scenes[index];
+    if (scene !== undefined) {
+        const tagId = scene.tagId;
+        state.scenes = state.scenes.filter(s => s.tagId === tagId);
+    }
+    state.randomize = false;
+};
+
 const ADS_UNKNOWN_6 = (state) => { };
 const ADS_FADE_OUT = (state) => { };
 const ADS_UNKNOWN_8 = (state) => { };
@@ -492,6 +517,7 @@ const runScripts = () => {
 };
 
 export const startProcess = (initialState) => {
+    // FIXME this state needs a deep clean up
     state = {
         data: null,
         context: null,
@@ -520,6 +546,7 @@ export const startProcess = (initialState) => {
         clip: { x: 0, y: 0, width: 640, height: 480 },
         type: null,
         skip: false,
+        randomize: false,
         ...initialState,
     };
 
