@@ -22,6 +22,7 @@ let elapsed = null;
 const fps = 1000 / 60;
 
 let state = null;
+let clear = 0;
 
 const clearContext = (context) => {
     context.canvas.width = 640;
@@ -102,6 +103,7 @@ const UPDATE = (state) => {
     if (state.continue) {
         // TODO update function here before the delay
         // update will run once only inside this if
+        // drawBackground(state);
         if (!state.delay) {
             return;
         }
@@ -129,7 +131,7 @@ const SLOT_PALETTE = (state) => { };
 const TTM_UNKNOWN_0 = (state) => { };
 
 const SET_SCENE = (state) => {
-    drawBackground(state);
+    // drawBackground(state);
 };
 
 const SET_BACKGROUND = (state, index) => {
@@ -257,11 +259,17 @@ const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
 
 const DRAW_SPRITE1 = (state) => { };
 const DRAW_SPRITE3 = (state) => { };
-const CLEAR_SCREEN = (state, index) => {
+
+const clearScreen = (state, index) => {
     clearContext(state.context);
     clearContext(state.tmpContext);
     drawBackground(state);
     drawContext(state);
+};
+
+const CLEAR_SCREEN = (state, index) => {
+    clear++;
+    clearScreen(state, index);
 };
 
 const DRAW_SCREEN = (state) => { };
@@ -351,7 +359,42 @@ const IF_UNKNOWN_2 = (state) => { };
 const OR_UNKNOWN_3 = (state) => { };
 const OR = (state) => { };
 
+// const PLAY_SCENE = async (state) => {
+//     let promises = [];
+//     let canContinue = true;
+//     state.continue = false;    
+//     state.scenes.forEach(s => {
+//         promises.push(
+//             new Promise((resolve) => {
+//                 if (!s.state.skip) {
+//                     s.state.skip = runScript(s.state, s.script);
+//                 }
+//                 return resolve(s.state.skip);
+//             })
+//         );
+//     });
+
+//     if (promises.length > 0) {
+//         const skipped = await Promise.all(promises);
+//         skipped.forEach(skip => {
+//             if (!skip) {
+//                 canContinue &= skip;
+//             }
+//         });
+//     }
+
+//     state.continue = canContinue;
+//     if (state.continue) {
+//         state.scenes = [];
+//     }
+// };
+
 const PLAY_SCENE = (state) => {
+    // if (clear > 0 && clear >= state.scenes.length) {
+    //     clearScreen(state, 0);
+    //     clear = 0;
+    // }
+
     let canContinue = true;
     state.continue = false;
     state.scenes.forEach(s => {
@@ -579,6 +622,7 @@ export const startProcess = (initialState) => {
                 state.scenesRes.push(loadResourceEntry(entry));
             }
         });
+        drawBackground(state);
     }
 
     mainloop();
