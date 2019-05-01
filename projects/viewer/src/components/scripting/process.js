@@ -24,6 +24,11 @@ const fps = 1000 / 60;
 let state = null;
 let clear = 0;
 
+let bkgScreen = null;
+let bkgRes = null;
+let bkgOcean = [];
+let bkgRaft = null;
+
 const clearContext = (context) => {
     context.canvas.width = 640;
     context.canvas.height = 480;
@@ -40,52 +45,53 @@ const drawContext = (state, index) => {
 }
 
 // FIXME Improve this code repetition
-const drawBackground = (state) => {
+const drawBackground = (state) => {    
     // Draw background / ocean / night
-    if (state.bkgScreen) {
-        drawScreen(state.bkgScreen, state.context);
+    if (bkgScreen) {
+        drawScreen(bkgScreen, state.context);
     }
+
     if (state.island) {
-        const posX = (state.island === 1) ? 288 : 16;
+        const posX = (state.island === 1) ? 288 : 16;    
 
         // Draw island
-        if (state.bkgRes) {            
+        if (bkgRes) {            
             // Draw clouds (random and animated)
             // const cloudIdx = Math.floor((Math.random() * 3) + 15);
             // const x = Math.floor((Math.random() * 640));
             // const y = Math.floor((Math.random() * 80));
-            let image = state.bkgRes.images[17];
+            let image = bkgRes.images[17];
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 120, 40, image.width, image.height);
 
             // Draw raft based on state
-            image = state.bkgRaft.images[3];
+            image = bkgRaft.images[3];
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 222, 268, image.width, image.height);
 
             // isle
-            image = state.bkgRes.images[0];
+            image = bkgRes.images[0];
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX, 280, image.width, image.height);
 
             // palm tree
-            image = state.bkgRes.images[14];
+            image = bkgRes.images[14];
             drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 108, 280, image.width, image.height);
-            image = state.bkgRes.images[13];
+            image = bkgRes.images[13];
             drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 154, 148, image.width, image.height);
-            image = state.bkgRes.images[12];
+            image = bkgRes.images[12];
             drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 77, 122, image.width, image.height);
             
             // Draw shore with animations
-            image = state.bkgRes.images[3];
+            image = bkgRes.images[3];
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX - 13, 305, image.width, image.height);
 
-            image = state.bkgRes.images[6];
+            image = bkgRes.images[6];
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 76, 320, image.width, image.height);
 
-            image = state.bkgRes.images[10];
+            image = bkgRes.images[10];
             drawImage(image, state.tmpContext, 0, 0);
             state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 230, 303, image.width, image.height);
 
@@ -268,7 +274,7 @@ const clearScreen = (state, index) => {
 };
 
 const CLEAR_SCREEN = (state, index) => {
-    clear++;
+    clear += 1;
     clearScreen(state, index);
 };
 
@@ -287,54 +293,66 @@ const PLAY_SAMPLE = (state, index) => {
 
 const STOP_SAMPLE = (state) => { };
 
+const SCREEN_TYPE = {
+    'ISLETEMP.SCR': 1,
+    'ISLAND2.SCR': 2,
+    'SUZBEACH.SCR': 0,
+    'JOFFICE.SCR': 0,
+    'THEEND.SCR': 0,
+    'INTRO.SCR': 0,
+}
+
 const LOAD_SCREEN = (state, name) => {
-    const entry = state.entries.find(e => e.name === name);
-    if (entry !== undefined) {
-        state.bkgScreen = loadResourceEntry(entry);
+    state.island = SCREEN_TYPE[name];
+    
+    if (!bkgScreen) {
+        const entry = state.entries.find(e => e.name === name);
+        if (entry !== undefined) {
+            bkgScreen = loadResourceEntry(entry);
+        }
     }
 
-    if (name === 'ISLETEMP.SCR' || name === 'ISLAND2.SCR') {
-        state.island = (name === 'ISLETEMP.SCR') ? 1 : 2;
+    if (state.island) {
         // Load background assets if not loaded yet
-        if (!state.bkgRes) {
+        if (!bkgRes) {
             const entry = state.entries.find(e => e.name === 'BACKGRND.BMP');
             if (entry !== undefined) {
-                state.bkgRes = loadResourceEntry(entry);
+                bkgRes = loadResourceEntry(entry);
             }
         }
-        if (state.bkgOcean.length === 0) {
+        
+        if (!bkgRaft) {
+            const entry = state.entries.find(e => e.name === 'MRAFT.BMP');
+            if (entry !== undefined) {
+                bkgRaft = loadResourceEntry(entry);
+            }
+        }
+
+        if (bkgOcean.length === 0) {
             // FIXME shorten this code later
             let entry = state.entries.find(e => e.name === 'OCEAN00.SCR');
             if (entry !== undefined) {
-                state.bkgOcean.push(loadResourceEntry(entry));
+                bkgOcean.push(loadResourceEntry(entry));
             }
             entry = state.entries.find(e => e.name === 'OCEAN01.SCR');
             if (entry !== undefined) {
-                state.bkgOcean.push(loadResourceEntry(entry));
+                bkgOcean.push(loadResourceEntry(entry));
             }
             entry = state.entries.find(e => e.name === 'OCEAN02.SCR');
             if (entry !== undefined) {
-                state.bkgOcean.push(loadResourceEntry(entry));
+                bkgOcean.push(loadResourceEntry(entry));
             }
             entry = state.entries.find(e => e.name === 'NIGHT.SCR');
             if (entry !== undefined) {
-                state.bkgOcean.push(loadResourceEntry(entry));
+                bkgOcean.push(loadResourceEntry(entry));
             }
-        }
-        if (!state.bkgRaft) {
-            const entry = state.entries.find(e => e.name === 'MRAFT.BMP');
-            if (entry !== undefined) {
-                state.bkgRaft = loadResourceEntry(entry);
+            const isNight = false; // calculate night shift here
+            let oceanIdx = Math.floor((Math.random() * 4)); // 0 to 3 (adding night for now)
+            if (isNight) {
+                oceanIdx = 4;
             }
+            bkgScreen = bkgOcean[oceanIdx];
         }
-
-        const isNight = false; // calculate night shift here
-        let oceanIdx = Math.floor((Math.random() * 4)); // 0 to 3 (adding night for now)
-        if (isNight) {
-            oceanIdx = 4;
-        }
-
-        state.bkgScreen = state.bkgOcean[oceanIdx];
     }
 };
 
@@ -406,6 +424,7 @@ const PLAY_SCENE = (state) => {
     });
     state.continue = canContinue;
     if (state.continue) {
+        clearScreen(state, 0);
         state.scenes = [];
     }
 };
@@ -576,11 +595,7 @@ export const startProcess = (initialState) => {
         delay: 0,
         continue: true,
         frameId: null,
-        bkgScreen: null,
-        bkgRes: null,
-        bkgOcean: [],
-        bkgRaft: null,
-        island: null,
+        island: 1,
         scenesRes: [],
         scenesState: [],
         scenes: [],
@@ -592,6 +607,10 @@ export const startProcess = (initialState) => {
         randomize: false,
         ...initialState,
     };
+    bkgScreen = null;
+    bkgRes = null;
+    bkgOcean = [];
+    bkgRaft = null;
 
     // temp canvas
     const tmpCanvas = document.createElement("canvas");
@@ -622,7 +641,6 @@ export const startProcess = (initialState) => {
                 state.scenesRes.push(loadResourceEntry(entry));
             }
         });
-        drawBackground(state);
     }
 
     mainloop();
