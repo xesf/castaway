@@ -144,7 +144,7 @@ const SET_BACKGROUND = (state, index) => {
     state.saveIndex = index;
 };
 
-const TTM_UNKNOWN_2 = (state) => { };
+const GOTO = (state) => { };
 
 const SET_COLORS = (state, fc, bc) => {
     if (fc < 16) {
@@ -373,7 +373,7 @@ const ADS_UNKNOWN_0 = (state) => { };
 const IF_UNKNOWN_1 = (state) => { };
 const IF_LASTPLAYED = (state) => { };
 const IF_SKIP_NEXT2 = (state) => { };
-const IF_UNKNOWN_2 = (state) => { };
+const IF_IS_RUNNING = (state) => { };
 const OR_UNKNOWN_3 = (state) => { };
 const OR = (state) => { };
 
@@ -457,7 +457,7 @@ const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
     }
 };
 
-const ADD_SCENE_UNKNOWN_4 = (state) => { };
+const STOP_SCENE = (state) => { };
 const ADS_UNKNOWN_5 = (state) => { };
 
 const RANDOM_START = (state) => {
@@ -478,7 +478,7 @@ const RANDOM_END = (state) => {
 
 const ADS_UNKNOWN_6 = (state) => { };
 const ADS_FADE_OUT = (state) => { };
-const ADS_UNKNOWN_8 = (state) => { };
+const RUN_SCRIPT = (state) => { };
 const END = (state) => { };
 
 // CUSTOM COMMAND
@@ -496,7 +496,7 @@ const CommandType = [
     { opcode: 0x1100, callback: TTM_UNKNOWN_0 },
     { opcode: 0x1110, callback: SET_SCENE },
     { opcode: 0x1120, callback: SET_BACKGROUND },
-    { opcode: 0x1200, callback: TTM_UNKNOWN_2 }, 
+    { opcode: 0x1200, callback: GOTO }, 
     { opcode: 0x2000, callback: SET_COLORS },
     { opcode: 0x2010, callback: SET_FRAME1 },
     { opcode: 0x2020, callback: TTM_UNKNOWN_3 },
@@ -530,20 +530,20 @@ const CommandType = [
     { opcode: 0x1330, callback: IF_UNKNOWN_1 },
     { opcode: 0x1350, callback: IF_LASTPLAYED },
     { opcode: 0x1360, callback: IF_SKIP_NEXT2 },
-    { opcode: 0x1370, callback: IF_UNKNOWN_2 },
+    { opcode: 0x1370, callback: IF_IS_RUNNING },
     { opcode: 0x1420, callback: OR_UNKNOWN_3 },
     { opcode: 0x1430, callback: OR },
     { opcode: 0x1510, callback: PLAY_SCENE },
     { opcode: 0x1520, callback: PLAY_SCENE_2 },
     { opcode: 0x2005, callback: ADD_SCENE },
-    { opcode: 0x2010, callback: ADD_SCENE_UNKNOWN_4 },
+    { opcode: 0x2010, callback: STOP_SCENE },
     { opcode: 0x2014, callback: ADS_UNKNOWN_5 },
     { opcode: 0x3010, callback: RANDOM_START },
     { opcode: 0x3020, callback: RANDOM_UNKNOWN_0 },
     { opcode: 0x30ff, callback: RANDOM_END },
     { opcode: 0x4000, callback: ADS_UNKNOWN_6 },
     { opcode: 0xf010, callback: ADS_FADE_OUT },
-    { opcode: 0xf200, callback: ADS_UNKNOWN_8 }, 
+    { opcode: 0xf200, callback: RUN_SCRIPT }, 
     { opcode: 0xffff, callback: END },
     // CUSTOM: Add for text script
     { opcode: 0xfff0, callback: END_IF },
