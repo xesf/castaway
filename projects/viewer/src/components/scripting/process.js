@@ -45,17 +45,17 @@ const drawContext = (state, index) => {
 }
 
 // FIXME Improve this code repetition
-const drawBackground = (state) => {    
+const drawBackground = (state) => {
     // Draw background / ocean / night
     if (bkgScreen) {
         drawScreen(bkgScreen, state.context);
     }
 
     if (state.island) {
-        const posX = (state.island === 1) ? 288 : 16;    
+        const posX = (state.island === 1) ? 288 : 16;
 
         // Draw island
-        if (bkgRes) {            
+        if (bkgRes) {
             // Draw clouds (random and animated)
             // const cloudIdx = Math.floor((Math.random() * 3) + 15);
             // const x = Math.floor((Math.random() * 640));
@@ -156,7 +156,7 @@ const SET_COLORS = (state, fc, bc) => {
 };
 
 const SET_FRAME1 = (state) => { };
-const TTM_UNKNOWN_3 = (state) => { };
+const SET_TIMER = (state) => { };
 
 const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
     state.clip = {
@@ -198,9 +198,18 @@ const SAVE_IMAGE1 = (state, x, y, width, height) => {
     );
 };
 
-const TTM_UNKNOWN_4 = (state) => { };
-const TTM_UNKNOWN_5 = (state) => { };
-const TTM_UNKNOWN_6 = (state) => { };
+const TTM_UNKNOWN_4 = (state, x, y, width, height) => {
+    // state.context.fillStyle = getPaletteColor(1);
+    // state.context.fillRect(x, y, width, height);
+};
+const TTM_UNKNOWN_5 = (state, x, y, width, height) => {
+    // state.context.fillStyle = getPaletteColor(2);
+    // state.context.fillRect(x, y, width, height);
+};
+const TTM_UNKNOWN_6 = (state, x, y, width, height) => {
+    // state.context.fillStyle = getPaletteColor(3);
+    // state.context.fillRect(x, y, width, height);
+};
 
 const DRAW_LINE = (state, x1, y1, x2, y2) => {
     state.context.beginPath();
@@ -370,11 +379,11 @@ const LOAD_PALETTE = (state) => { };
 
 // ADS COMMANDS
 const ADS_UNKNOWN_0 = (state) => { };
-const IF_UNKNOWN_1 = (state) => { };
-const IF_LASTPLAYED = (state) => { };
-const IF_SKIP_NEXT2 = (state) => { };
-const IF_IS_RUNNING = (state) => { };
-const OR_UNKNOWN_3 = (state) => { };
+const IF_NOT_PLAYED = (state) => { };
+const IF_PLAYED = (state) => { };
+const IF_NOT_RUNNING = (state) => { };
+const IF_RUNNING = (state) => { };
+const AND = (state) => { };
 const OR = (state) => { };
 
 // const PLAY_SCENE = async (state) => {
@@ -458,7 +467,6 @@ const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
 };
 
 const STOP_SCENE = (state) => { };
-const ADS_UNKNOWN_5 = (state) => { };
 
 const RANDOM_START = (state) => {
     state.randomize = true;
@@ -499,7 +507,7 @@ const CommandType = [
     { opcode: 0x1200, callback: GOTO }, 
     { opcode: 0x2000, callback: SET_COLORS },
     { opcode: 0x2010, callback: SET_FRAME1 },
-    { opcode: 0x2020, callback: TTM_UNKNOWN_3 },
+    { opcode: 0x2020, callback: SET_TIMER },
     { opcode: 0x4000, callback: SET_CLIP_REGION },
     { opcode: 0x4110, callback: FADE_OUT },
     { opcode: 0x4120, callback: FADE_IN },
@@ -527,17 +535,16 @@ const CommandType = [
     { opcode: 0xF050, callback: LOAD_PALETTE },
     // ADS COMMANDS
     { opcode: 0x1070, callback: ADS_UNKNOWN_0 },
-    { opcode: 0x1330, callback: IF_UNKNOWN_1 },
-    { opcode: 0x1350, callback: IF_LASTPLAYED },
-    { opcode: 0x1360, callback: IF_SKIP_NEXT2 },
-    { opcode: 0x1370, callback: IF_IS_RUNNING },
-    { opcode: 0x1420, callback: OR_UNKNOWN_3 },
+    { opcode: 0x1330, callback: IF_NOT_PLAYED },
+    { opcode: 0x1350, callback: IF_PLAYED },
+    { opcode: 0x1360, callback: IF_NOT_RUNNING },
+    { opcode: 0x1370, callback: IF_RUNNING },
+    { opcode: 0x1420, callback: AND },
     { opcode: 0x1430, callback: OR },
     { opcode: 0x1510, callback: PLAY_SCENE },
     { opcode: 0x1520, callback: PLAY_SCENE_2 },
     { opcode: 0x2005, callback: ADD_SCENE },
     { opcode: 0x2010, callback: STOP_SCENE },
-    { opcode: 0x2014, callback: ADS_UNKNOWN_5 },
     { opcode: 0x3010, callback: RANDOM_START },
     { opcode: 0x3020, callback: RANDOM_UNKNOWN_0 },
     { opcode: 0x30ff, callback: RANDOM_END },
@@ -545,7 +552,7 @@ const CommandType = [
     { opcode: 0xf010, callback: ADS_FADE_OUT },
     { opcode: 0xf200, callback: RUN_SCRIPT }, 
     { opcode: 0xffff, callback: END },
-    // CUSTOM: Add for text script
+    // CUSTOM: Added for text script
     { opcode: 0xfff0, callback: END_IF },
 ];
 
