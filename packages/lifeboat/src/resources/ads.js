@@ -102,7 +102,7 @@ export function loadADSResourceEntry(entry) {
             command.line += `${c.command} `;
 
             for (let b = 0; b < size; b++) {
-                const param = data.getUint16(innerOffset, true);
+                const param = data.getInt16(innerOffset, true);
                 command.params.push(param);
                 innerOffset += 2;
 

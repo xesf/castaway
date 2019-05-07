@@ -442,7 +442,7 @@ const PLAY_SCENE_2 = (state) => { };
 
 const initialState = { reentry: 0, continue: true, skip: false, };
 
-const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {    
+const ADD_SCENE = (state, sceneIdx, tagId, delay, retries) => {    
     const ttm = state.scenesRes[sceneIdx - 1];
     if (ttm === undefined || ttm.scenes === undefined) {
         return;
@@ -450,7 +450,7 @@ const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
     const scene = ttm.scenes.find(s => s.tagId === tagId);
 
     for (let r = 0; r < retries; r += 1) {
-        const s = Object.assign({}, scene);
+        const s = Object.assign({ sceneIdx, delay }, scene);
         if (s.script === undefined) {
             console.log('script is null', scene);
             continue;
@@ -466,7 +466,11 @@ const ADD_SCENE = (state, sceneIdx, tagId, unk, retries) => {
     }
 };
 
-const STOP_SCENE = (state) => { };
+const STOP_SCENE = (state, sceneIdx, tagId, retries) => {
+    if (state.scenes.length) {
+        state.scenes = state.scenes.find(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    }
+};
 
 const RANDOM_START = (state) => {
     state.randomize = true;
