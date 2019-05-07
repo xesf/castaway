@@ -442,12 +442,14 @@ const PLAY_SCENE_2 = (state) => { };
 
 const initialState = { reentry: 0, continue: true, skip: false, };
 
-const ADD_SCENE = (state, sceneIdx, tagId, delay, retries) => {    
+const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {    
     const ttm = state.scenesRes[sceneIdx - 1];
     if (ttm === undefined || ttm.scenes === undefined) {
         return;
     }
     const scene = ttm.scenes.find(s => s.tagId === tagId);
+    const retries = retriesDelay > 0 ? retriesDelay : 1;
+    const delay = retriesDelay < 0 ? retriesDelay : 0;
 
     for (let r = 0; r < retries; r += 1) {
         const s = Object.assign({ sceneIdx, delay }, scene);
