@@ -493,7 +493,11 @@ const RANDOM_END = (state) => {
 const ADS_UNKNOWN_6 = (state) => { };
 const ADS_FADE_OUT = (state) => { };
 const RUN_SCRIPT = (state) => { };
-const END = (state) => { };
+
+const END = (state) => {
+    clearScreen(state, 0);
+    state.scenes = [];
+};
 
 // CUSTOM COMMAND
 const END_IF = (state) => { };
