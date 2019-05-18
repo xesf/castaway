@@ -22,7 +22,6 @@ let elapsed = null;
 const fps = 1000 / 60;
 
 let state = null;
-let clear = 0;
 
 let bkgScreen = null;
 let bkgRes = null;
@@ -30,10 +29,11 @@ let bkgOcean = [];
 let bkgRaft = null;
 
 const clearContext = (context) => {
-    context.canvas.width = 640;
-    context.canvas.height = 480;
-    context.fillStyle = 'black';
-    context.fillRect(0, 0, 640, 480);
+    // context.canvas.width = 640;
+    // context.canvas.height = 480;
+    // context.fillStyle = 'black';
+    // context.fillRect(0, 0, 640, 480);
+    context.clearRect(0, 0, 640, 480);
 }
 
 const drawContext = (state, index) => {
@@ -45,10 +45,10 @@ const drawContext = (state, index) => {
 }
 
 // FIXME Improve this code repetition
-const drawBackground = (state) => {
+const drawBackground = (state, context) => {
     // Draw background / ocean / night
     if (bkgScreen) {
-        drawScreen(bkgScreen, state.context);
+        drawScreen(bkgScreen, context);
     }
 
     if (state.island) {
@@ -62,38 +62,41 @@ const drawBackground = (state) => {
             // const y = Math.floor((Math.random() * 80));
             let image = bkgRes.images[17];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 120, 40, image.width, image.height);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 120, 40, image.width, image.height);
 
             // Draw raft based on state
             image = bkgRaft.images[3];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 222, 268, image.width, image.height);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 222, 268, image.width, image.height);
 
             // isle
             image = bkgRes.images[0];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX, 280, image.width, image.height);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX, 280, image.width, image.height);
 
             // palm tree
             image = bkgRes.images[14];
-            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 108, 280, image.width, image.height);
+            drawImage(image, state.tmpContext, 0, 0);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 108, 280, image.width, image.height);
             image = bkgRes.images[13];
-            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 154, 148, image.width, image.height);
+            drawImage(image, state.tmpContext, 0, 0);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 154, 148, image.width, image.height);
             image = bkgRes.images[12];
-            drawImage(image, state.tmpContext, 0, 0);state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 77, 122, image.width, image.height);
+            drawImage(image, state.tmpContext, 0, 0);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 77, 122, image.width, image.height);
             
             // Draw shore with animations
             image = bkgRes.images[3];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX - 13, 305, image.width, image.height);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX - 13, 305, image.width, image.height);
 
             image = bkgRes.images[6];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 76, 320, image.width, image.height);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 76, 320, image.width, image.height);
 
             image = bkgRes.images[10];
             drawImage(image, state.tmpContext, 0, 0);
-            state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 230, 303, image.width, image.height);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, posX + 230, 303, image.width, image.height);
 
             // Draw low tide
         }
@@ -103,7 +106,10 @@ const drawBackground = (state) => {
 // TTM COMMANDS
 const SAVE_BACKGROUND = (state) => { };
 const DRAW_BACKGROUND = (state) => { };
-const PURGE = (state) => { };
+const PURGE = (state) => {
+    // state.purge = true;
+    // console.log('PURGE');
+};
 
 const UPDATE = (state) => { 
     if (state.continue) {
@@ -114,19 +120,26 @@ const UPDATE = (state) => {
             return;
         }
         state.continue = false;
-    }
-    if (!state.elapsed) {
         state.elapsed = state.delay + Date.now();
     }
+    // if (!state.elapsed) {
+    //     state.elapsed = state.delay + Date.now();
+    // }
 
     if (Date.now() > state.elapsed) {
         state.elapsed = 0;
         state.continue = true;
+        // console.log('elapsed', state.lastCommand);
+        if (state.lastCommand) {
+            console.log('lastCommand');
+            state.lastCommand = false;
+            state.played = true; // time is over since last update
+        }
     }
 };
 
 const SET_DELAY = (state, delay) => {
-    state.delay = (delay * 20); // FIXME validate this value
+    state.delay = ((delay === 0 ? 1 : delay) * 20);
 };
 
 const SLOT_IMAGE = (state, slot) => {
@@ -144,7 +157,9 @@ const SET_BACKGROUND = (state, index) => {
     state.saveIndex = index;
 };
 
-const GOTO = (state) => { };
+const GOTO = (state, tagId) => {
+    state.reentry = 0; // TODO check for other scenes
+};
 
 const SET_COLORS = (state, fc, bc) => {
     if (fc < 16) {
@@ -278,12 +293,11 @@ const DRAW_SPRITE3 = (state) => { };
 const clearScreen = (state, index) => {
     clearContext(state.context);
     clearContext(state.tmpContext);
-    drawBackground(state);
+    // drawBackground(state, state.mainContext);
     drawContext(state);
 };
 
 const CLEAR_SCREEN = (state, index) => {
-    clear += 1;
     clearScreen(state, index);
 };
 
@@ -379,8 +393,49 @@ const LOAD_PALETTE = (state) => { };
 
 // ADS COMMANDS
 const ADS_UNKNOWN_0 = (state) => { };
-const IF_NOT_PLAYED = (state) => { };
-const IF_PLAYED = (state) => { };
+
+const IF_NOT_PLAYED = (state, sceneIdx, tagId) => {
+    // if (state.continue) {
+    //     state.continue = false;
+    // }
+    // if (state.played.length > 0) {
+    //     const scene = state.played.find(s => s.sceneIdx === sceneIdx && s.tagId === tagId);
+    //     if (scene !== undefined) {
+    //         state.continue = true;
+    //         // TODO OR Skip
+    //     }
+    // } else {
+    //     state.continue = true;
+    // }
+};
+
+const IF_PLAYED = (state, sceneIdx, tagId) => {
+    if (state.continue) {
+        state.continue = false;
+    }
+    const scene = state.scenes.find(s => 
+        s.sceneIdx === sceneIdx && s.tagId === tagId
+        && s.state.played);
+    console.log('if played', scene);
+    if (scene !== undefined) {
+        STOP_SCENE(state, sceneIdx, tagId, 0);
+        state.continue = true;
+    }
+    // if (state.played.length > 0) {
+    //     console.log('if played loop if');
+    //     const scene = state.played[state.played.length - 1];
+    //     if (scene.sceneIdx === sceneIdx && scene.tagId === tagId) {
+    //         // console.log('scene here', sceneIdx, scene.sceneIdx, tagId, scene.tagId);
+    //         state.played.pop();
+    //         state.continue = true;
+
+    //         console.log('if played');
+    //         state.scenes = state.scenes.find(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    //     }
+    // }
+    // TODO jump end of if statement if not played
+};
+
 const IF_NOT_RUNNING = (state) => { };
 const IF_RUNNING = (state) => { };
 const AND = (state) => { };
@@ -389,14 +444,15 @@ const OR = (state) => { };
 // const PLAY_SCENE = async (state) => {
 //     let promises = [];
 //     let canContinue = true;
-//     state.continue = false;    
+//     state.continue = false;
 //     state.scenes.forEach(s => {
 //         promises.push(
 //             new Promise((resolve) => {
 //                 if (!s.state.skip) {
-//                     s.state.skip = runScript(s.state, s.script);
+//                     s.state.skip = runScript(s.state, s.script)
+//                     resolve(s.state.skip);
 //                 }
-//                 return resolve(s.state.skip);
+//                 return resolve(true);
 //             })
 //         );
 //     });
@@ -404,15 +460,16 @@ const OR = (state) => { };
 //     if (promises.length > 0) {
 //         const skipped = await Promise.all(promises);
 //         skipped.forEach(skip => {
-//             if (!skip) {
-//                 canContinue &= skip;
-//             }
+//             console.log(skip);
+//             canContinue &= skip;
 //         });
 //     }
 
 //     state.continue = canContinue;
 //     if (state.continue) {
-//         state.scenes = [];
+//         console.log('scenes playing: ', state.scenes.length);
+//         // clearScreen(state, 0);
+//         // state.scenes = [];
 //     }
 // };
 
@@ -422,25 +479,37 @@ const PLAY_SCENE = (state) => {
     //     clear = 0;
     // }
 
-    let canContinue = true;
-    state.continue = false;
-    state.scenes.forEach(s => {
-        // console.log(s);
-        if (!s.state.skip) {
-            s.state.skip = runScript(s.state, s.script);
-            canContinue &= s.skip;
-        }
-    });
-    state.continue = canContinue;
-    if (state.continue) {
-        clearScreen(state, 0);
-        state.scenes = [];
-    }
+    // let canContinue = true;
+    // state.continue = false;
+
+    // state.scenes.forEach(s => {
+    //     if (!s.state.skip) {
+    //         s.state.skip = runScript(s.state, s.script);
+    //         canContinue &= s.state.skip;
+    //         if (s.state.skip) {
+    //             state.played.push({ sceneIdx: s.sceneIdx, tagId: s.tagId });
+    //         }
+    //     }
+    // });
+    // state.continue = canContinue;
+    // if (state.continue) {
+    //     console.log('scenes playing: ', state.scenes.length);
+    //     // clearScreen(state, 0);
+    //     state.scenes = state.scenes.filter(s => !s.state.skip);
+    // }
 };
 
 const PLAY_SCENE_2 = (state) => { };
 
-const initialState = { reentry: 0, continue: true, skip: false, };
+const initialState = {
+    reentry: 0,
+    lastCommand: false,
+    runs: 0,
+    played: false,
+    continue: true,
+    skip: false,
+    island: 1
+};
 
 const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {    
     const ttm = state.scenesRes[sceneIdx - 1];
@@ -448,29 +517,38 @@ const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {
         return;
     }
     const scene = ttm.scenes.find(s => s.tagId === tagId);
-    const retries = retriesDelay > 0 ? retriesDelay : 1;
-    const delay = retriesDelay < 0 ? retriesDelay : 0;
+    const retries = retriesDelay >= 0 ? retriesDelay : 0;
+    const delay = retriesDelay < 0 ? retriesDelay : state.delay;
 
-    for (let r = 0; r < retries; r += 1) {
-        const s = Object.assign({ sceneIdx, delay }, scene);
+    const canvas = document.createElement("canvas");
+    canvas.width = 640;
+    canvas.height = 480;
+
+    const stateInit = { ...initialState, context: canvas.getContext('2d') };
+
+    // for (let r = 0; r < retries; r += 1) {
+        const s = Object.assign({ sceneIdx, delay, retries }, scene);
         if (s.script === undefined) {
             console.log('script is null', scene);
-            continue;
+            return;
         }
         if (!state.scenes.length) {
             s.script.unshift(...ttm.scenes[0].script);
-            s.state = Object.assign({}, state, initialState);
+            s.state = Object.assign({}, state, stateInit);
         } else {
-            s.state = Object.assign({}, state.scenes[0].state, initialState);
+            s.state = Object.assign({}, state.scenes[0].state, stateInit);
         }
         console.log(s);
         state.scenes.push(s);
-    }
+    // }
 };
 
 const STOP_SCENE = (state, sceneIdx, tagId, retries) => {
-    if (state.scenes.length) {
-        state.scenes = state.scenes.find(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    const scenes = state.scenes.find(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    if (scenes !== undefined) {
+        state.scenes = scenes;
+    } else {
+        state.scenes = [];
     }
 };
 
@@ -495,7 +573,7 @@ const ADS_FADE_OUT = (state) => { };
 const RUN_SCRIPT = (state) => { };
 
 const END = (state) => {
-    clearScreen(state, 0);
+    // clearScreen(state, 0);
     state.scenes = [];
 };
 
@@ -579,20 +657,76 @@ const runScript = (state, script) => {
             continue;
         }
         type.callback(state, ...c.params);
-        state.reentry = i;
+        //if (state.reentry !== -1) {
+            state.reentry = i;
+        //}
         if (!state.continue) {
             break;
         }
     }
-    if (state.reentry === script.length - 1) {
-        state.reentry = 0;
-        return true; // stop script for now
+    if (state.reentry === (script.length - 1)) {
+            state.lastCommand = true;
+        // if (state.reentry !== -1) {
+            state.reentry = 0;
+            state.runs++;
+        // }
+        if (!state.continue) {
+            state.continue = true;
+        }
+        state.played = true;
+        // if (state.purge && state.continue) {
+        //     if (state.retries > 0) {
+        //         state.retries--;
+        //     } else {
+        //         state.continue = false;
+        //         // state.reentry = -1;
+        //         state.played = true;
+        //         return true;
+        //     }
+        // }
+        // return false; // stop script for now
     }
+    // if (state.played && state.elapsed === 0) {
+    //     return true;
+    // }
     return false;
 };
 
 const runScripts = () => {
-    return runScript(state, state.data.scripts);
+    clearContext(state.context);
+    if (state.island) {
+        drawBackground(state, state.mainContext);
+    }
+    //clearScreen(state, 0);
+    let canContinue = false;
+    let exitFrame = runScript(state, state.data.scripts);
+    
+    // if (state.scenes.length > 0) {
+        // for (let i = 0; i < state.scenes.length; i+=1) {
+        //     const s = state.scenes[i];
+        //     runScript(s.state, s.script);
+        //     canContinue |= s.state.runs > 0;
+        // }
+        state.scenes.forEach(s => {
+            runScript(s.state, s.script);
+            canContinue |= s.state.runs > 0;
+        });
+
+        state.scenes.forEach(s => {
+            // if (!s.state.skip && s.state.reentry !== -1) {
+                state.context.drawImage(s.state.context.canvas, 0, 0);
+            // }
+        });
+    //}
+
+    state.continue = canContinue;
+    // if (state.continue) {
+    //     console.log('scenes playing prev: ', state.scenes.length);
+    //     state.scenes = state.scenes.filter(s => s.state.reentry !== -1);
+    //     console.log('scenes playing next: ', state.scenes.length);
+    // }
+
+    return exitFrame;
 };
 
 export const startProcess = (initialState) => {
@@ -601,6 +735,7 @@ export const startProcess = (initialState) => {
         data: null,
         context: null,
         tmpContext: null,
+        mainContext: null,
         save: [],
         saveIndex: 0,
         audioManager: null,
@@ -609,7 +744,7 @@ export const startProcess = (initialState) => {
         // this should be for multiple running scripts
         reentry: 0,
         elapsed: 0,
-        delay: 0,
+        delay: 1,
         continue: true,
         frameId: null,
         island: 1,
@@ -622,6 +757,11 @@ export const startProcess = (initialState) => {
         type: null,
         skip: false,
         randomize: false,
+        played: [],
+        purge: false,
+        played: false,
+        runs: 0,
+        lastCommand: false,
         ...initialState,
     };
     bkgScreen = null;
