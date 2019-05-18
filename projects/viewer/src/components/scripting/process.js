@@ -5,20 +5,9 @@ import { drawImage, drawScreen, getPaletteColor } from "../../resources/image";
 import { createAudioManager } from "../../resources/audio";
 import { PALETTE } from '../../../../../node_modules/@castaway/lifeboat/src/constants';
 
-/**
- * TODO
- * 8h full day cycle
- *  - 6h Day
- *  - 2h Night 
- * By default night begins at 3pm (Day starts at 9am)
- * Create random Ocean Background
- * If day cicle ends, show Night Background
- * Random island position (perhaps set via command?!)
- */
 let tick = null;
 let prevTick = Date.now();
 let elapsed = null;
-// let startTime = prevTick;
 const fps = 1000 / 60;
 
 let state = null;
@@ -29,10 +18,6 @@ let bkgOcean = [];
 let bkgRaft = null;
 
 const clearContext = (context) => {
-    // context.canvas.width = 640;
-    // context.canvas.height = 480;
-    // context.fillStyle = 'black';
-    // context.fillRect(0, 0, 640, 480);
     context.clearRect(0, 0, 640, 480);
 }
 
@@ -40,7 +25,7 @@ const drawContext = (state, index) => {
     const save = state.save[state.saveIndex];
     if (save.canDraw) {
         save.canDraw = false;
-        state.context.drawImage(save.context.canvas, 0, 0); //  save.x, save.y);
+        state.context.drawImage(save.context.canvas, 0, 0);
     }
 }
 
@@ -108,30 +93,21 @@ const SAVE_BACKGROUND = (state) => { };
 const DRAW_BACKGROUND = (state) => { };
 const PURGE = (state) => {
     // state.purge = true;
-    // console.log('PURGE');
 };
 
 const UPDATE = (state) => { 
     if (state.continue) {
-        // TODO update function here before the delay
-        // update will run once only inside this if
-        // drawBackground(state);
         if (!state.delay) {
             return;
         }
         state.continue = false;
         state.elapsed = state.delay + Date.now();
     }
-    // if (!state.elapsed) {
-    //     state.elapsed = state.delay + Date.now();
-    // }
-
     if (Date.now() > state.elapsed) {
         state.elapsed = 0;
         state.continue = true;
-        // console.log('elapsed', state.lastCommand);
+        // TODO not reaching here for some reason
         if (state.lastCommand) {
-            console.log('lastCommand');
             state.lastCommand = false;
             state.played = true; // time is over since last update
         }
@@ -149,9 +125,7 @@ const SLOT_IMAGE = (state, slot) => {
 const SLOT_PALETTE = (state) => { };
 const TTM_UNKNOWN_0 = (state) => { };
 
-const SET_SCENE = (state) => {
-    // drawBackground(state);
-};
+const SET_SCENE = (state) => { };
 
 const SET_BACKGROUND = (state, index) => {
     state.saveIndex = index;
@@ -293,7 +267,6 @@ const DRAW_SPRITE3 = (state) => { };
 const clearScreen = (state, index) => {
     clearContext(state.context);
     clearContext(state.tmpContext);
-    // drawBackground(state, state.mainContext);
     drawContext(state);
 };
 
@@ -416,24 +389,11 @@ const IF_PLAYED = (state, sceneIdx, tagId) => {
     const scene = state.scenes.find(s => 
         s.sceneIdx === sceneIdx && s.tagId === tagId
         && s.state.played);
-    console.log('if played', scene);
+
     if (scene !== undefined) {
         STOP_SCENE(state, sceneIdx, tagId, 0);
         state.continue = true;
     }
-    // if (state.played.length > 0) {
-    //     console.log('if played loop if');
-    //     const scene = state.played[state.played.length - 1];
-    //     if (scene.sceneIdx === sceneIdx && scene.tagId === tagId) {
-    //         // console.log('scene here', sceneIdx, scene.sceneIdx, tagId, scene.tagId);
-    //         state.played.pop();
-    //         state.continue = true;
-
-    //         console.log('if played');
-    //         state.scenes = state.scenes.find(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
-    //     }
-    // }
-    // TODO jump end of if statement if not played
 };
 
 const IF_NOT_RUNNING = (state) => { };
@@ -441,64 +401,7 @@ const IF_RUNNING = (state) => { };
 const AND = (state) => { };
 const OR = (state) => { };
 
-// const PLAY_SCENE = async (state) => {
-//     let promises = [];
-//     let canContinue = true;
-//     state.continue = false;
-//     state.scenes.forEach(s => {
-//         promises.push(
-//             new Promise((resolve) => {
-//                 if (!s.state.skip) {
-//                     s.state.skip = runScript(s.state, s.script)
-//                     resolve(s.state.skip);
-//                 }
-//                 return resolve(true);
-//             })
-//         );
-//     });
-
-//     if (promises.length > 0) {
-//         const skipped = await Promise.all(promises);
-//         skipped.forEach(skip => {
-//             console.log(skip);
-//             canContinue &= skip;
-//         });
-//     }
-
-//     state.continue = canContinue;
-//     if (state.continue) {
-//         console.log('scenes playing: ', state.scenes.length);
-//         // clearScreen(state, 0);
-//         // state.scenes = [];
-//     }
-// };
-
-const PLAY_SCENE = (state) => {
-    // if (clear > 0 && clear >= state.scenes.length) {
-    //     clearScreen(state, 0);
-    //     clear = 0;
-    // }
-
-    // let canContinue = true;
-    // state.continue = false;
-
-    // state.scenes.forEach(s => {
-    //     if (!s.state.skip) {
-    //         s.state.skip = runScript(s.state, s.script);
-    //         canContinue &= s.state.skip;
-    //         if (s.state.skip) {
-    //             state.played.push({ sceneIdx: s.sceneIdx, tagId: s.tagId });
-    //         }
-    //     }
-    // });
-    // state.continue = canContinue;
-    // if (state.continue) {
-    //     console.log('scenes playing: ', state.scenes.length);
-    //     // clearScreen(state, 0);
-    //     state.scenes = state.scenes.filter(s => !s.state.skip);
-    // }
-};
-
+const PLAY_SCENE = (state) => { }; // runScripts has the continue logic 
 const PLAY_SCENE_2 = (state) => { };
 
 const initialState = {
@@ -526,21 +429,17 @@ const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {
 
     const stateInit = { ...initialState, context: canvas.getContext('2d') };
 
-    // for (let r = 0; r < retries; r += 1) {
-        const s = Object.assign({ sceneIdx, delay, retries }, scene);
-        if (s.script === undefined) {
-            console.log('script is null', scene);
-            return;
-        }
-        if (!state.scenes.length) {
-            s.script.unshift(...ttm.scenes[0].script);
-            s.state = Object.assign({}, state, stateInit);
-        } else {
-            s.state = Object.assign({}, state.scenes[0].state, stateInit);
-        }
-        console.log(s);
-        state.scenes.push(s);
-    // }
+    const s = Object.assign({ sceneIdx, delay, retries }, scene);
+    if (s.script === undefined) {
+        return;
+    }
+    if (!state.scenes.length) {
+        s.script.unshift(...ttm.scenes[0].script);
+        s.state = Object.assign({}, state, stateInit);
+    } else {
+        s.state = Object.assign({}, state.scenes[0].state, stateInit);
+    }
+    state.scenes.push(s);
 };
 
 const STOP_SCENE = (state, sceneIdx, tagId, retries) => {
@@ -650,82 +549,48 @@ const runScript = (state, script) => {
     }
     for (let i = state.reentry; i < script.length; i++) {
         const c = script[i];
-        // setTimeout(state.callback(c), 0); // set current script command
         const type = CommandType.find(ct => ct.opcode === c.opcode);
-        // console.log(c.line);
         if (!type) {
             continue;
         }
         type.callback(state, ...c.params);
-        //if (state.reentry !== -1) {
-            state.reentry = i;
-        //}
+        state.reentry = i;
         if (!state.continue) {
             break;
         }
     }
     if (state.reentry === (script.length - 1)) {
-            state.lastCommand = true;
-        // if (state.reentry !== -1) {
-            state.reentry = 0;
-            state.runs++;
-        // }
+        state.lastCommand = true;
+        state.reentry = 0;
+        state.runs++;
         if (!state.continue) {
             state.continue = true;
         }
         state.played = true;
-        // if (state.purge && state.continue) {
-        //     if (state.retries > 0) {
-        //         state.retries--;
-        //     } else {
-        //         state.continue = false;
-        //         // state.reentry = -1;
-        //         state.played = true;
-        //         return true;
-        //     }
-        // }
-        // return false; // stop script for now
     }
-    // if (state.played && state.elapsed === 0) {
-    //     return true;
-    // }
     return false;
 };
 
 const runScripts = () => {
     clearContext(state.context);
+    
     if (state.island) {
         drawBackground(state, state.mainContext);
     }
-    //clearScreen(state, 0);
+
     let canContinue = false;
     let exitFrame = runScript(state, state.data.scripts);
     
-    // if (state.scenes.length > 0) {
-        // for (let i = 0; i < state.scenes.length; i+=1) {
-        //     const s = state.scenes[i];
-        //     runScript(s.state, s.script);
-        //     canContinue |= s.state.runs > 0;
-        // }
-        state.scenes.forEach(s => {
-            runScript(s.state, s.script);
-            canContinue |= s.state.runs > 0;
-        });
+    state.scenes.forEach(s => {
+        runScript(s.state, s.script);
+        canContinue |= s.state.runs > 0;
+    });
 
-        state.scenes.forEach(s => {
-            // if (!s.state.skip && s.state.reentry !== -1) {
-                state.context.drawImage(s.state.context.canvas, 0, 0);
-            // }
-        });
-    //}
+    state.scenes.forEach(s => {
+        state.context.drawImage(s.state.context.canvas, 0, 0);
+    });
 
     state.continue = canContinue;
-    // if (state.continue) {
-    //     console.log('scenes playing prev: ', state.scenes.length);
-    //     state.scenes = state.scenes.filter(s => s.state.reentry !== -1);
-    //     console.log('scenes playing next: ', state.scenes.length);
-    // }
-
     return exitFrame;
 };
 
