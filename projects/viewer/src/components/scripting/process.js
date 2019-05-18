@@ -16,6 +16,10 @@ let bkgScreen = null;
 let bkgRes = null;
 let bkgOcean = [];
 let bkgRaft = null;
+let cloudIdx = Math.floor((Math.random() * 3) + 15);
+let cloudX = Math.floor((Math.random() * 640));
+let cloudY = Math.floor((Math.random() * 80));
+let cloudElapsed = 0;
 
 const clearContext = (context) => {
     context.clearRect(0, 0, 640, 480);
@@ -39,15 +43,20 @@ const drawBackground = (state, context) => {
     if (state.island) {
         const posX = (state.island === 1) ? 288 : 16;
 
+        if (!cloudElapsed) {
+            cloudElapsed = Math.floor((Math.random() * 640)) + Date.now();
+        }
+        if (Date.now() > cloudElapsed) {
+            cloudElapsed = 0;
+            cloudX--;
+        }
+
         // Draw island
         if (bkgRes) {
             // Draw clouds (random and animated)
-            // const cloudIdx = Math.floor((Math.random() * 3) + 15);
-            // const x = Math.floor((Math.random() * 640));
-            // const y = Math.floor((Math.random() * 80));
-            let image = bkgRes.images[17];
+            let image = bkgRes.images[cloudIdx];
             drawImage(image, state.tmpContext, 0, 0);
-            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, 120, 40, image.width, image.height);
+            context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, cloudX, cloudY, image.width, image.height);
 
             // Draw raft based on state
             image = bkgRaft.images[3];
@@ -298,57 +307,67 @@ const SCREEN_TYPE = {
     'INTRO.SCR': 0,
 }
 
+const loadBackground = (state) => {
+    // Load background assets if not loaded yet
+    if (!bkgRes) {
+        const entry = state.entries.find(e => e.name === 'BACKGRND.BMP');
+        if (entry !== undefined) {
+            bkgRes = loadResourceEntry(entry);
+        }
+    }
+}
+
+const loadRaft = (state) => {
+    if (!bkgRaft) {
+        const entry = state.entries.find(e => e.name === 'MRAFT.BMP');
+        if (entry !== undefined) {
+            bkgRaft = loadResourceEntry(entry);
+        }
+    }
+}
+
+const loadOcean = (state) => {
+    if (bkgOcean.length === 0) {
+        // FIXME shorten this code later
+        let entry = state.entries.find(e => e.name === 'OCEAN00.SCR');
+        if (entry !== undefined) {
+            bkgOcean.push(loadResourceEntry(entry));
+        }
+        entry = state.entries.find(e => e.name === 'OCEAN01.SCR');
+        if (entry !== undefined) {
+            bkgOcean.push(loadResourceEntry(entry));
+        }
+        entry = state.entries.find(e => e.name === 'OCEAN02.SCR');
+        if (entry !== undefined) {
+            bkgOcean.push(loadResourceEntry(entry));
+        }
+        entry = state.entries.find(e => e.name === 'NIGHT.SCR');
+        if (entry !== undefined) {
+            bkgOcean.push(loadResourceEntry(entry));
+        }
+        const isNight = false; // calculate night shift here
+        let oceanIdx = Math.floor((Math.random() * 4)); // 0 to 3 (adding night for now)
+        if (isNight) {
+            oceanIdx = 4;
+        }
+        bkgScreen = bkgOcean[oceanIdx];
+    }
+}
+
 const LOAD_SCREEN = (state, name) => {
     state.island = SCREEN_TYPE[name];
     
-    if (!bkgScreen) {
-        const entry = state.entries.find(e => e.name === name);
-        if (entry !== undefined) {
-            bkgScreen = loadResourceEntry(entry);
-        }
-    }
+    // if (!bkgScreen) {
+    //     const entry = state.entries.find(e => e.name === name);
+    //     if (entry !== undefined) {
+    //         bkgScreen = loadResourceEntry(entry);
+    //     }
+    // }
 
     if (state.island) {
-        // Load background assets if not loaded yet
-        if (!bkgRes) {
-            const entry = state.entries.find(e => e.name === 'BACKGRND.BMP');
-            if (entry !== undefined) {
-                bkgRes = loadResourceEntry(entry);
-            }
-        }
-        
-        if (!bkgRaft) {
-            const entry = state.entries.find(e => e.name === 'MRAFT.BMP');
-            if (entry !== undefined) {
-                bkgRaft = loadResourceEntry(entry);
-            }
-        }
-
-        if (bkgOcean.length === 0) {
-            // FIXME shorten this code later
-            let entry = state.entries.find(e => e.name === 'OCEAN00.SCR');
-            if (entry !== undefined) {
-                bkgOcean.push(loadResourceEntry(entry));
-            }
-            entry = state.entries.find(e => e.name === 'OCEAN01.SCR');
-            if (entry !== undefined) {
-                bkgOcean.push(loadResourceEntry(entry));
-            }
-            entry = state.entries.find(e => e.name === 'OCEAN02.SCR');
-            if (entry !== undefined) {
-                bkgOcean.push(loadResourceEntry(entry));
-            }
-            entry = state.entries.find(e => e.name === 'NIGHT.SCR');
-            if (entry !== undefined) {
-                bkgOcean.push(loadResourceEntry(entry));
-            }
-            const isNight = false; // calculate night shift here
-            let oceanIdx = Math.floor((Math.random() * 4)); // 0 to 3 (adding night for now)
-            if (isNight) {
-                oceanIdx = 4;
-            }
-            bkgScreen = bkgOcean[oceanIdx];
-        }
+        loadBackground(state);
+        loadRaft(state);
+        loadOcean(state);
     }
 };
 
