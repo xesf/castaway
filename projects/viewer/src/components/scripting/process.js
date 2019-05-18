@@ -458,11 +458,12 @@ const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {
     } else {
         s.state = Object.assign({}, state.scenes[0].state, stateInit);
     }
+    console.log(s);
     state.scenes.push(s);
 };
 
 const STOP_SCENE = (state, sceneIdx, tagId, retries) => {
-    const scenes = state.scenes.find(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    const scenes = state.scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
     if (scenes !== undefined) {
         state.scenes = scenes;
     } else {
