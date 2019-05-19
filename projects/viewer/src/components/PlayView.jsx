@@ -18,10 +18,11 @@ const PlayView = ({ entries }) => {
                 const mainContext = mainCanvasRef.current.getContext("2d");
                 context.clearRect(0, 0, 640, 480);
                 
-                const entry = entries.find(e => e.name === 'MJJOG.TTM');
+                const entry = entries.find(e => e.name === 'BUILDING.ADS');
                 const data = loadResourceEntry(entry);
 
                 startProcess({
+                    type: 'ADS',
                     context,
                     mainContext,
                     data,

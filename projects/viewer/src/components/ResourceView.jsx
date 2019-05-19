@@ -38,9 +38,6 @@ const ResourceView = ({ entries, data }) => {
 
                 const context = canvasRef.current.getContext("2d");
                 context.clearRect(0, 0, 640, 480);
-
-                const mainContext = mainCanvasRef.current.getContext("2d");
-                context.clearRect(0, 0, 640, 480);
                 
                 const resType = ResourceType.find(r => r.type === data.type);    
                 if (resType !== undefined) {
@@ -48,6 +45,9 @@ const ResourceView = ({ entries, data }) => {
                 
                     if (resType.type === 'ADS' ||
                         resType.type === 'TTM') {
+                        const mainContext = mainCanvasRef.current.getContext("2d");
+                        context.clearRect(0, 0, 640, 480);
+
                         startProcess({
                             type: resType.type,
                             context,
@@ -64,6 +64,15 @@ const ResourceView = ({ entries, data }) => {
         },
         [data]
     );
+
+    if (data.type !== 'ADS' &&
+        data.type !== 'TTM') {
+        return (<React.Fragment>
+            <div style={{ display: 'block', width: '100%', height: '500px', overflowX: 'auto'}}>
+                <canvas ref={canvasRef} width="640" height="480" />
+            </div>
+        </React.Fragment>);
+    }
     
     return (
         <React.Fragment>

@@ -449,6 +449,7 @@ const initialState = {
 const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {    
     const ttm = state.scenesRes[sceneIdx - 1];
     if (ttm === undefined || ttm.scenes === undefined) {
+        console.log('add failed ttm', sceneIdx, tagId);
         return;
     }
     const scene = ttm.scenes.find(s => s.tagId === tagId);
@@ -463,6 +464,7 @@ const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {
 
     const s = Object.assign({ sceneIdx, delay, retries }, scene);
     if (s.script === undefined) {
+        console.log('add failed script', sceneIdx, tagId, scene, ttm);
         return;
     }
     if (!state.scenes.length) {
@@ -648,17 +650,12 @@ const runScripts = () => {
     let exitFrame = runScript(state, script, true);
     
     if (!state.continue) {
-        let canContinue = false;
         state.scenes.forEach(s => {
             runScript(s.state, s.script);
-            canContinue = canContinue | (s.state.runs > 0) ? true : false;
         });
-
         state.scenes.forEach(s => {
             state.context.drawImage(s.state.context.canvas, 0, 0);
         });
-    
-        state.continue = canContinue;
     }
     return exitFrame;
 };
@@ -701,6 +698,7 @@ export const startProcess = (initialState) => {
     bkgRes = null;
     bkgOcean = [];
     bkgRaft = null;
+    currentScene = 0;
 
     // temp canvas
     const tmpCanvas = document.createElement("canvas");
