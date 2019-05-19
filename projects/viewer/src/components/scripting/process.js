@@ -632,7 +632,6 @@ const runScript = (state, script, main = false) => {
         }
         state.played = true;
         if (main) {
-            console.log('very last command', state.lastCommand);
             currentScene++;
         }
     }
@@ -640,14 +639,17 @@ const runScript = (state, script, main = false) => {
 };
 
 const runScripts = () => {
+    let exitFrame = false;
     clearContext(state.context);
     
     if (state.island) {
         drawBackground(state, state.mainContext);
     }
 
-    const script = state.data.scenes[currentScene].script;
-    let exitFrame = runScript(state, script, true);
+    const scene = state.data.scenes[currentScene];
+    if (scene !== undefined) {
+        exitFrame = runScript(state, scene.script, true);
+    }
     
     if (!state.continue) {
         state.scenes.forEach(s => {
