@@ -168,6 +168,11 @@ const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
         width: x2 - x1,
         height: y2 - y1,
     };
+    // console.log('SET_CLIP_REGION', state.clip);
+    // state.context.strokeStyle = getPaletteColor(PALETTE[12]);
+    // state.context.lineWidth = '3';
+    // state.context.rect(state.clip.x, state.clip.y, state.clip.width, state.clip.height);
+    // state.context.stroke();
 };
 
 const FADE_OUT = (state) => { };
@@ -202,16 +207,25 @@ const SAVE_IMAGE1 = (state, x, y, width, height) => {
 };
 
 const TTM_UNKNOWN_4 = (state, x, y, width, height) => {
-    // state.context.fillStyle = getPaletteColor(1);
-    // state.context.fillRect(x, y, width, height);
+    console.log('TTM_UNKNOWN_4', state.clip);
+    state.context.strokeStyle = getPaletteColor(PALETTE[12]);
+    state.context.lineWidth = '3';
+    state.context.rect(x, y, width, height);
+    state.context.stroke();
 };
 const TTM_UNKNOWN_5 = (state, x, y, width, height) => {
-    // state.context.fillStyle = getPaletteColor(2);
-    // state.context.fillRect(x, y, width, height);
+    console.log('TTM_UNKNOWN_5', state.clip);
+    state.context.strokeStyle = getPaletteColor(PALETTE[12]);
+    state.context.lineWidth = '3';
+    state.context.rect(x, y, width, height);
+    state.context.stroke();
 };
 const TTM_UNKNOWN_6 = (state, x, y, width, height) => {
-    // state.context.fillStyle = getPaletteColor(3);
-    // state.context.fillRect(x, y, width, height);
+    console.log('TTM_UNKNOWN_6', state.clip);
+    state.context.strokeStyle = getPaletteColor(PALETTE[12]);
+    state.context.lineWidth = '3';
+    state.context.rect(x, y, width, height);
+    state.context.stroke();
 };
 
 const DRAW_LINE = (state, x1, y1, x2, y2) => {
@@ -247,12 +261,14 @@ const DRAW_SPRITE = (state, offsetX, offsetY, index, slot) => {
     }
     const image = state.res[slot].images[index];
     if (image !== undefined) {
+        state.context.save();
         state.context.beginPath();
         state.context.rect(state.clip.x, state.clip.y, state.clip.width, state.clip.height);
         state.context.clip();
 
         drawImage(image, state.tmpContext, 0, 0);
         state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, offsetX, offsetY, image.width, image.height);
+        state.context.restore();
     }
 };
 
@@ -262,6 +278,7 @@ const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
     }
     const image = state.res[slot].images[index];
     if (image !== undefined) {
+        state.context.save();
         state.context.beginPath();
         state.context.rect(state.clip.x, state.clip.y, state.clip.width, state.clip.height);
         state.context.clip();
@@ -271,6 +288,7 @@ const DRAW_SPRITE_FLIP = (state, offsetX, offsetY, index, slot) => {
         state.context.translate(image.width, 0);
         state.context.scale(-1, 1);
         state.context.drawImage(state.tmpContext.canvas, 0, 0, image.width, image.height, -offsetX, offsetY, image.width, image.height);
+        state.context.restore();
         state.context.restore();
     }
 };
