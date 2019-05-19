@@ -89,15 +89,15 @@ function dumpMovieScripts(filepath, resindex) {
                         command += os.EOL;
                     }
                     command += `${type.command} `;
+                    if (type.command === 'SET_SCENE' && c.name) {
+                        command += c.name;
+                    }
                 } else {
                     command = 'UNKNOWN ';
                 }
                 for (let p = 0; p < c.params.length; p++) {
                     command += `${c.params[p]} `;
                 }
-                /*if (c.name) {
-                    command += c.name
-                }*/
                 command += os.EOL;
                 fs.appendFileSync(path.join(dumppath, `${e.name}_script.txt`), command);
             }

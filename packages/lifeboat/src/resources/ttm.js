@@ -130,14 +130,19 @@ export function loadTTMResourceEntry(entry) {
         for (let p = 0; p < command.params.length; p++) {
             command.line += `${command.params[p]} `;
         }
-        /*if (command.name) {
-            command.line += command.name
-        }*/
+        if (command.name) {
+            command.line += command.name.toUpperCase();
+        }
 
         lineNumber++;
         scripts.push(command);
         sceneScripts.push(command);
     }
+
+    scenes.push({
+        tagId: prevTagId,
+        script: sceneScripts
+    });
 
     return {
         name: entry.name,
