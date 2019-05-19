@@ -193,39 +193,31 @@ const SAVE_IMAGE0 = (state, x, y, width, height) => {
 };
 
 const SAVE_IMAGE1 = (state, x, y, width, height) => {
-    const save = state.save[state.saveIndex];
-    save.canDraw = true;
-    save.x = x;
-    save.y = y;
-    save.width = width;
-    save.height = height;
-    save.context.drawImage(
-        state.context.canvas,
-        x, y, width, height,
-        x, y, width, height,
-    );
+    SAVE_IMAGE0(state, x, y, width, height);
 };
 
 const TTM_UNKNOWN_4 = (state, x, y, width, height) => {
-    console.log('TTM_UNKNOWN_4', state.clip);
-    state.context.strokeStyle = getPaletteColor(PALETTE[12]);
-    state.context.lineWidth = '3';
-    state.context.rect(x, y, width, height);
-    state.context.stroke();
+    // console.log('TTM_UNKNOWN_4', state.clip);
+    // state.context.strokeStyle = getPaletteColor(PALETTE[12]);
+    // state.context.lineWidth = '3';
+    // state.context.rect(x, y, width, height);
+    // state.context.stroke();
 };
 const TTM_UNKNOWN_5 = (state, x, y, width, height) => {
-    console.log('TTM_UNKNOWN_5', state.clip);
-    state.context.strokeStyle = getPaletteColor(PALETTE[12]);
-    state.context.lineWidth = '3';
-    state.context.rect(x, y, width, height);
-    state.context.stroke();
+    // SAVE_IMAGE0(state, x, y, width, height);
+
+    // console.log('TTM_UNKNOWN_5', state.clip);
+    // state.context.strokeStyle = getPaletteColor(PALETTE[12]);
+    // state.context.lineWidth = '3';
+    // state.context.rect(x, y, width, height);
+    // state.context.stroke();
 };
 const TTM_UNKNOWN_6 = (state, x, y, width, height) => {
-    console.log('TTM_UNKNOWN_6', state.clip);
-    state.context.strokeStyle = getPaletteColor(PALETTE[12]);
-    state.context.lineWidth = '3';
-    state.context.rect(x, y, width, height);
-    state.context.stroke();
+    // console.log('TTM_UNKNOWN_6', state.clip);
+    // state.context.strokeStyle = getPaletteColor(PALETTE[12]);
+    // state.context.lineWidth = '3';
+    // state.context.rect(x, y, width, height);
+    // state.context.stroke();
 };
 
 const DRAW_LINE = (state, x1, y1, x2, y2) => {
@@ -605,7 +597,7 @@ const CommandType = [
 ];
 
 const runScript = (state, script, main = false) => {
-    if (script === undefined) {
+    if (script === undefined || state.reentry === -1) {
         return true;
     }
     for (let i = state.reentry; i < script.length; i++) {
