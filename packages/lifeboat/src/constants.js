@@ -2,7 +2,7 @@
 export const INDEX_STRING_SIZE = 12;
 
 export const PALETTE = [
-    { a: 0,   r: 168, g: 0,   b: 168 },
+    { a: 0, r: 168, g: 0,   b: 168 },
     { a: 255, r: 0,   g: 0,   b: 168 },
     { a: 255, r: 0,   g: 168, b: 0   },
     { a: 255, r: 0,   g: 168, b: 168 },

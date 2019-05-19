@@ -84,7 +84,10 @@ export function loadADSResourceEntry(entry) {
     let lineNumber = 1;
     let indent = 0;
     let innerOffset = 0;
+    let prevTagId = 0;
     const scripts = [];
+    const scenes = [];
+    let sceneScripts = [];
     while (innerOffset < uncompressedSize) {
         let opcode = data.getUint16(innerOffset, true);
         innerOffset += 2;
@@ -102,7 +105,7 @@ export function loadADSResourceEntry(entry) {
             command.line += `${c.command} `;
 
             for (let b = 0; b < size; b++) {
-                const param = data.getUint16(innerOffset, true);
+                const param = data.getInt16(innerOffset, true);
                 command.params.push(param);
                 innerOffset += 2;
 
@@ -131,11 +134,20 @@ export function loadADSResourceEntry(entry) {
                 indent = 0;
                 command.lineNumber = lineNumber; 
             }
+            sceneScripts.push(command);
         } else {
             command.tag = tags.find(t => t.id === command.opcode);
             command.line += `${command.tag.description}`;
             command.indent = 0;
             indent = 0;
+            if (prevTagId) {
+                scenes.push({
+                    tagId: prevTagId,
+                    script: sceneScripts
+                });
+            }
+            sceneScripts = []; // reset scene script
+            prevTagId = command.tag;
         }
 
         lineNumber++;
@@ -151,5 +163,6 @@ export function loadADSResourceEntry(entry) {
         tags,
         buffer: data,
         scripts,
+        scenes,
     };
 }

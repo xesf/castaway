@@ -24,6 +24,7 @@ export const ResourceType = [
 
 const ResourceView = ({ entries, data }) => {
     const canvasRef = useRef();
+    const mainCanvasRef = useRef();
     const [script, setScript] = useState();
 
     const updateScriptLine = (s) => {
@@ -36,8 +37,7 @@ const ResourceView = ({ entries, data }) => {
                 stopProcess();
 
                 const context = canvasRef.current.getContext("2d");
-                context.fillStyle = 'black';
-                context.fillRect(0, 0, 640, 480);
+                context.clearRect(0, 0, 640, 480);
                 
                 const resType = ResourceType.find(r => r.type === data.type);    
                 if (resType !== undefined) {
@@ -45,9 +45,13 @@ const ResourceView = ({ entries, data }) => {
                 
                     if (resType.type === 'ADS' ||
                         resType.type === 'TTM') {
+                        const mainContext = mainCanvasRef.current.getContext("2d");
+                        context.clearRect(0, 0, 640, 480);
+
                         startProcess({
                             type: resType.type,
                             context,
+                            mainContext,
                             data,
                             entries,
                             callback: updateScriptLine
@@ -60,11 +64,21 @@ const ResourceView = ({ entries, data }) => {
         },
         [data]
     );
+
+    if (data.type !== 'ADS' &&
+        data.type !== 'TTM') {
+        return (<React.Fragment>
+            <div style={{ display: 'block', width: '100%', height: '500px', overflowX: 'auto'}}>
+                <canvas ref={canvasRef} width="640" height="480" />
+            </div>
+        </React.Fragment>);
+    }
     
     return (
         <React.Fragment>
-            <div style={{ display: 'block', width: '100%', overflowX: 'auto'}}>
-                <canvas ref={canvasRef} width="640" height="480" />
+            <div style={{ display: 'block', width: '100%', height: '500px', overflowX: 'auto'}}>
+                <canvas ref={mainCanvasRef} width="640" height="480" style={{ position: 'absolute', zIndex: '0' }} />
+                <canvas ref={canvasRef} width="640" height="480" style={{ position: 'absolute', zIndex: '1' }} />
             </div>
             {data.scripts &&
                 <div style={{
