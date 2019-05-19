@@ -124,14 +124,14 @@ export function loadTTMResourceEntry(entry) {
         command.line = ''; // [0x${c.opcode.toString(16)}] 
         if (type !== undefined) {
             command.line += `${type.command} `;
+            if (command.opcode == 0x1110 && command.name) {
+                command.line += command.name.toUpperCase();
+            }
         } else {
             command.line = 'UNKNOWN ';
         }
         for (let p = 0; p < command.params.length; p++) {
             command.line += `${command.params[p]} `;
-        }
-        if (command.name) {
-            command.line += command.name.toUpperCase();
         }
 
         lineNumber++;
