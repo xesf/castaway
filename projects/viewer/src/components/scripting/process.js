@@ -11,6 +11,7 @@ let elapsed = null;
 const fps = 1000 / 60;
 
 let state = null;
+let currentScene = 0;
 
 let bkgScreen = null;
 let bkgRes = null;
@@ -99,7 +100,11 @@ const drawBackground = (state, context) => {
 
 // TTM COMMANDS
 const SAVE_BACKGROUND = (state) => { };
-const DRAW_BACKGROUND = (state) => { };
+
+const DRAW_BACKGROUND = (state) => {
+    drawBackground(state, state.mainContext);
+};
+
 const PURGE = (state) => {
     // state.purge = true;
 };
@@ -134,7 +139,7 @@ const SLOT_IMAGE = (state, slot) => {
 const SLOT_PALETTE = (state) => { };
 const TTM_UNKNOWN_0 = (state) => { };
 
-const SET_SCENE = (state) => { };
+const SET_SCENE = (state) => {};
 
 const SET_BACKGROUND = (state, index) => {
     state.saveIndex = index;
@@ -408,7 +413,6 @@ const IF_PLAYED = (state, sceneIdx, tagId) => {
     const scene = state.scenes.find(s => 
         s.sceneIdx === sceneIdx && s.tagId === tagId
         && s.state.played);
-
     if (scene !== undefined) {
         STOP_SCENE(state, sceneIdx, tagId, 0);
         state.continue = true;
@@ -420,7 +424,16 @@ const IF_RUNNING = (state) => { };
 const AND = (state) => { };
 const OR = (state) => { };
 
-const PLAY_SCENE = (state) => { }; // runScripts has the continue logic 
+const PLAY_SCENE = (state) => {
+    if (state.continue) {
+        state.continue = false;
+    }
+    let canContinue = false
+    state.scenes.forEach(s => {
+        canContinue = canContinue | (s.state.runs > 0) ? true : false;
+    });
+    state.continue = canContinue;
+}; // runScripts has the continue logic 
 const PLAY_SCENE_2 = (state) => { };
 
 const initialState = {
@@ -492,8 +505,31 @@ const ADS_FADE_OUT = (state) => { };
 const RUN_SCRIPT = (state) => { };
 
 const END = (state) => {
-    // clearScreen(state, 0);
-    state.scenes = [];
+    if (!state.continue) {
+        state.continue = true;
+    } else if (state.continue) {
+        state.continue = false;
+        console.log('end pause', state.lastCommand);
+    }
+    const scene = state.scenes.find(s => s.state.played);
+    if (state.lastCommand && scene !== undefined) {
+        state.scenes = [];
+        state.continue = true;
+        console.log('end resume', state.lastCommand);
+    }
+    // if (!state.continue && !state.lastCommand) {
+    //     console.log('last command', state.lastCommand);
+    //     state.continue = true;
+    // }
+    
+    // // TODO this should be place elsewhere
+    // // reset clouds
+    // cloudIdx = Math.floor((Math.random() * 3) + 15);
+    // cloudX = Math.floor((Math.random() * 640));
+    // cloudY = Math.floor((Math.random() * 80));
+    // let oceanIdx = Math.floor((Math.random() * 4)); // 0 to 3 (adding night for now)
+    // bkgScreen = bkgOcean[oceanIdx];
+    // drawBackground(state, state.mainContext);
 };
 
 // CUSTOM COMMAND
@@ -563,7 +599,7 @@ const CommandType = [
     { opcode: 0xfff0, callback: END_IF },
 ];
 
-const runScript = (state, script) => {
+const runScript = (state, script, main = false) => {
     if (script === undefined) {
         return true;
     }
@@ -572,6 +608,12 @@ const runScript = (state, script) => {
         const type = CommandType.find(ct => ct.opcode === c.opcode);
         if (!type) {
             continue;
+        }
+        if (main) {
+            console.log(c.line);
+        }
+        if (i === (script.length - 1)) {
+            state.lastCommand = true;
         }
         type.callback(state, ...c.params);
         state.reentry = i;
@@ -587,6 +629,10 @@ const runScript = (state, script) => {
             state.continue = true;
         }
         state.played = true;
+        if (main) {
+            console.log('very last command', state.lastCommand);
+            currentScene++;
+        }
     }
     return false;
 };
@@ -598,19 +644,22 @@ const runScripts = () => {
         drawBackground(state, state.mainContext);
     }
 
-    let canContinue = false;
-    let exitFrame = runScript(state, state.data.scripts);
+    const script = state.data.scenes[currentScene].script;
+    let exitFrame = runScript(state, script, true);
     
-    state.scenes.forEach(s => {
-        runScript(s.state, s.script);
-        canContinue |= s.state.runs > 0;
-    });
+    if (!state.continue) {
+        let canContinue = false;
+        state.scenes.forEach(s => {
+            runScript(s.state, s.script);
+            canContinue = canContinue | (s.state.runs > 0) ? true : false;
+        });
 
-    state.scenes.forEach(s => {
-        state.context.drawImage(s.state.context.canvas, 0, 0);
-    });
-
-    state.continue = canContinue;
+        state.scenes.forEach(s => {
+            state.context.drawImage(s.state.context.canvas, 0, 0);
+        });
+    
+        state.continue = canContinue;
+    }
     return exitFrame;
 };
 
@@ -629,7 +678,7 @@ export const startProcess = (initialState) => {
         // this should be for multiple running scripts
         reentry: 0,
         elapsed: 0,
-        delay: 1,
+        delay: 0,
         continue: true,
         frameId: null,
         island: 1,
@@ -642,7 +691,6 @@ export const startProcess = (initialState) => {
         type: null,
         skip: false,
         randomize: false,
-        played: [],
         purge: false,
         played: false,
         runs: 0,
@@ -684,7 +732,7 @@ export const startProcess = (initialState) => {
             }
         });
     }
-
+    console.log(state.data.scenes);
     mainloop();
 
     return state;
