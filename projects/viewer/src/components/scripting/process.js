@@ -519,19 +519,6 @@ const END = (state) => {
         state.continue = true;
         console.log('end resume', state.lastCommand);
     }
-    // if (!state.continue && !state.lastCommand) {
-    //     console.log('last command', state.lastCommand);
-    //     state.continue = true;
-    // }
-    
-    // // TODO this should be place elsewhere
-    // // reset clouds
-    // cloudIdx = Math.floor((Math.random() * 3) + 15);
-    // cloudX = Math.floor((Math.random() * 640));
-    // cloudY = Math.floor((Math.random() * 80));
-    // let oceanIdx = Math.floor((Math.random() * 4)); // 0 to 3 (adding night for now)
-    // bkgScreen = bkgOcean[oceanIdx];
-    // drawBackground(state, state.mainContext);
 };
 
 // CUSTOM COMMAND
@@ -634,32 +621,43 @@ const runScript = (state, script, main = false) => {
         if (main) {
             currentScene++;
         }
+        if (state.type === 'TTM') {
+            return true;
+        }
     }
     return false;
 };
 
 const runScripts = () => {
-    let exitFrame = false;
-    clearContext(state.context);
-    
-    if (state.island) {
-        drawBackground(state, state.mainContext);
-    }
+    if (state.type === 'ADS') {
+        let exitFrame = false;
 
-    const scene = state.data.scenes[currentScene];
-    if (scene !== undefined) {
-        exitFrame = runScript(state, scene.script, true);
-    }
+        clearContext(state.context);
+
+        if (state.island) {
+            drawBackground(state, state.mainContext);
+        }
     
-    if (!state.continue) {
-        state.scenes.forEach(s => {
-            runScript(s.state, s.script);
-        });
-        state.scenes.forEach(s => {
-            state.context.drawImage(s.state.context.canvas, 0, 0);
-        });
+        const scene = state.data.scenes[currentScene];
+        if (scene !== undefined) {
+            exitFrame = runScript(state, scene.script, true);
+        }
+        
+        if (!state.continue) {
+            state.scenes.forEach(s => {
+                runScript(s.state, s.script);
+            });
+            state.scenes.forEach(s => {
+                state.context.drawImage(s.state.context.canvas, 0, 0);
+            });
+        }
+        return exitFrame;
+    } else {
+        if (state.island) {
+            drawBackground(state, state.mainContext);
+        }
+        return runScript(state, state.data.scripts);
     }
-    return exitFrame;
 };
 
 export const startProcess = (initialState) => {
