@@ -380,12 +380,12 @@ const loadOcean = (state) => {
 const LOAD_SCREEN = (state, name) => {
     state.island = SCREEN_TYPE[name];
     
-    // if (!bkgScreen) {
-    //     const entry = state.entries.find(e => e.name === name);
-    //     if (entry !== undefined) {
-    //         bkgScreen = loadResourceEntry(entry);
-    //     }
-    // }
+    if (!bkgScreen) {
+        const entry = state.entries.find(e => e.name === name);
+        if (entry !== undefined) {
+            bkgScreen = loadResourceEntry(entry);
+        }
+    }
 
     if (state.island) {
         loadBackground(state);
@@ -529,13 +529,11 @@ const END = (state) => {
         state.continue = true;
     } else if (state.continue) {
         state.continue = false;
-        console.log('end pause', state.lastCommand);
     }
     const scene = state.scenes.find(s => s.state.played);
     if (state.lastCommand && scene !== undefined) {
         state.scenes = [];
         state.continue = true;
-        console.log('end resume', state.lastCommand);
     }
 };
 
