@@ -13,6 +13,10 @@ const fps = 1000 / 60;
 let state = null;
 let currentScene = 0;
 
+let scenesRes = [];
+let scenes = [];
+// let removeScenes = [];
+
 let bkgScreen = null;
 let bkgRes = null;
 let bkgOcean = [];
@@ -159,7 +163,11 @@ const SET_COLORS = (state, fc, bc) => {
 };
 
 const SET_FRAME1 = (state) => { };
-const SET_TIMER = (state) => { };
+const SET_TIMER = (state, delay, timer) => {
+    // state.delay = ((delay === 0 ? 1 : delay) * 20);
+    state.timer = timer * 20;
+    state.elapsedTimer = state.timer + Date.now();
+};
 
 const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
     state.clip = {
@@ -420,11 +428,17 @@ const IF_PLAYED = (state, sceneIdx, tagId) => {
     if (state.continue) {
         state.continue = false;
     }
-    const scene = state.scenes.find(s => 
+    const scene = scenes.find(s => 
         s.sceneIdx === sceneIdx && s.tagId === tagId
         && s.state.played);
     if (scene !== undefined) {
-        STOP_SCENE(state, sceneIdx, tagId, 0);
+        // removeScenes.push({
+        //     sceneIdx,
+        //     tagId,
+        // });
+        if (!scene.state.timer) {
+            STOP_SCENE(state, sceneIdx, tagId, 0);
+        }
         state.continue = true;
     }
 };
@@ -439,11 +453,29 @@ const PLAY_SCENE = (state) => {
         state.continue = false;
     }
     let canContinue = false
-    state.scenes.forEach(s => {
+    scenes.forEach(s => {
         canContinue = canContinue | (s.state.runs > 0) ? true : false;
+        // if (s.state.elapsedTimer && Date.now() > s.state.elapsedTimer) {
+        //     removeScenes.push({
+        //         sceneIdx: s.sceneIdx,
+        //         tagId: s.tagId,
+        //     });
+        // }
     });
+
+    // if (removeScenes.length > 0) {
+    //     removeScenes.forEach(s => {
+    //         STOP_SCENE(state, s.sceneIdx, s.tagId, 0);
+    //     });
+    //     removeScenes = [];
+    // }
+    if (scenes.length === 0) {
+        canContinue = true;
+    }
+    
     state.continue = canContinue;
 }; // runScripts has the continue logic 
+
 const PLAY_SCENE_2 = (state) => { };
 
 const initialState = {
@@ -453,11 +485,14 @@ const initialState = {
     played: false,
     continue: true,
     skip: false,
-    island: 1
+    island: 1,
+    elapsedTimer: 0,
+    timer: 0,
+    delay: 0,
 };
 
 const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {    
-    const ttm = state.scenesRes[sceneIdx - 1];
+    const ttm = scenesRes[sceneIdx - 1];
     if (ttm === undefined || ttm.scenes === undefined) {
         console.log('add failed ttm', sceneIdx, tagId);
         return;
@@ -477,22 +512,22 @@ const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {
         console.log('add failed script', sceneIdx, tagId, scene, ttm);
         return;
     }
-    if (!state.scenes.length) {
+    if (!scenes.length) {
         s.script.unshift(...ttm.scenes[0].script);
         s.state = Object.assign({}, state, stateInit);
     } else {
-        s.state = Object.assign({}, state.scenes[0].state, stateInit);
+        s.state = Object.assign({}, scenes[0].state, stateInit);
     }
     console.log(s);
-    state.scenes.push(s);
+    scenes.push(s);
 };
 
 const STOP_SCENE = (state, sceneIdx, tagId, retries) => {
-    const scenes = state.scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
-    if (scenes !== undefined) {
-        state.scenes = scenes;
+    const s = scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    if (s !== undefined) {
+        scenes = s;
     } else {
-        state.scenes = [];
+        scenes = [];
     }
 };
 
@@ -503,11 +538,11 @@ const RANDOM_START = (state) => {
 const RANDOM_UNKNOWN_0 = (state) => { };
 
 const RANDOM_END = (state) => {
-    const index = Math.floor((Math.random() * state.scenes.length));
-    const scene = state.scenes[index];
+    const index = Math.floor((Math.random() * scenes.length));
+    const scene = scenes[index];
     if (scene !== undefined) {
         const tagId = scene.tagId;
-        state.scenes = state.scenes.filter(s => s.tagId === tagId);
+        scenes = scenes.filter(s => s.tagId === tagId);
     }
     state.randomize = false;
 };
@@ -522,9 +557,9 @@ const END = (state) => {
     } else if (state.continue) {
         state.continue = false;
     }
-    const scene = state.scenes.find(s => s.state.played);
+    const scene = scenes.find(s => s.state.played);
     if (state.lastCommand && scene !== undefined) {
-        state.scenes = [];
+        scenes = [];
         state.continue = true;
     }
 };
@@ -652,10 +687,10 @@ const runScripts = () => {
         }
         
         if (!state.continue) {
-            state.scenes.forEach(s => {
+            scenes.forEach(s => {
                 runScript(s.state, s.script);
             });
-            state.scenes.forEach(s => {
+            scenes.forEach(s => {
                 state.context.drawImage(s.state.context.canvas, 0, 0);
             });
         }
@@ -683,13 +718,12 @@ export const startProcess = (initialState) => {
         // this should be for multiple running scripts
         reentry: 0,
         elapsed: 0,
+        elapsedTimer: 0,
         delay: 0,
+        timer: 0,
         continue: true,
         frameId: null,
         island: 1,
-        scenesRes: [],
-        scenesState: [],
-        scenes: [],
         foregroundColor: PALETTE[0],
         backgroundColor: PALETTE[0],
         clip: { x: 0, y: 0, width: 640, height: 480 },
@@ -734,7 +768,7 @@ export const startProcess = (initialState) => {
         state.data.resources.forEach(r => {
             const entry = state.entries.find(e => e.name === r.name);
             if (entry !== undefined) {
-                state.scenesRes.push(loadResourceEntry(entry));
+                scenesRes.push(loadResourceEntry(entry));
             }
         });
     }
