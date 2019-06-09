@@ -106,6 +106,7 @@ const drawBackground = (state, context) => {
 const SAVE_BACKGROUND = (state) => { };
 
 const DRAW_BACKGROUND = (state) => {
+    // RESTORE_REGION(state, 0, 0, 0, 0);
     drawBackground(state, state.mainContext);
 };
 
@@ -186,13 +187,14 @@ const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
 const FADE_OUT = (state) => { };
 const FADE_IN = (state) => { };
 
-const SAVE_IMAGE0 = (state, x, y, width, height) => {
-    const save = state.save[state.saveIndex];
+const DRAW_BACKGROUND_REGION = (state, x, y, width, height) => {
+    const save = state.saveBkg[0];
     save.canDraw = true;
     save.x = x;
     save.y = y;
     save.width = width;
     save.height = height;
+
     save.context.drawImage(
         state.context.canvas,
         x, y, width, height,
@@ -200,8 +202,19 @@ const SAVE_IMAGE0 = (state, x, y, width, height) => {
     );
 };
 
-const SAVE_IMAGE1 = (state, x, y, width, height) => {
-    SAVE_IMAGE0(state, x, y, width, height);
+const SAVE_IMAGE_REGION = (state, x, y, width, height) => {
+    // const save = state.save[state.saveIndex];
+    // save.canDraw = true;
+    // save.x = x;
+    // save.y = y;
+    // save.width = width;
+    // save.height = height;
+    
+    // save.context.drawImage(
+    //     state.context.canvas,
+    //     x, y, width, height,
+    //     x, y, width, height,
+    // );
 };
 
 const TTM_UNKNOWN_4 = (state, x, y, width, height) => {
@@ -211,21 +224,24 @@ const TTM_UNKNOWN_4 = (state, x, y, width, height) => {
     // state.context.rect(x, y, width, height);
     // state.context.stroke();
 };
-const TTM_UNKNOWN_5 = (state, x, y, width, height) => {
-    // SAVE_IMAGE0(state, x, y, width, height);
 
-    // console.log('TTM_UNKNOWN_5', state.clip);
-    // state.context.strokeStyle = getPaletteColor(PALETTE[12]);
-    // state.context.lineWidth = '3';
-    // state.context.rect(x, y, width, height);
-    // state.context.stroke();
+const SAVE_REGION = (state, x, y, width, height) => {
+    // state.clip = {
+    //     x,
+    //     y,
+    //     width,
+    //     height,
+    // };
 };
-const TTM_UNKNOWN_6 = (state, x, y, width, height) => {
-    // console.log('TTM_UNKNOWN_6', state.clip);
-    // state.context.strokeStyle = getPaletteColor(PALETTE[12]);
-    // state.context.lineWidth = '3';
-    // state.context.rect(x, y, width, height);
-    // state.context.stroke();
+
+const RESTORE_REGION = (state, x, y, width, height) => {
+    const save = state.saveBkg[0];
+    save.canDraw = false;
+    save.x = 0;
+    save.y = 0;
+    save.width = 0;
+    save.height = 0;
+    clearContext(save.context);
 };
 
 const DRAW_LINE = (state, x1, y1, x2, y2) => {
@@ -586,11 +602,11 @@ const CommandType = [
     { opcode: 0x4000, callback: SET_CLIP_REGION },
     { opcode: 0x4110, callback: FADE_OUT },
     { opcode: 0x4120, callback: FADE_IN },
-    { opcode: 0x4200, callback: SAVE_IMAGE0 },
-    { opcode: 0x4210, callback: SAVE_IMAGE1 },
+    { opcode: 0x4200, callback: DRAW_BACKGROUND_REGION },
+    { opcode: 0x4210, callback: SAVE_IMAGE_REGION },
     { opcode: 0xA000, callback: TTM_UNKNOWN_4 },
-    { opcode: 0xA050, callback: TTM_UNKNOWN_5 },
-    { opcode: 0xA060, callback: TTM_UNKNOWN_6 },
+    { opcode: 0xA050, callback: SAVE_REGION },
+    { opcode: 0xA060, callback: RESTORE_REGION },
     { opcode: 0xA0A0, callback: DRAW_LINE },
     { opcode: 0xA100, callback: DRAW_RECT },
     { opcode: 0xA400, callback: DRAW_BUBBLE },
@@ -680,6 +696,10 @@ const runScripts = () => {
         if (state.island) {
             drawBackground(state, state.mainContext);
         }
+        const saveBkg = state.saveBkg[0];
+        if (saveBkg.canDraw) {
+            state.context.drawImage(saveBkg.context.canvas, 0, 0);
+        }
     
         const scene = state.data.scenes[currentScene];
         if (scene !== undefined) {
@@ -712,6 +732,7 @@ export const startProcess = (initialState) => {
         mainContext: null,
         save: [],
         saveIndex: 0,
+        saveBkg: [],
         audioManager: null,
         slot: 0,
         res: [],
@@ -761,6 +782,18 @@ export const startProcess = (initialState) => {
             canDraw: false,
         });
     }
+
+    const c = document.createElement("canvas");
+    c.width = 640;
+    c.height = 480;
+    state.saveBkg.push({
+        context: c.getContext('2d'),
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        canDraw: false,
+    });
 
     state.audioManager = createAudioManager({ soundFxVolume: 0.50 });
 
