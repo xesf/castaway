@@ -13,6 +13,10 @@ const fps = 1000 / 60;
 let state = null;
 let currentScene = 0;
 
+let scenesRes = [];
+let scenes = [];
+// let removeScenes = [];
+
 let bkgScreen = null;
 let bkgRes = null;
 let bkgOcean = [];
@@ -102,6 +106,7 @@ const drawBackground = (state, context) => {
 const SAVE_BACKGROUND = (state) => { };
 
 const DRAW_BACKGROUND = (state) => {
+    // RESTORE_REGION(state, 0, 0, 0, 0);
     drawBackground(state, state.mainContext);
 };
 
@@ -159,7 +164,11 @@ const SET_COLORS = (state, fc, bc) => {
 };
 
 const SET_FRAME1 = (state) => { };
-const SET_TIMER = (state) => { };
+const SET_TIMER = (state, delay, timer) => {
+    // state.delay = ((delay === 0 ? 1 : delay) * 20);
+    state.timer = timer * 20;
+    state.elapsedTimer = state.timer + Date.now();
+};
 
 const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
     state.clip = {
@@ -178,13 +187,14 @@ const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
 const FADE_OUT = (state) => { };
 const FADE_IN = (state) => { };
 
-const SAVE_IMAGE0 = (state, x, y, width, height) => {
-    const save = state.save[state.saveIndex];
+const DRAW_BACKGROUND_REGION = (state, x, y, width, height) => {
+    const save = state.saveBkg[0];
     save.canDraw = true;
     save.x = x;
     save.y = y;
     save.width = width;
     save.height = height;
+
     save.context.drawImage(
         state.context.canvas,
         x, y, width, height,
@@ -192,8 +202,19 @@ const SAVE_IMAGE0 = (state, x, y, width, height) => {
     );
 };
 
-const SAVE_IMAGE1 = (state, x, y, width, height) => {
-    SAVE_IMAGE0(state, x, y, width, height);
+const SAVE_IMAGE_REGION = (state, x, y, width, height) => {
+    // const save = state.save[state.saveIndex];
+    // save.canDraw = true;
+    // save.x = x;
+    // save.y = y;
+    // save.width = width;
+    // save.height = height;
+    
+    // save.context.drawImage(
+    //     state.context.canvas,
+    //     x, y, width, height,
+    //     x, y, width, height,
+    // );
 };
 
 const TTM_UNKNOWN_4 = (state, x, y, width, height) => {
@@ -203,21 +224,24 @@ const TTM_UNKNOWN_4 = (state, x, y, width, height) => {
     // state.context.rect(x, y, width, height);
     // state.context.stroke();
 };
-const TTM_UNKNOWN_5 = (state, x, y, width, height) => {
-    // SAVE_IMAGE0(state, x, y, width, height);
 
-    // console.log('TTM_UNKNOWN_5', state.clip);
-    // state.context.strokeStyle = getPaletteColor(PALETTE[12]);
-    // state.context.lineWidth = '3';
-    // state.context.rect(x, y, width, height);
-    // state.context.stroke();
+const SAVE_REGION = (state, x, y, width, height) => {
+    // state.clip = {
+    //     x,
+    //     y,
+    //     width,
+    //     height,
+    // };
 };
-const TTM_UNKNOWN_6 = (state, x, y, width, height) => {
-    // console.log('TTM_UNKNOWN_6', state.clip);
-    // state.context.strokeStyle = getPaletteColor(PALETTE[12]);
-    // state.context.lineWidth = '3';
-    // state.context.rect(x, y, width, height);
-    // state.context.stroke();
+
+const RESTORE_REGION = (state, x, y, width, height) => {
+    const save = state.saveBkg[0];
+    save.canDraw = false;
+    save.x = 0;
+    save.y = 0;
+    save.width = 0;
+    save.height = 0;
+    clearContext(save.context);
 };
 
 const DRAW_LINE = (state, x1, y1, x2, y2) => {
@@ -420,11 +444,17 @@ const IF_PLAYED = (state, sceneIdx, tagId) => {
     if (state.continue) {
         state.continue = false;
     }
-    const scene = state.scenes.find(s => 
+    const scene = scenes.find(s => 
         s.sceneIdx === sceneIdx && s.tagId === tagId
         && s.state.played);
     if (scene !== undefined) {
-        STOP_SCENE(state, sceneIdx, tagId, 0);
+        // removeScenes.push({
+        //     sceneIdx,
+        //     tagId,
+        // });
+        if (!scene.state.timer) {
+            STOP_SCENE(state, sceneIdx, tagId, 0);
+        }
         state.continue = true;
     }
 };
@@ -439,11 +469,29 @@ const PLAY_SCENE = (state) => {
         state.continue = false;
     }
     let canContinue = false
-    state.scenes.forEach(s => {
+    scenes.forEach(s => {
         canContinue = canContinue | (s.state.runs > 0) ? true : false;
+        // if (s.state.elapsedTimer && Date.now() > s.state.elapsedTimer) {
+        //     removeScenes.push({
+        //         sceneIdx: s.sceneIdx,
+        //         tagId: s.tagId,
+        //     });
+        // }
     });
+
+    // if (removeScenes.length > 0) {
+    //     removeScenes.forEach(s => {
+    //         STOP_SCENE(state, s.sceneIdx, s.tagId, 0);
+    //     });
+    //     removeScenes = [];
+    // }
+    if (scenes.length === 0) {
+        canContinue = true;
+    }
+    
     state.continue = canContinue;
 }; // runScripts has the continue logic 
+
 const PLAY_SCENE_2 = (state) => { };
 
 const initialState = {
@@ -453,11 +501,14 @@ const initialState = {
     played: false,
     continue: true,
     skip: false,
-    island: 1
+    island: 1,
+    elapsedTimer: 0,
+    timer: 0,
+    delay: 0,
 };
 
 const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {    
-    const ttm = state.scenesRes[sceneIdx - 1];
+    const ttm = scenesRes[sceneIdx - 1];
     if (ttm === undefined || ttm.scenes === undefined) {
         console.log('add failed ttm', sceneIdx, tagId);
         return;
@@ -477,22 +528,22 @@ const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {
         console.log('add failed script', sceneIdx, tagId, scene, ttm);
         return;
     }
-    if (!state.scenes.length) {
+    if (!scenes.length) {
         s.script.unshift(...ttm.scenes[0].script);
         s.state = Object.assign({}, state, stateInit);
     } else {
-        s.state = Object.assign({}, state.scenes[0].state, stateInit);
+        s.state = Object.assign({}, scenes[0].state, stateInit);
     }
     console.log(s);
-    state.scenes.push(s);
+    scenes.push(s);
 };
 
 const STOP_SCENE = (state, sceneIdx, tagId, retries) => {
-    const scenes = state.scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
-    if (scenes !== undefined) {
-        state.scenes = scenes;
+    const s = scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    if (s !== undefined) {
+        scenes = s;
     } else {
-        state.scenes = [];
+        scenes = [];
     }
 };
 
@@ -503,11 +554,11 @@ const RANDOM_START = (state) => {
 const RANDOM_UNKNOWN_0 = (state) => { };
 
 const RANDOM_END = (state) => {
-    const index = Math.floor((Math.random() * state.scenes.length));
-    const scene = state.scenes[index];
+    const index = Math.floor((Math.random() * scenes.length));
+    const scene = scenes[index];
     if (scene !== undefined) {
         const tagId = scene.tagId;
-        state.scenes = state.scenes.filter(s => s.tagId === tagId);
+        scenes = scenes.filter(s => s.tagId === tagId);
     }
     state.randomize = false;
 };
@@ -522,9 +573,9 @@ const END = (state) => {
     } else if (state.continue) {
         state.continue = false;
     }
-    const scene = state.scenes.find(s => s.state.played);
+    const scene = scenes.find(s => s.state.played);
     if (state.lastCommand && scene !== undefined) {
-        state.scenes = [];
+        scenes = [];
         state.continue = true;
     }
 };
@@ -551,11 +602,11 @@ const CommandType = [
     { opcode: 0x4000, callback: SET_CLIP_REGION },
     { opcode: 0x4110, callback: FADE_OUT },
     { opcode: 0x4120, callback: FADE_IN },
-    { opcode: 0x4200, callback: SAVE_IMAGE0 },
-    { opcode: 0x4210, callback: SAVE_IMAGE1 },
+    { opcode: 0x4200, callback: DRAW_BACKGROUND_REGION },
+    { opcode: 0x4210, callback: SAVE_IMAGE_REGION },
     { opcode: 0xA000, callback: TTM_UNKNOWN_4 },
-    { opcode: 0xA050, callback: TTM_UNKNOWN_5 },
-    { opcode: 0xA060, callback: TTM_UNKNOWN_6 },
+    { opcode: 0xA050, callback: SAVE_REGION },
+    { opcode: 0xA060, callback: RESTORE_REGION },
     { opcode: 0xA0A0, callback: DRAW_LINE },
     { opcode: 0xA100, callback: DRAW_RECT },
     { opcode: 0xA400, callback: DRAW_BUBBLE },
@@ -645,6 +696,10 @@ const runScripts = () => {
         if (state.island) {
             drawBackground(state, state.mainContext);
         }
+        const saveBkg = state.saveBkg[0];
+        if (saveBkg.canDraw) {
+            state.context.drawImage(saveBkg.context.canvas, 0, 0);
+        }
     
         const scene = state.data.scenes[currentScene];
         if (scene !== undefined) {
@@ -652,10 +707,10 @@ const runScripts = () => {
         }
         
         if (!state.continue) {
-            state.scenes.forEach(s => {
+            scenes.forEach(s => {
                 runScript(s.state, s.script);
             });
-            state.scenes.forEach(s => {
+            scenes.forEach(s => {
                 state.context.drawImage(s.state.context.canvas, 0, 0);
             });
         }
@@ -677,19 +732,19 @@ export const startProcess = (initialState) => {
         mainContext: null,
         save: [],
         saveIndex: 0,
+        saveBkg: [],
         audioManager: null,
         slot: 0,
         res: [],
         // this should be for multiple running scripts
         reentry: 0,
         elapsed: 0,
+        elapsedTimer: 0,
         delay: 0,
+        timer: 0,
         continue: true,
         frameId: null,
         island: 1,
-        scenesRes: [],
-        scenesState: [],
-        scenes: [],
         foregroundColor: PALETTE[0],
         backgroundColor: PALETTE[0],
         clip: { x: 0, y: 0, width: 640, height: 480 },
@@ -728,13 +783,25 @@ export const startProcess = (initialState) => {
         });
     }
 
+    const c = document.createElement("canvas");
+    c.width = 640;
+    c.height = 480;
+    state.saveBkg.push({
+        context: c.getContext('2d'),
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        canDraw: false,
+    });
+
     state.audioManager = createAudioManager({ soundFxVolume: 0.50 });
 
     if (state.type === 'ADS') {
         state.data.resources.forEach(r => {
             const entry = state.entries.find(e => e.name === r.name);
             if (entry !== undefined) {
-                state.scenesRes.push(loadResourceEntry(entry));
+                scenesRes.push(loadResourceEntry(entry));
             }
         });
     }
