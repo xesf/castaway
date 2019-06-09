@@ -2,6 +2,7 @@
   "name": "@castaway/viewer",
   "version": "0.0.1",
   "private": true,
+  "homepage": "http://localhost/viewer",
   "dependencies": {
     "@castaway/lifeboat": "^0.0.1",
     "async": "2.6.2",

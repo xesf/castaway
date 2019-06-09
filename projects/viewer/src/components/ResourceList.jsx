@@ -8,7 +8,7 @@ const ResourceList = ({ res }) => {
         <React.Fragment>
             <div className="item">
                 <div className="header">
-                    <a className="item" href='/#entry=PLAY'>
+                    <a className="item" href='#entry=PLAY'>
                         Play
                     </a>
                 </div>
@@ -22,7 +22,7 @@ const ResourceList = ({ res }) => {
                             return null;
                         }
                         return (
-                            <a key={entry.name} className="item" href={`/#entry=${entry.name}`}>
+                            <a key={entry.name} className="item" href={`#entry=${entry.name}`}>
                                 {entry.name}
                             </a>
                         );

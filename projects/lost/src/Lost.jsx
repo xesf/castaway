@@ -26,6 +26,9 @@ const Lost = () => {
 
     return (
         <div className="viewer-bkg">
+            <div>
+                <a href="/viewer">Viewer</a>
+            </div>
             {resindex && <ResourceContent res={resindex} />}
         </div>
     );
