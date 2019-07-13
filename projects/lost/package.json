@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@castaway/lifeboat": "^0.0.1",
-    "async": "2.6.2",
     "@babel/core": "7.3.4",
+    "@castaway/lifeboat": "^0.0.1",
     "@svgr/webpack": "4.1.0",
+    "async": "2.6.2",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "babel-jest": "24.1.0",
