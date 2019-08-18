@@ -11,7 +11,9 @@ import webpackDevServer from 'webpack-dev-middleware';
 import webpackConfig from '../../webpack.config';
 import App from './index-ssr';
 
-const logStream = fs.createWriteStream(path.join(__dirname, '/server-log.txt'), { flags: 'a' });
+const cwd = process.cwd();
+
+const logStream = fs.createWriteStream(path.join(cwd, '/server-log.txt'), { flags: 'a' });
 
 const app = express();
 
@@ -30,8 +32,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/', express.static('../public'));
-app.use('/data', express.static('../data'));
+// app.use('/', express.static(path.join(cwd, 'public')));
+app.use('/data', express.static(path.join(cwd, 'data')));
 
 const indexBody = renderToStaticMarkup(React.createElement(App));
 
