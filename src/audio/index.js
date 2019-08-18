@@ -53,6 +53,7 @@ function getSoundFxSource(config, context, data) {
         context.resume();
     };
     source.load = (index, callback) => {
+        console.log(`data/samples/sample${index}.aac`);
         if (index <= -1 || (source.currentIndex === index && source.isPlaying)) {
             return;
         }

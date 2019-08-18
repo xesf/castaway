@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import async from 'async';
 
 import './viewerapp.css';
-import jonny from '../assets/jonny.png';
 
 import ResourceList from './components/ResourceList';
 import ResourceContent from './components/ResourceContent';
@@ -27,17 +26,11 @@ const ViewerApp = () => {
     });
 
     return (
-        <div>
-            <div className="ui visible sidebar inverted vertical menu large viewer-bkg">
-                <div className="item">
-                    <a className="ui logo icon image" href="/">
-                        <img src={jonny} alt="Castaway Viewer" width="36" />
-                    </a>
-                    <a href="/"><b> Castaway Viewer</b></a>
-                </div>
+        <div style={{ width: 'auto', height: 'auto' }}>
+            <div className="ui visible inverted vertical menu large viewer-bkg">
                 {resindex && <ResourceList res={resindex} />}
             </div>
-            <div className="pusher" style={{ marginLeft: '250px' }}>
+            <div className="pusher" style={{ marginLeft: '250px', backgroundColor: '#fff' }}>
                 {resindex && <ResourceContent res={resindex} />}
             </div>
         </div>

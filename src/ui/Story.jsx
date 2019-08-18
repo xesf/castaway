@@ -8,7 +8,7 @@ import ResourceContent from './components/ResourceContent';
 import { preloadFileAsync } from '../utils/preload';
 import { loadResources } from '../resources';
 
-const Lost = () => {
+const Story = () => {
     const [resindex, setResindex] = useState();
 
     useEffect(() => {
@@ -26,12 +26,9 @@ const Lost = () => {
 
     return (
         <div className="viewer-bkg">
-            <div>
-                <a href="/viewer">Viewer</a>
-            </div>
             {resindex && <ResourceContent res={resindex} />}
         </div>
     );
 };
 
-export default Lost;
+export default Story;

@@ -2,6 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import './ui/index.css';
-import Lost from './ui/Lost';
+import App from './ui/App';
 
-ReactDOM.render(<Lost />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'));

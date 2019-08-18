@@ -33,6 +33,7 @@ app.use((req, res, next) => {
 });
 
 // app.use('/', express.static(path.join(cwd, 'public')));
+app.use('/assets', express.static(path.join(cwd, 'public/assets')));
 app.use('/data', express.static(path.join(cwd, 'data')));
 
 const indexBody = renderToStaticMarkup(React.createElement(App));

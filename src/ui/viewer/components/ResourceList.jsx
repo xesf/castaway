@@ -6,13 +6,6 @@ import { map, orderBy } from 'lodash';
 const ResourceList = ({ res }) => (
     <>
         <div className="item">
-            <div className="header">
-                <a className="item" href="#entry=PLAY">
-                    Play
-                </a>
-            </div>
-        </div>
-        <div className="item">
             <div className="header">{res.resources[0].name}</div>
             <div className="menu">
                 {map(orderBy(res.resources[0].entries, ['type'], ['asc']),
