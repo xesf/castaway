@@ -1,5 +1,5 @@
 import { getString } from '../utils/string';
-import { decompress } from "../compression";
+import { decompress } from '../compression';
 
 import { ADSCommandType } from './data/scripting';
 
@@ -10,7 +10,7 @@ export function loadADSResourceEntry(entry) {
         throw `Invalid Type ${type}: expecting header type VER`;
     }
     const versionSize = entry.data.getUint32(offset + 4, true);
-    const version = getString(entry.data, offset + 8, versionSize); // 4.09
+    /* const version = */ getString(entry.data, offset + 8, versionSize); // 4.09
     offset += 8;
     offset += versionSize;
 
@@ -29,13 +29,13 @@ export function loadADSResourceEntry(entry) {
         throw `Invalid Type ${block}: expecting block type RES`;
     }
     offset += 4;
-    const resSize = entry.data.getUint32(offset, true);
+    /* const resSize = */ entry.data.getUint32(offset, true);
     const numResources = entry.data.getUint16(offset + 4, true);
     // Skip unknown fields
     offset += 6;
 
     const resources = [];
-    for (let r = 0; r < numResources; r++) {
+    for (let r = 0; r < numResources; r += 1) {
         const id = entry.data.getUint16(offset, true);
         const name = getString(entry.data, offset + 2);
         resources.push({
@@ -65,12 +65,12 @@ export function loadADSResourceEntry(entry) {
         throw `Invalid Type ${block}: expecting block type TAG`;
     }
     offset += 4;
-    const tagSize = entry.data.getUint32(offset, true);
+    /* const tagSize = */ entry.data.getUint32(offset, true);
     const numTags = entry.data.getUint16(offset + 4, true);
     offset += 6;
-    
+
     const tags = [];
-    for (let t = 0; t < numTags; t++) {
+    for (let t = 0; t < numTags; t += 1) {
         const id = entry.data.getUint16(offset, true);
         const description = getString(entry.data, offset + 2);
         tags.push({
@@ -89,22 +89,22 @@ export function loadADSResourceEntry(entry) {
     const scenes = [];
     let sceneScripts = [];
     while (innerOffset < uncompressedSize) {
-        let opcode = data.getUint16(innerOffset, true);
+        const opcode = data.getUint16(innerOffset, true);
         innerOffset += 2;
-        let command = {
+        const command = {
             opcode,
             lineNumber,
             line: '',
             indent: 0,
             tag: null,
             params: []
-        }
-        const c = ADSCommandType.find(ct => ct.opcode === opcode);
+        };
+        const c = ADSCommandType.find((ct) => ct.opcode === opcode);
         if (c !== undefined && opcode > 0x100) {
             const size = c.paramSize;
             command.line += `${c.command} `;
 
-            for (let b = 0; b < size; b++) {
+            for (let b = 0; b < size; b += 1) {
                 const param = data.getInt16(innerOffset, true);
                 command.params.push(param);
                 innerOffset += 2;
@@ -121,22 +121,24 @@ export function loadADSResourceEntry(entry) {
             }
             if (c.indent === 0) {
                 command.indent = 0;
-                while (indent--) {
+                while (indent) {
                     scripts.push({
                         opcode: 0xfff0,
-                        lineNumber: lineNumber++,
+                        lineNumber,
                         line: 'END_IF',
                         indent,
                         tag: null,
                         params: []
                     });
+                    lineNumber += 1;
+                    indent -= 1;
                 }
                 indent = 0;
-                command.lineNumber = lineNumber; 
+                command.lineNumber = lineNumber;
             }
             sceneScripts.push(command);
         } else {
-            command.tag = tags.find(t => t.id === command.opcode);
+            command.tag = tags.find((t) => t.id === command.opcode);
             command.line += `${command.tag.description}`;
             command.indent = 0;
             indent = 0;
@@ -150,7 +152,7 @@ export function loadADSResourceEntry(entry) {
             prevTagId = command.tag;
         }
 
-        lineNumber++;
+        lineNumber += 1;
         scripts.push(command);
     }
 

@@ -7,24 +7,24 @@ export function loadPALResourceEntry(entry) {
         throw `Invalid Type ${type}: expecting header type PAL`;
     }
     offset += 4;
-    // skip unknown bytes    
+    // skip unknown bytes
     offset += 4;
 
-    let block = getString(entry.data, offset, 3);
+    const block = getString(entry.data, offset, 3);
     if (block !== 'VGA') {
         throw `Invalid Type ${block}: expecting block type VGA`;
     }
     offset += 4;
-    
+
     const palette = [];
     // read all 256 palette colors
-    for (let c = 0; c < 256; c++) {
+    for (let c = 0; c < 256; c += 1) {
         const r = entry.data.getUint8(offset + 0, true);
         const g = entry.data.getUint8(offset + 1, true);
         const b = entry.data.getUint8(offset + 2, true);
         offset += 3;
 
-        palette.push({ 
+        palette.push({
             index: c,
             a: 255,
             r: r * 4,

@@ -1,5 +1,5 @@
-/data
+data
 dist
 node_modules
 build
-projects/viewer/public/data
+server-log.txt

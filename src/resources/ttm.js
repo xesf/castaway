@@ -1,16 +1,16 @@
 import { getString } from '../utils/string';
-import { decompress } from "../compression";
+import { decompress } from '../compression';
 
 import { TTMCommandType } from './data/scripting';
 
 export function loadTTMResourceEntry(entry) {
     let offset = 0;
-    const type = getString(entry.data, offset, 3);
+    let type = getString(entry.data, offset, 3);
     if (type !== 'VER') {
         throw `Invalid Type ${type}: expecting header type VER`;
     }
     const versionSize = entry.data.getUint32(offset + 4, true);
-    const version = getString(entry.data, offset + 8, versionSize); // 4.09
+    /* const version = */ getString(entry.data, offset + 8, versionSize); // 4.09
     offset += 8;
     offset += versionSize;
 
@@ -53,12 +53,12 @@ export function loadTTMResourceEntry(entry) {
         throw `Invalid Type ${block}: expecting block type TAG`;
     }
     offset += 4;
-    const tagSize = entry.data.getUint32(offset, true);
+    /* const tagSize = */ entry.data.getUint32(offset, true);
     const numTags = entry.data.getUint16(offset + 4, true);
     offset += 6;
-    
+
     const tags = [];
-    for (let t = 0; t < numTags; t++) {
+    for (let t = 0; t < numTags; t += 1) {
         const id = entry.data.getUint16(offset, true);
         const description = getString(entry.data, offset + 2);
         tags.push({
@@ -80,18 +80,18 @@ export function loadTTMResourceEntry(entry) {
         innerOffset += 2;
         const size = opcode & 0x000f;
         opcode &= 0xfff0;
-        let command = {
+        const command = {
             opcode,
             lineNumber,
             line: null,
             name: null,
             tag: null,
             params: []
-        }
-        if (opcode == 0x1110 && size === 1) {
+        };
+        if (opcode === 0x1110 && size === 1) {
             const tagId = data.getUint16(innerOffset, true);
             innerOffset += 2;
-            command.tag = tags.find(t => t.id === tagId);
+            command.tag = tags.find((t) => t.id === tagId);
             if (command.tag !== undefined) {
                 command.name = `${tagId}:${command.tag.description}`;
             } else {
@@ -107,34 +107,34 @@ export function loadTTMResourceEntry(entry) {
             command.name = getString(data, innerOffset);
             innerOffset += command.name.length;
             if (data.getUint8(innerOffset, true) === 0) {
-                innerOffset++;
+                innerOffset += 1;
             }
             if (data.getUint8(innerOffset, true) === 0) {
-                innerOffset++;
+                innerOffset += 1;
             }
             command.params.push(command.name);
         } else {
-            for (let b = 0; b < size; b++) {
+            for (let b = 0; b < size; b += 1) {
                 command.params.push(data.getInt16(innerOffset, true));
                 innerOffset += 2;
             }
         }
 
-        const type = TTMCommandType.find(ct => ct.opcode === command.opcode);
-        command.line = ''; // [0x${c.opcode.toString(16)}] 
+        type = TTMCommandType.find((ct) => ct.opcode === command.opcode);
+        command.line = ''; // [0x${c.opcode.toString(16)}]
         if (type !== undefined) {
             command.line += `${type.command} `;
-            if (command.opcode == 0x1110 && command.name) {
+            if (command.opcode === 0x1110 && command.name) {
                 command.line += command.name.toUpperCase();
             }
         } else {
             command.line = 'UNKNOWN ';
         }
-        for (let p = 0; p < command.params.length; p++) {
+        for (let p = 0; p < command.params.length; p += 1) {
             command.line += `${command.params[p]} `;
         }
 
-        lineNumber++;
+        lineNumber += 1;
         scripts.push(command);
         sceneScripts.push(command);
     }

@@ -1,6 +1,6 @@
-import { INDEX_STRING_SIZE, PALETTE } from '../constants';
+import { PALETTE } from '../constants';
 import { getString } from '../utils/string';
-import { decompress } from "../compression";
+import { decompress } from '../compression';
 
 export function loadBMPResourceEntry(entry) {
     let offset = 0;
@@ -23,14 +23,14 @@ export function loadBMPResourceEntry(entry) {
 
     const images = [];
     // get width value for all images
-    for (let i = 0; i < numImages; i++) {
+    for (let i = 0; i < numImages; i += 1) {
         const w = entry.data.getUint16(offset, true);
         offset += 2;
 
         images.push({ width: w, height: 0, pixels: [], buffer: [] });
     }
     // get height value for all images
-    for (let i = 0; i < numImages; i++) {
+    for (let i = 0; i < numImages; i += 1) {
         const h = entry.data.getUint16(offset, true);
         offset += 2;
 
@@ -42,33 +42,33 @@ export function loadBMPResourceEntry(entry) {
     }
     let blockSize = entry.data.getUint32(offset + 4, true);
     const compressionType = entry.data.getUint8(offset + 8, true);
-    const uncompressedSize = entry.data.getUint32(offset + 9, true);
+    /* const uncompressedSize = */ entry.data.getUint32(offset + 9, true);
     offset += 13;
     blockSize -= 5; // take type and size out of the block
     const compressedData = new DataView(entry.buffer.slice(offset, offset + blockSize));
     const data = decompress(compressionType, compressedData, 0, compressedData.byteLength);
     let dataIndex = 0;
     let pixelIndex = 0;
-    for (let i = 0; i < numImages; i++) {
+    for (let i = 0; i < numImages; i += 1) {
         const image = images[i];
-        for (let h = 0; h < image.height; h++) {
-            for (let w = 0; w < image.width; w++) {
+        for (let h = 0; h < image.height; h += 1) {
+            for (let w = 0; w < image.width; w += 1) {
                 let c = data[dataIndex];
                 if (pixelIndex % 2 === 0) {
-                    c = c >> 4;
+                    c >>= 4;
                 } else {
-                    c = (c & 0x0f);
-                    dataIndex++;
+                    c &= 0x0f;
+                    dataIndex += 1;
                 }
                 image.buffer[w + image.width * h] = c;
-                image.pixels[w + image.width * h] = { 
+                image.pixels[w + image.width * h] = {
                     index: c,
                     a: PALETTE[c].a,
                     r: PALETTE[c].r,
                     g: PALETTE[c].g,
                     b: PALETTE[c].b,
                 };
-                pixelIndex++;
+                pixelIndex += 1;
             }
         }
     }

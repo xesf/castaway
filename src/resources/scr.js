@@ -1,6 +1,6 @@
-import { INDEX_STRING_SIZE, PALETTE } from '../constants';
+import { PALETTE } from '../constants';
 import { getString } from '../utils/string';
-import { decompress } from "../compression";
+import { decompress } from '../compression';
 
 export function loadSCRResourceEntry(entry) {
     let offset = 0;
@@ -28,7 +28,7 @@ export function loadSCRResourceEntry(entry) {
     }
     blockSize = entry.data.getUint32(offset + 4, true);
     const compressionType = entry.data.getUint8(offset + 8, true);
-    const uncompressedSize = entry.data.getUint32(offset + 9, true);
+    /* const uncompressedSize = */ entry.data.getUint32(offset + 9, true);
     offset += 13;
     blockSize -= 5; // take type and size out of the block
 
@@ -45,25 +45,25 @@ export function loadSCRResourceEntry(entry) {
     const image = images[0];
     let dataIndex = 0;
     let pixelIndex = 0;
-    for (let h = 0; h < height; h++) {
-        for (let w = 0; w < width; w++) {
+    for (let h = 0; h < height; h += 1) {
+        for (let w = 0; w < width; w += 1) {
             let c = data[dataIndex];
             if (pixelIndex % 2 === 0) {
-                c = c >> 4;
+                c >>= 4;
             } else {
-                c = (c & 0x0f);
-                dataIndex++;
+                c &= 0x0f;
+                dataIndex += 1;
             }
             const pal = PALETTE[c];
             image.buffer[w + image.width * h] = c;
-            image.pixels[w + image.width * h] = { 
+            image.pixels[w + image.width * h] = {
                 index: c,
                 a: pal.a,
                 r: pal.r,
                 g: pal.g,
                 b: pal.b,
             };
-            pixelIndex++;
+            pixelIndex += 1;
         }
     }
 

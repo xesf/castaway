@@ -8,7 +8,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import webpack from 'webpack';
 import webpackDevServer from 'webpack-dev-middleware';
 
-import webpackConfig from '../webpack.config';
+import webpackConfig from '../../webpack.config';
 import App from './index-ssr';
 
 const logStream = fs.createWriteStream(path.join(__dirname, '/server-log.txt'), { flags: 'a' });

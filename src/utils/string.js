@@ -7,8 +7,8 @@
  */
 export function getString(buffer, offset, length = 100) {
     let str = '';
-    for (let i = 0; i < length; i++) {
-        let char = buffer.getUint8(offset + i);
+    for (let i = 0; i < length; i += 1) {
+        const char = buffer.getUint8(offset + i);
         if (char === 0) {
             break;
         }

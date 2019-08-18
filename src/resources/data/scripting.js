@@ -10,7 +10,7 @@ export const TTMCommandType = [
     { opcode: 0x1100, command: 'UNKNOWN_0' }, // Scene related?
     { opcode: 0x1110, command: 'SET_SCENE' },
     { opcode: 0x1120, command: 'SET_BACKGROUND' },
-    { opcode: 0x1200, command: 'GOTO' }, 
+    { opcode: 0x1200, command: 'GOTO' },
     { opcode: 0x2000, command: 'SET_COLORS' },
     { opcode: 0x2010, command: 'SET_FRAME1' },
     { opcode: 0x2020, command: 'UNKNOWN_3' }, // SET_FRAME2 ???

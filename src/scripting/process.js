@@ -1,9 +1,9 @@
+/* eslint-disable */
+import { loadResourceEntry } from '../resources';
 
-import { loadResourceEntry } from '../../packages/lifeboat/src/resources';
-
-import { drawImage, drawScreen, getPaletteColor } from "../../resources/image";
-import { createAudioManager } from "../../resources/audio";
-import { PALETTE } from '../../../../../node_modules/@castaway/lifeboat/src/constants';
+import { drawImage, drawScreen, getPaletteColor } from '../graphics/index';
+import { createAudioManager } from '../audio';
+import { PALETTE } from '../constants';
 
 let tick = null;
 let prevTick = Date.now();
@@ -28,7 +28,7 @@ let cloudElapsed = 0;
 
 const clearContext = (context) => {
     context.clearRect(0, 0, 640, 480);
-}
+};
 
 const drawContext = (state, index) => {
     const save = state.save[state.saveIndex];
@@ -837,3 +837,4 @@ const mainloop = () => {
         cancelAnimationFrame(state.frameId);
     }
 }
+/* eslint-enable */
