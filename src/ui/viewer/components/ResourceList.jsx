@@ -3,20 +3,19 @@ import React from 'react';
 import { map, orderBy } from 'lodash';
 
 
-const ResourceList = ({ res }) => {
-    return (
-        <React.Fragment>
-            <div className="item">
-                <div className="header">
-                    <a className="item" href='#entry=PLAY'>
-                        Play
-                    </a>
-                </div>
+const ResourceList = ({ res }) => (
+    <>
+        <div className="item">
+            <div className="header">
+                <a className="item" href="#entry=PLAY">
+                    Play
+                </a>
             </div>
-            <div className="item">
-                <div className="header">{res.resources[0].name}</div>
-                <div className="menu">
-                    {map(orderBy(res.resources[0].entries, ['type'], ['asc']), 
+        </div>
+        <div className="item">
+            <div className="header">{res.resources[0].name}</div>
+            <div className="menu">
+                {map(orderBy(res.resources[0].entries, ['type'], ['asc']),
                     (entry) => {
                         if (entry.type === 'VIN') {
                             return null;
@@ -27,10 +26,9 @@ const ResourceList = ({ res }) => {
                             </a>
                         );
                     })}
-                </div>
             </div>
-        </React.Fragment>
-    );
-}
+        </div>
+    </>
+);
 
 export default ResourceList;

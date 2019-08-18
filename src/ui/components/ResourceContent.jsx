@@ -8,7 +8,7 @@ const ResourceContent = ({ res }) => {
     useEffect(() => {
         const e = res.resources[0].entries;
         setEntries(e);
-        return () => {}
+        return () => {};
     }, [res]);
 
     return (

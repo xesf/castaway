@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react';
 
-import { loadResourceEntry } from '@castaway/lifeboat/src/resources';
-import { startProcess, stopProcess } from './scripting/process';
+import { loadResourceEntry } from '../../../resources';
+import { startProcess, stopProcess } from '../../../scripting/process';
 
 const PlayView = ({ entries }) => {
     const canvasRef = useRef();
@@ -12,13 +12,13 @@ const PlayView = ({ entries }) => {
             if (entries !== undefined) {
                 stopProcess();
 
-                const context = canvasRef.current.getContext("2d");
+                const context = canvasRef.current.getContext('2d');
                 context.clearRect(0, 0, 640, 480);
 
-                const mainContext = mainCanvasRef.current.getContext("2d");
+                const mainContext = mainCanvasRef.current.getContext('2d');
                 context.clearRect(0, 0, 640, 480);
-                
-                const entry = entries.find(e => e.name === 'BUILDING.ADS');
+
+                const entry = entries.find((e) => e.name === 'BUILDING.ADS');
                 const data = loadResourceEntry(entry);
 
                 startProcess({
@@ -30,15 +30,15 @@ const PlayView = ({ entries }) => {
                 });
             }
 
-            return () => {}
+            return () => {};
         },
         [entries]
     );
-    
+
     return (
         <div style={{ display: 'block', width: '100%', overflowX: 'auto'}}>
             <canvas ref={mainCanvasRef} width="640" height="480" style={{ position: 'absolute', zIndex: '0' }} />
-                <canvas ref={canvasRef} width="640" height="480" style={{ position: 'absolute', zIndex: '1' }} />
+            <canvas ref={canvasRef} width="640" height="480" style={{ position: 'absolute', zIndex: '1' }} />
         </div>
     );
 };
