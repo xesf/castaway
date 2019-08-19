@@ -122,6 +122,7 @@ export function loadADSResourceEntry(entry) {
             if (c.indent === 0) {
                 command.indent = 0;
                 while (indent) {
+                    indent -= 1;
                     scripts.push({
                         opcode: 0xfff0,
                         lineNumber,
@@ -131,7 +132,6 @@ export function loadADSResourceEntry(entry) {
                         params: []
                     });
                     lineNumber += 1;
-                    indent -= 1;
                 }
                 indent = 0;
                 command.lineNumber = lineNumber;
