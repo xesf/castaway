@@ -26,11 +26,19 @@ const ViewerApp = () => {
     });
 
     return (
-        <div style={{ width: 'auto', height: 'auto' }}>
-            <div className="ui visible inverted vertical menu large viewer-bkg">
+        <div style={{ width: 'auto', height: 'auto', backgroundColor: '#fff' }}>
+            <div className="ui visible inverted vertical menu small viewer-bkg" style={{ margin: '0', top: '40px', height: 'auto', overflowY: 'scroll' }}>
                 {resindex && <ResourceList res={resindex} />}
             </div>
-            <div className="pusher" style={{ marginLeft: '250px', backgroundColor: '#fff' }}>
+            <div
+                className="pusher"
+                style={{
+                    marginLeft: '180px',
+                    height: window.innerHeight - 45,
+                    width: window.innerWidth,
+                    overflowY: 'scroll'
+                }}
+            >
                 {resindex && <ResourceContent res={resindex} />}
             </div>
         </div>

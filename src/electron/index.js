@@ -9,10 +9,8 @@ const BrowserWindow = electron.BrowserWindow;
 let mainWindow = null;
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 915,
-        height: 615,
-        maxWidth: 2700,
-        maxHeight: 1920,
+        width: 920,
+        height: 715,
     });
     mainWindow.loadURL(
         isDev

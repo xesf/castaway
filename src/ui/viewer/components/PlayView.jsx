@@ -30,7 +30,7 @@ const PlayView = ({ entries }) => {
                 });
             }
 
-            return () => {};
+            return () => { stopProcess(); };
         },
         [entries]
     );

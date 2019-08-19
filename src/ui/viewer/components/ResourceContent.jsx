@@ -35,7 +35,7 @@ const ResourceContent = ({ res }) => {
     }, [res, name]);
 
     return (
-        <div className="ui basic segment">
+        <div className="ui basic segment" style={{ overflowY: 'scroll' }}>
             <div className="ui basic segment">
                 <b>{name}</b>
             </div>
