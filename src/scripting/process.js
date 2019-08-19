@@ -815,6 +815,25 @@ export const stopProcess = () => {
     if (state && state.frameId) {
         cancelAnimationFrame(state.frameId);
     }
+
+    tick = null;
+    prevTick = Date.now();
+    elapsed = null;
+
+    state = null;
+    currentScene = 0;
+
+    scenesRes = [];
+    scenes = [];
+
+    bkgScreen = null;
+    bkgRes = null;
+    bkgOcean = [];
+    bkgRaft = null;
+    cloudIdx = Math.floor((Math.random() * 3) + 15);
+    cloudX = Math.floor((Math.random() * 640));
+    cloudY = Math.floor((Math.random() * 80));
+    cloudElapsed = 0;
 };
 
 window.requestAnimationFrame = window.requestAnimationFrame
