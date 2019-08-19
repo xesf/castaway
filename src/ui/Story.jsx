@@ -25,9 +25,9 @@ const Story = () => {
     });
 
     return (
-        <div className="viewer-bkg">
+        <>
             {resindex && <ResourceContent res={resindex} />}
-        </div>
+        </>
     );
 };
 
