@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { remove } from 'lodash';
 import { loadResourceEntry } from '../resources';
 
 import { drawImage, drawScreen, getPaletteColor } from '../graphics/index';
@@ -15,7 +16,9 @@ let currentScene = 0;
 
 let scenesRes = [];
 let scenes = [];
-// let removeScenes = [];
+let scenesRandom = [];
+let addScenes = [];
+let removeScenes = [];
 
 let bkgScreen = null;
 let bkgRes = null;
@@ -164,10 +167,10 @@ const SET_COLORS = (state, fc, bc) => {
 };
 
 const SET_FRAME1 = (state) => { };
+
 const SET_TIMER = (state, delay, timer) => {
-    // state.delay = ((delay === 0 ? 1 : delay) * 20);
+    state.delay = ((delay === 0 ? 1 : delay) * 20);
     state.timer = timer * 20;
-    state.elapsedTimer = state.timer + Date.now();
 };
 
 const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
@@ -448,13 +451,26 @@ const IF_PLAYED = (state, sceneIdx, tagId) => {
         s.sceneIdx === sceneIdx && s.tagId === tagId
         && s.state.played);
     if (scene !== undefined) {
-        // removeScenes.push({
-        //     sceneIdx,
-        //     tagId,
-        // });
-        if (!scene.state.timer) {
-            STOP_SCENE(state, sceneIdx, tagId, 0);
+        //STOP_SCENE(state, sceneIdx, tagId, 0);
+        // console.log(scenes);
+        // scenes = scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+        // console.log(scenes);
+        // console.log(sceneIdx, tagId);
+        // console.log(scene.sceneIdx, scene.tagId);
+        // if (!scene.state.elapsedTimer && scene.state.timer > 0) {
+        //     console.log(scene.state.elapsedTimer);
+        //     scene.state.elapsedTimer = scene.state.timer + Date.now();
+        //     console.log(scene.state.elapsedTimer);
+        // }
+        if (scene.state.timer === 0) { // /* || Date.now() > scene.state.elapsedTimer*/
+            removeScenes.push({
+                sceneIdx,
+                tagId,
+            });
         }
+        // if (!scene.state.timer) {
+        //     STOP_SCENE(state, sceneIdx, tagId, 0);
+        // }
         state.continue = true;
     }
 };
@@ -467,8 +483,45 @@ const OR = (state) => { };
 const PLAY_SCENE = (state) => {
     if (state.continue) {
         state.continue = false;
+
+        console.log('before remove', removeScenes, scenes);
+        if (removeScenes.length > 0) {
+            // sss = scenes.filter(s => {
+            //     for (let e = 0; e < removeScenes.length; e += 1) {
+            //         const ss = removeScenes[e];
+            //         if (ss.sceneIdx === s.sceneIdx && ss.tagId === s.tagId) {
+            //             return true;
+            //         }
+            //     }
+            //     return false;
+            // });
+            // console.log('remove results', sss);
+            // scenes = [ ...ss ];
+            removeScenes.forEach(s => {
+                scenes = scenes.filter(ss => ss.sceneIdx !== s.sceneIdx && ss.tagId !== s.tagId);
+                // const index = scenes.indexOf(s => s.sceneIdx === sceneIdx && s.tagId === tagId);
+                // scenes.splice(index, 1);
+            });
+            removeScenes = [];
+        }
+        console.log('after remove, before add', addScenes, scenes);
+        if (addScenes.length > 0) {
+            addScenes.forEach(s => {
+                scenes.push(getSceneState(
+                    state,
+                    s.sceneIdx,
+                    s.tagId, 
+                    s.retriesDelay,
+                    s.unk,
+                ));
+            });
+            addScenes = [];
+        }
+        // scenes = sss;
+        console.log('final', scenes);
     }
-    let canContinue = false
+
+    let canContinue = false;
     scenes.forEach(s => {
         canContinue = canContinue | (s.state.runs > 0) ? true : false;
         // if (s.state.elapsedTimer && Date.now() > s.state.elapsedTimer) {
@@ -507,7 +560,26 @@ const initialState = {
     delay: 0,
 };
 
-const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {    
+const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {
+    if (state.randomize) {
+        scenesRandom.push({
+            sceneIdx,
+            tagId, 
+            retriesDelay,
+            unk,
+        });
+        return;    
+    }
+
+    addScenes.push({
+        sceneIdx,
+        tagId, 
+        retriesDelay,
+        unk,
+    });
+}
+
+const getSceneState = (state, sceneIdx, tagId, retriesDelay, unk) => {
     const ttm = scenesRes[sceneIdx - 1];
     if (ttm === undefined || ttm.scenes === undefined) {
         console.log('add failed ttm', sceneIdx, tagId);
@@ -534,33 +606,48 @@ const ADD_SCENE = (state, sceneIdx, tagId, retriesDelay, unk) => {
     } else {
         s.state = Object.assign({}, scenes[0].state, stateInit);
     }
-    console.log(s);
-    scenes.push(s);
+    return s;
 };
 
 const STOP_SCENE = (state, sceneIdx, tagId, retries) => {
-    const s = scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
-    if (s !== undefined) {
-        scenes = s;
-    } else {
+    removeScenes.push({
+        sceneIdx,
+        tagId,
+        retries,
+    });
+    // console.log(scenes);
+    // remove(scenes, s => s.sceneIdx === sceneIdx && s.tagId === tagId);
+    // const index = scenes.indexOf(s => s.sceneIdx === sceneIdx && s.tagId === tagId);
+    // scenes.splice(index, 1);
+    // delete scenes[index];
+    // scenes = scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    // console.log(scenes);
+    // const index = scenes.indexOf(s => s.sceneIdx === sceneIdx && s.tagId === tagId);
+    // scenes.splice(index, 1);
+
+    // const s = scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
+    // if (s !== undefined) {
+    //     scenes = s;
+    // }
+    /* else {
         scenes = [];
-    }
+    }*/
 };
 
 const RANDOM_START = (state) => {
     state.randomize = true;
+    scenesRandom = [];
 };
 
 const RANDOM_UNKNOWN_0 = (state) => { };
 
 const RANDOM_END = (state) => {
-    const index = Math.floor((Math.random() * scenes.length));
-    const scene = scenes[index];
-    if (scene !== undefined) {
-        const tagId = scene.tagId;
-        scenes = scenes.filter(s => s.tagId === tagId);
-    }
     state.randomize = false;
+    const index = Math.floor((Math.random() * scenesRandom.length));
+    const scene = scenesRandom[index];
+    if (scene !== undefined) {
+        ADD_SCENE(state, scene.sceneIdx, scene.tagId, scene.retriesDelay, scene.unk);
+    }
 };
 
 const ADS_UNKNOWN_6 = (state) => { };
