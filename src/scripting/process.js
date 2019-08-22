@@ -484,7 +484,7 @@ const PLAY_SCENE = (state) => {
     if (state.continue) {
         state.continue = false;
 
-        console.log('before remove', removeScenes, scenes);
+        console.log('before remove', scenes.slice(0));
         if (removeScenes.length > 0) {
             // sss = scenes.filter(s => {
             //     for (let e = 0; e < removeScenes.length; e += 1) {
@@ -498,13 +498,15 @@ const PLAY_SCENE = (state) => {
             // console.log('remove results', sss);
             // scenes = [ ...ss ];
             removeScenes.forEach(s => {
-                scenes = scenes.filter(ss => ss.sceneIdx !== s.sceneIdx && ss.tagId !== s.tagId);
+                console.log(s);
+                remove(scenes, ss => ss.sceneIdx === s.sceneIdx && ss.tagId === s.tagId);
+                // scenes = scenes.filter(ss => ss.sceneIdx !== s.sceneIdx && ss.tagId !== s.tagId);
                 // const index = scenes.indexOf(s => s.sceneIdx === sceneIdx && s.tagId === tagId);
                 // scenes.splice(index, 1);
             });
             removeScenes = [];
         }
-        console.log('after remove, before add', addScenes, scenes);
+        console.log('after remove, before add', scenes.slice(0));
         if (addScenes.length > 0) {
             addScenes.forEach(s => {
                 scenes.push(getSceneState(
@@ -518,7 +520,7 @@ const PLAY_SCENE = (state) => {
             addScenes = [];
         }
         // scenes = sss;
-        console.log('final', scenes);
+        console.log('final', scenes.slice(0));
     }
 
     let canContinue = false;
