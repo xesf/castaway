@@ -1,11 +1,85 @@
 {
-  "name": "root",
+  "name": "castaway",
+  "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "projects/*"
-  ],
+  "main": "src/electron/index.js",
+  "homepage": "./",
+  "scripts": {
+    "start": "concurrently \"yarn server\" \"wait-on http://localhost:8080 && electron .\"",
+    "server": "cross-env NODE_ENV=development nodemon ./src/server/index.js --exec babel-node -w ./src/server/index.js",
+    "dump": "cross-env NODE_ENV=development nodemon ./src/dump/index.js --exec babel-node -w ./src/dump/index.js",
+    "lint": "eslint ./src --ext .js,.jsx -c .eslintrc.yml",
+    "build": "yarn build:server && yarn build:electron",
+    "build:electron": "electron-builder",
+    "build:server": "cross-env NODE_ENV=production webpack -p",
+    "release": "yarn build:server && electron-builder --publish=always"
+  },
+  "dependencies": {
+    "async": "^3.1.0",
+    "axios": "^0.19.0",
+    "classnames": "^2.2.6",
+    "cors": "^2.8.5",
+    "electron-is-dev": "^1.1.0",
+    "express": "^4.17.1",
+    "lodash": "^4.17.20",
+    "morgan": "^1.9.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "^7.1.0",
+    "redux": "^4.0.4",
+    "react-scripts": "^3.1.1",
+    "semantic-ui-react": "^0.87.3",
+    "webpack": "^4.39.2",
+    "webpack-dev-middleware": "^3.7.0"
+  },
   "devDependencies": {
-    "lerna": "3.13.1"
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.5.5",
+    "babel-eslint": "^10.0.2",
+    "babel-loader": "^8.0.6",
+    "babel-preset-minify": "^0.5.1",
+    "concurrently": "^4.1.2",
+    "cross-env": "^5.2.0",
+    "css-loader": "^3.2.0",
+    "electron": "^6.0.2",
+    "electron-builder": "^21.2.0",
+    "electron-chrome-extension": "^3.0.1-rc.2",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-loader": "^2.2.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "eslint-stats": "^1.0.1",
+    "json-loader": "^0.5.7",
+    "node-libs-browser": "^2.2.1",
+    "node-sass": "^4.12.0",
+    "nodemon": "^1.19.1",
+    "raw-loader": "^3.1.0",
+    "sass-loader": "^7.2.0",
+    "style-loader": "^1.0.0",
+    "wait-on": "^3.3.0",
+    "webpack-cli": "^3.3.7"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

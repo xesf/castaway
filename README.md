@@ -48,38 +48,25 @@ List of new features to add to Johnny Castaway experience:
 
 ## Usage
 
-This project uses node, yarn and lerna CLI to manage multiple applications and packages in a mono repository.
+Create a "data" folder in the root directory and place the original files.
+* SCRANTIC.SCR
+* RESOURCE.MAP
+* RESOURCE.001
 
 Install:
 * nodejs: https://nodejs.org/en/
 * yarn: https://yarnpkg.com/en/
 
+### Run Johnny Castaway
+
 Run this commands in the root folder:
 
-> yarn global add lerna
+> yarn install
 
-> lerna bootstrap
+> yarn start
 
 ### Dump Resources
 
 This application allows you to extract the resources of Johnny Castaway. A data/dump folder will be created when application is executed.
 
-> cd projects/dump
-
-> yarn start
-
-### Viewer
-
-This application allows you to browse through the resources and play them.
-
-> cd projects/viewer
-
-> yarn start
-
-### Mobile
-
-A ReactNative experimental application to play Johnny Castaway. At the moment it only executes the viewer as a web view, but in future should play the whole story.
-
-> cd projects/mobile
-
-> yarn start
+> yarn dump
