@@ -16,7 +16,7 @@ import { loadResources } from './src/resources/index.mjs'
 
 const __dirname = path.resolve();
 
-const filepath = path.join(__dirname, 'data');
+const filepath = path.join(__dirname, 'src/data');
 const fc = fs.readFileSync(path.join(filepath, 'RESOURCE.MAP'));
 const buffer = fc.buffer.slice(fc.byteOffset, fc.byteOffset + fc.byteLength);
 

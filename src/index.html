@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <link rel="manifest" href="manifest.json" />
+        <link rel="shortcut icon" href="favicon.ico" />
+        <title>Johnny Castaway</title>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        
+        <div id="root" style="display: block; width: 100%; overflow-x: auto">
+            <canvas id="mainCanvas" width="640" height="480" style="position: absolute; z-index: 0"></canvas>
+            <canvas id="canvas" width="640" height="480" style="position: absolute; z-index: 1"></canvas>
+        </div>
+
+        <script type="module" src="index.mjs"></script>
+    </body>
+</html>

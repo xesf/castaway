@@ -15,11 +15,9 @@ The aim of this project is to provide a complete re-implemtation of the Johnny C
 
 - Document the files format used;
 
-- Build tools using NodeJS;
+- Dump tools using NodeJS;
 
-- Focus on taking advantage of the modern web development languages and frameworks like Javascript and React;
-
-- Use as a sandbox to try new features of those frameworks during the process;
+- Focus on taking advantage of the modern web development languages and the usage of ES modules;
 
 - Have fun implementing it!!
 
@@ -48,25 +46,28 @@ List of new features to add to Johnny Castaway experience:
 
 ## Usage
 
-Create a "data" folder in the root directory and place the original files.
+Create a "data" folder in the src directory and place the original files.
 * SCRANTIC.SCR
 * RESOURCE.MAP
 * RESOURCE.001
 
 Install:
-* nodejs: https://nodejs.org/en/
-* yarn: https://yarnpkg.com/en/
+* http-server (you can use "brew install http-server")
 
 ### Run Johnny Castaway
 
 Run this commands in the root folder:
 
-> yarn install
+> cd src
 
-> yarn start
+> http-server -c-1
+
+> open localhost:8080
 
 ### Dump Resources
 
 This application allows you to extract the resources of Johnny Castaway. A data/dump folder will be created when application is executed.
 
-> yarn dump
+> chmod +x ./dump.mjs
+
+> ./dump.mjs

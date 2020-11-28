@@ -1,7 +1,6 @@
-import { loadResourceEntry } from '../resources/index.mjs';
-
-import { drawImage, drawScreen, getPaletteColor } from '../graphics/index.mjs';
 import { createAudioManager } from '../audio/index.mjs';
+import { drawImage, drawScreen, getPaletteColor } from '../graphics/index.mjs';
+import { loadResourceEntry } from '../resources/index.mjs';
 import { PALETTE } from '../constants.mjs';
 
 let tick = null;
@@ -926,7 +925,7 @@ window.requestAnimationFrame = window.requestAnimationFrame
     || window.mozRequestAnimationFrame
     || window.webkitRequestAnimationFrame
     || window.msRequestAnimationFrame
-    || ((f) => setTimeout(f, 1000/60));
+    || ((f) => setTimeout(f, fps));
 
 const mainloop = () => {
     state.frameId = requestAnimationFrame(mainloop);

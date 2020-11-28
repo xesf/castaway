@@ -1,4 +1,4 @@
-/data
+/src/data
 dist
 node_modules
 build
