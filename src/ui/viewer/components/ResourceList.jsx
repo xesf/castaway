@@ -2,7 +2,6 @@ import React from 'react';
 
 import { map, orderBy } from 'lodash';
 
-
 const ResourceList = ({ res }) => (
     <>
         <div className="item">

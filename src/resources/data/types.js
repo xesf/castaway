@@ -4,7 +4,6 @@ import { loadPALResourceEntry } from '../pal';
 import { loadSCRResourceEntry } from '../scr';
 import { loadTTMResourceEntry } from '../ttm';
 
-
 export const ResourceType = [
     { type: 'ADS', callback: loadADSResourceEntry }, // Animation sequences
     { type: 'BMP', callback: loadBMPResourceEntry }, // Various raw images

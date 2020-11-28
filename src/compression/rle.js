@@ -1,4 +1,3 @@
-
 export function decompressRLE(data, offset, length) {
     const pdata = [];
     while (offset < length) {

@@ -1,4 +1,3 @@
-
 export const drawImage = (image, context, posX, posY) => {
     const img = context.createImageData(image.width, image.height);
     for (let p = 0; p < image.pixels.length; p += 1) {
@@ -48,7 +47,6 @@ export const drawAllImages = (data, context) => {
         posX += image.width;
     }
 };
-
 
 export const drawPalette = (data, context) => {
     context.canvas.width = 640;

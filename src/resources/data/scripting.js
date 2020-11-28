@@ -1,4 +1,3 @@
-
 export const TTMCommandType = [
     { opcode: 0x0020, command: 'SAVE_BACKGROUND' }, // not used
     { opcode: 0x0080, command: 'DRAW_BACKGROUND' },

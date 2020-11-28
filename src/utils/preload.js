@@ -1,4 +1,3 @@
-
 export function preloadFileAsync(url, name) {
     const send = (eventName, progress) => {
         if (name) {
