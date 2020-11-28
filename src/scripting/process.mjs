@@ -166,8 +166,8 @@ const SET_COLORS = (state, fc, bc) => {
 const SET_FRAME1 = (state) => { };
 
 const SET_TIMER = (state, delay, timer) => {
-    state.delay = ((delay === 0 ? 1 : delay) * 20);
-    state.timer = timer * 20;
+    // state.delay = ((delay === 0 ? 1 : delay) * 20);
+    state.timer = timer * 20 + ((delay === 0 ? 1 : delay) * 20);
 };
 
 const SET_CLIP_REGION = (state, x1, y1, x2, y2) => {
@@ -444,30 +444,23 @@ const IF_PLAYED = (state, sceneIdx, tagId) => {
     if (state.continue) {
         state.continue = false;
     }
-    const scene = scenes.find(s => 
+    let scene = scenes.find(s => 
         s.sceneIdx === sceneIdx && s.tagId === tagId
         && s.state.played);
     if (scene !== undefined) {
-        //STOP_SCENE(state, sceneIdx, tagId, 0);
-        // console.log(scenes);
-        // scenes = scenes.filter(s => s.sceneIdx !== sceneIdx && s.tagId !== tagId);
-        // console.log(scenes);
-        // console.log(sceneIdx, tagId);
-        // console.log(scene.sceneIdx, scene.tagId);
-        // if (!scene.state.elapsedTimer && scene.state.timer > 0) {
-        //     console.log(scene.state.elapsedTimer);
-        //     scene.state.elapsedTimer = scene.state.timer + Date.now();
-        //     console.log(scene.state.elapsedTimer);
-        // }
-        if (scene.state.timer === 0) { // /* || Date.now() > scene.state.elapsedTimer*/
+        if (scene.state.timer === 0) {
             removeScenes.push({
                 sceneIdx,
                 tagId,
             });
         }
-        // if (!scene.state.timer) {
-        //     STOP_SCENE(state, sceneIdx, tagId, 0);
-        // }
+        state.continue = true;
+        return;
+    }
+
+    scene = scenes.find(s => 
+        s.sceneIdx === sceneIdx && s.tagId === tagId);
+    if (scene === undefined) {
         state.continue = true;
     }
 };
@@ -481,28 +474,16 @@ const PLAY_SCENE = (state) => {
     if (state.continue) {
         state.continue = false;
 
-        console.log('before remove', scenes.slice(0));
+        console.log("Scenes", scenes.slice(0));
+        console.log("Remove Scenes", removeScenes.slice(0));
+
         if (removeScenes.length > 0) {
-            // sss = scenes.filter(s => {
-            //     for (let e = 0; e < removeScenes.length; e += 1) {
-            //         const ss = removeScenes[e];
-            //         if (ss.sceneIdx === s.sceneIdx && ss.tagId === s.tagId) {
-            //             return true;
-            //         }
-            //     }
-            //     return false;
-            // });
-            // console.log('remove results', sss);
-            // scenes = [ ...ss ];
             removeScenes.forEach(s => {
-                console.log(s);
-                scenes = scenes.filter(ss => ss.sceneIdx !== s.sceneIdx && ss.tagId !== s.tagId);
                 const index = scenes.indexOf(s => s.sceneIdx === sceneIdx && s.tagId === tagId);
                 scenes.splice(index, 1);
             });
             removeScenes = [];
         }
-        console.log('after remove, before add', scenes.slice(0));
         if (addScenes.length > 0) {
             addScenes.forEach(s => {
                 scenes.push(getSceneState(
@@ -515,30 +496,19 @@ const PLAY_SCENE = (state) => {
             });
             addScenes = [];
         }
-        // scenes = sss;
-        console.log('final', scenes.slice(0));
     }
 
     let canContinue = false;
     scenes.forEach(s => {
         canContinue = canContinue | (s.state.runs > 0) ? true : false;
-        // if (s.state.elapsedTimer && Date.now() > s.state.elapsedTimer) {
-        //     removeScenes.push({
-        //         sceneIdx: s.sceneIdx,
-        //         tagId: s.tagId,
-        //     });
-        // }
     });
 
-    // if (removeScenes.length > 0) {
-    //     removeScenes.forEach(s => {
-    //         STOP_SCENE(state, s.sceneIdx, s.tagId, 0);
-    //     });
-    //     removeScenes = [];
-    // }
     if (scenes.length === 0) {
         canContinue = true;
     }
+
+    console.log("Remove Scenes", removeScenes.slice(0));
+    console.log("Scenes", scenes.slice(0));
     
     state.continue = canContinue;
 }; // runScripts has the continue logic 
