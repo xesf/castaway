@@ -1,10 +1,8 @@
-/* eslint-disable */
-import { remove } from 'lodash';
-import { loadResourceEntry } from '../resources';
+import { loadResourceEntry } from '../resources/index.mjs';
 
-import { drawImage, drawScreen, getPaletteColor } from '../graphics/index';
-import { createAudioManager } from '../audio';
-import { PALETTE } from '../constants';
+import { drawImage, drawScreen, getPaletteColor } from '../graphics/index.mjs';
+import { createAudioManager } from '../audio/index.mjs';
+import { PALETTE } from '../constants.mjs';
 
 let tick = null;
 let prevTick = Date.now();
@@ -499,10 +497,9 @@ const PLAY_SCENE = (state) => {
             // scenes = [ ...ss ];
             removeScenes.forEach(s => {
                 console.log(s);
-                remove(scenes, ss => ss.sceneIdx === s.sceneIdx && ss.tagId === s.tagId);
-                // scenes = scenes.filter(ss => ss.sceneIdx !== s.sceneIdx && ss.tagId !== s.tagId);
-                // const index = scenes.indexOf(s => s.sceneIdx === sceneIdx && s.tagId === tagId);
-                // scenes.splice(index, 1);
+                scenes = scenes.filter(ss => ss.sceneIdx !== s.sceneIdx && ss.tagId !== s.tagId);
+                const index = scenes.indexOf(s => s.sceneIdx === sceneIdx && s.tagId === tagId);
+                scenes.splice(index, 1);
             });
             removeScenes = [];
         }

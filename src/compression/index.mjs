@@ -1,4 +1,4 @@
-import { CompressionType } from './data/types';
+import { CompressionType } from './data/types.mjs';
 
 export function decompress(type, data, offset, length) {
     if (!type) {

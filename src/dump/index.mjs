@@ -2,10 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-import { loadResources, loadResourceEntry } from '../resources';
-import { TTMCommandType, ADSCommandType } from '../resources/data/scripting';
+import { loadResources, loadResourceEntry } from '../resources/index.mjs';
+import { TTMCommandType, ADSCommandType } from '../resources/data/scripting.mjs';
 
-function dumpResourceIndex(filepath, resindex) {
+export function dumpResourceIndex(filepath, resindex) {
     const dumppath = path.join(filepath, 'dump');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -13,7 +13,7 @@ function dumpResourceIndex(filepath, resindex) {
     fs.writeFileSync(path.join(dumppath, 'resindex.json'), JSON.stringify(resindex, null, 2), 'utf-8');
 }
 
-function dumpResourceEntriesCompressed(filepath, resindex) {
+export function dumpResourceEntriesCompressed(filepath, resindex) {
     const dumppath = path.join(filepath, 'dump/compressed');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -25,7 +25,7 @@ function dumpResourceEntriesCompressed(filepath, resindex) {
     }
 }
 
-function dumpAvailableTypes(filepath, resindex) {
+export function dumpAvailableTypes(filepath, resindex) {
     const types = [];
     const res = resindex.resources[0];
     for (let e = 0; e < res.numEntries; e += 1) {
@@ -38,7 +38,7 @@ function dumpAvailableTypes(filepath, resindex) {
     fs.writeFileSync(path.join(dumppath, 'restypes.json'), JSON.stringify({ types }, null, 2), 'utf-8');
 }
 
-function dumpImages(filepath, resindex) {
+export function dumpImages(filepath, resindex) {
     const dumppath = path.join(filepath, 'dump', 'images');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -56,7 +56,7 @@ function dumpImages(filepath, resindex) {
     }
 }
 
-function dumpMovieScripts(filepath, resindex) {
+export function dumpMovieScripts(filepath, resindex) {
     const dumppath = path.join(filepath, 'dump', 'scripts');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -104,7 +104,7 @@ function dumpMovieScripts(filepath, resindex) {
     }
 }
 
-function dumpADSScripts(filepath, resindex) {
+export function dumpADSScripts(filepath, resindex) {
     const dumppath = path.join(filepath, 'dump', 'scripts');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -163,24 +163,3 @@ function dumpADSScripts(filepath, resindex) {
         }
     }
 }
-
-const filepath = path.join(__dirname, '../../data');
-const fc = fs.readFileSync(path.join(filepath, 'RESOURCE.MAP'));
-const buffer = fc.buffer.slice(fc.byteOffset, fc.byteOffset + fc.byteLength);
-
-// read resource file to get extra content like name for easy identification of the asset
-const resfn = path.join(filepath, 'RESOURCE.001');
-const resfc = fs.readFileSync(resfn);
-const resbuffer = resfc.buffer.slice(resfc.byteOffset, resfc.byteOffset + resfc.byteLength);
-
-const resindex = loadResources(buffer, resbuffer);
-
-// Export Resource Index in JSON file
-dumpResourceIndex(filepath, resindex);
-dumpResourceEntriesCompressed(filepath, resindex);
-dumpAvailableTypes(filepath, resindex);
-dumpImages(filepath, resindex);
-dumpMovieScripts(filepath, resindex);
-dumpADSScripts(filepath, resindex);
-
-console.log('Dump Complete!!');

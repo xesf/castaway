@@ -1,8 +1,8 @@
-import { loadADSResourceEntry } from '../ads';
-import { loadBMPResourceEntry } from '../bmp';
-import { loadPALResourceEntry } from '../pal';
-import { loadSCRResourceEntry } from '../scr';
-import { loadTTMResourceEntry } from '../ttm';
+import { loadADSResourceEntry } from '../ads.mjs';
+import { loadBMPResourceEntry } from '../bmp.mjs';
+import { loadPALResourceEntry } from '../pal.mjs';
+import { loadSCRResourceEntry } from '../scr.mjs';
+import { loadTTMResourceEntry } from '../ttm.mjs';
 
 export const ResourceType = [
     { type: 'ADS', callback: loadADSResourceEntry }, // Animation sequences

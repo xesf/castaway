@@ -1,4 +1,4 @@
-import { getString } from '../utils/string';
+import { getString } from '../utils/string.mjs';
 
 export function loadPALResourceEntry(entry) {
     let offset = 0;

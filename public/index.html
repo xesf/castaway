@@ -16,6 +16,11 @@
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root" />
-        <script type="text/javascript" src="bundle.js" />
+        <script type="module" src="../src/index.mjs" />
+
+        <div style="display: block; width: 100%; overflow-x: auto">
+            <canvas id="mainCanvas" width="640" height="480" style="position: absolute; z-index: 0" />
+            <canvas id="canvas" width="640" height="480" style="position: absolute; z-index: 1" />
+        </div>
     </body>
 </html>

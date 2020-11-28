@@ -1,6 +1,6 @@
-import { decompressRLE } from '../rle';
-import { decompressLZW } from '../lzw';
-import { decompressRLE2 } from '../rle2';
+import { decompressRLE } from '../rle.mjs';
+import { decompressLZW } from '../lzw.mjs';
+import { decompressRLE2 } from '../rle2.mjs';
 
 export const CompressionType = [
     { index: 0, type: 'None', callback: null },

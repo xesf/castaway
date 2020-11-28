@@ -1,7 +1,7 @@
-import { getString } from '../utils/string';
-import { decompress } from '../compression';
+import { getString } from '../utils/string.mjs';
+import { decompress } from '../compression/index.mjs';
 
-import { TTMCommandType } from './data/scripting';
+import { TTMCommandType } from './data/scripting.mjs';
 
 export function loadTTMResourceEntry(entry) {
     let offset = 0;

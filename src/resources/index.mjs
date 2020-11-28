@@ -1,7 +1,6 @@
-import { INDEX_STRING_SIZE } from '../constants';
-import { getString } from '../utils/string';
-
-import { ResourceType } from './data/types';
+import { INDEX_STRING_SIZE } from '../constants.mjs';
+import { getString } from '../utils/string.mjs';
+import { ResourceType } from './data/types.mjs';
 
 const INDEX_HEADER_SIZE = 6;
 

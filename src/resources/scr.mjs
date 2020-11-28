@@ -1,6 +1,6 @@
-import { PALETTE } from '../constants';
-import { getString } from '../utils/string';
-import { decompress } from '../compression';
+import { PALETTE } from '../constants.mjs';
+import { getString } from '../utils/string.mjs';
+import { decompress } from '../compression/index.mjs';
 
 export function loadSCRResourceEntry(entry) {
     let offset = 0;
