@@ -1,8 +1,21 @@
-import { INDEX_STRING_SIZE } from './constants.mjs';
 import { getString } from './utils/string.mjs';
-import { ResourceType } from './resources/data/types.mjs';
 
+import { loadADSResourceEntry } from './resources/ads.mjs';
+import { loadBMPResourceEntry } from './resources/bmp.mjs';
+import { loadPALResourceEntry } from './resources/pal.mjs';
+import { loadSCRResourceEntry } from './resources/scr.mjs';
+import { loadTTMResourceEntry } from './resources/ttm.mjs';
+
+const INDEX_STRING_SIZE = 12;
 const INDEX_HEADER_SIZE = 6;
+
+export const ResourceType = [
+    { type: 'ADS', callback: loadADSResourceEntry }, // Animation sequences
+    { type: 'BMP', callback: loadBMPResourceEntry }, // Various raw images
+    { type: 'PAL', callback: loadPALResourceEntry }, // VGA palette
+    { type: 'SCR', callback: loadSCRResourceEntry }, // Background raw images
+    { type: 'TTM', callback: loadTTMResourceEntry }, // Scripting macros
+];
 
 /**
  * Load all Resource details based on index resource file

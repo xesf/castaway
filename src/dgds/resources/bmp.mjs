@@ -1,6 +1,7 @@
-import { PALETTE } from '../constants.mjs';
 import { getString } from '../utils/string.mjs';
-import { decompress } from '../compression/index.mjs';
+import { decompress } from '../compression.mjs';
+
+import { PALETTE } from '../../scrantic/palette.mjs';
 
 export function loadBMPResourceEntry(entry) {
     let offset = 0;

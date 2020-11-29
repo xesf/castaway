@@ -1,7 +1,8 @@
 import { createAudioManager } from '../audio.mjs';
-import { drawImage, drawScreen, getPaletteColor } from '../graphics.mjs';
 import { loadResourceEntry } from '../resource.mjs';
-import { PALETTE } from '../constants.mjs';
+import { drawImage, drawScreen, getPaletteColor } from '../graphics.mjs';
+
+import { PALETTE } from '../../scrantic/palette.mjs';
 
 let tick = null;
 let prevTick = Date.now();

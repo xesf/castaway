@@ -68,6 +68,8 @@ Run this commands in the root folder:
 
 This application allows you to extract the resources of Johnny Castaway. A data/dump folder will be created when application is executed.
 
+> cd src
+
 > chmod +x ./dump.mjs
 
 > ./dump.mjs

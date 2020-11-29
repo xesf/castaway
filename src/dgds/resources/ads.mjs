@@ -1,7 +1,7 @@
 import { getString } from '../utils/string.mjs';
-import { decompress } from '../compression/index.mjs';
+import { decompress } from '../compression.mjs';
 
-import { ADSCommandType } from './data/scripting.mjs';
+import { ADSCommandType } from '../data/scripting.mjs';
 
 export function loadADSResourceEntry(entry) {
     let offset = 0;

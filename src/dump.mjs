@@ -11,13 +11,13 @@ import {
     dumpMovieScripts,
     dumpADSScripts,
     dumpSamples,
-} from './src/utils/dump.mjs';
+} from './dgds/utils/dump.mjs';
 
-import { loadResources } from './src/resource.mjs'
+import { loadResources } from './dgds/resource.mjs'
 
 const __dirname = path.resolve();
 
-const filepath = path.join(__dirname, 'src/data');
+const filepath = path.join(__dirname, 'data');
 const fc = fs.readFileSync(path.join(filepath, 'RESOURCE.MAP'));
 const buffer = fc.buffer.slice(fc.byteOffset, fc.byteOffset + fc.byteLength);
 
