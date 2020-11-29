@@ -2,8 +2,44 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-import { loadResources, loadResourceEntry } from '../resources/index.mjs';
+import { loadResources, loadResourceEntry } from '../resource.mjs';
 import { TTMCommandType, ADSCommandType } from '../resources/data/scripting.mjs';
+import { sampleOffsets } from '../audio.mjs';
+
+export function dumpSamples(filepath, scrbuffer) {
+    let dumppath = path.join(filepath, 'dump');
+    if (!fs.existsSync(dumppath)) {
+        fs.mkdirSync(dumppath);
+    }
+    dumppath = path.join(dumppath, 'riffs');
+    if (!fs.existsSync(dumppath)) {
+        fs.mkdirSync(dumppath);
+    }
+    const data = new DataView(scrbuffer);
+    // console.log(data);
+    for (let index = 0; index < sampleOffsets.length; index += 1) {
+        if (sampleOffsets[index] === -1) {
+            continue;
+        }
+        const size = data.getInt32(sampleOffsets[index] + 4, true) + 8;
+        // console.log(size);
+        const buffer = data.buffer.slice(sampleOffsets[index], sampleOffsets[index] + size);
+        // const sampleData = new DataView(buffer);
+
+        // const chunk1 = new Uint8Array(sampleData.buffer, 0, 12);
+        // const chunk2 = new Uint8Array(32);
+        // chunk2.set([0x4A, 0x55, 0x4E, 0x4B], 0); // JUNK
+        // const chunk3 = new Uint8Array(sampleData.buffer, 12, sampleData.byteLength - 12);
+        
+        // const bufferChunk = new Uint8Array([
+        //     ...chunk1,
+        //     ...chunk2,
+        //     ...chunk3,
+        // ]);
+
+        fs.writeFileSync(path.join(dumppath, `sample${index}.wav`), Buffer.from(buffer), 'utf-8');
+    }
+}
 
 export function dumpResourceIndex(filepath, resindex) {
     const dumppath = path.join(filepath, 'dump');

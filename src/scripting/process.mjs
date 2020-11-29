@@ -1,6 +1,6 @@
-import { createAudioManager } from '../audio/index.mjs';
-import { drawImage, drawScreen, getPaletteColor } from '../graphics/index.mjs';
-import { loadResourceEntry } from '../resources/index.mjs';
+import { createAudioManager } from '../audio.mjs';
+import { drawImage, drawScreen, getPaletteColor } from '../graphics.mjs';
+import { loadResourceEntry } from '../resource.mjs';
 import { PALETTE } from '../constants.mjs';
 
 let tick = null;

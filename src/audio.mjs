@@ -1,20 +1,21 @@
 const samplesSourceCache = [];
 
-function createAudioContext() {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext; // needed for Safari
-    return new AudioContext();
-}
+export const sampleOffsets = [
+    -1,
+    0x1DC00, 0x20800, 0x20E00,
+    0x22C00, 0x24000, 0x24C00,
+    0x28A00, 0x2C600, 0x2D000,
+    0x2DE00,
+    -1, 0x34400, 0x32E00,
+    0x39C00, 0x43400, 0x37200,
+    0x37E00, 0x45A00, 0x3AE00,
+    0x3E600, 0x3F400, 0x41200,
+    0x42600, 0x42C00, 0x43400
+];
 
-function loadAudioAsync(context, url, callback) {
-    const request = new XMLHttpRequest();
-    request.open('GET', url, true);
-    request.responseType = 'arraybuffer';
-    request.onload = () => {
-        context.decodeAudioData(request.response, callback, (err) => {
-            console.error(err);
-        });
-    };
-    request.send();
+function createAudioContext() {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    return new AudioContext();
 }
 
 function getSoundFxSource(config, context, data) {
@@ -53,8 +54,9 @@ function getSoundFxSource(config, context, data) {
         context.resume();
     };
     source.load = (index, callback) => {
-        // console.log(`data/samples/sample${index}.aac`);
-        if (index <= -1 || (source.currentIndex === index && source.isPlaying)) {
+        if (index <= -1 ||
+            (source.currentIndex === index && source.isPlaying) ||
+            sampleOffsets[index] === -1) {
             return;
         }
         if (source.isPlaying) {
@@ -71,16 +73,26 @@ function getSoundFxSource(config, context, data) {
             source.connect();
             callback.call();
         } else {
-            loadAudioAsync(context, `data/samples/sample${index}.aac`, (buffer) => {
-                // this bypasses a browser issue while loading same sample in short period of time
-                if (!samplesSourceCache[index]) {
-                    if (!source.bufferSource.buffer) {
-                        source.bufferSource.buffer = buffer;
-                        samplesSourceCache[index] = buffer;
-                        source.connect();
-                        callback.call();
+            fetch('data/SCRANTIC.SCR').then((response) => response.arrayBuffer()).then((fileBuffer) => {
+                const data = new DataView(fileBuffer);
+                const size = data.getInt32(sampleOffsets[index] + 4, true) + 8;
+                const buffer = data.buffer.slice(sampleOffsets[index], sampleOffsets[index] + size);
+
+                context.decodeAudioData(
+                    buffer,
+                    (decodeBuffer) => {
+                        if (!samplesSourceCache[index]) {
+                            if (!source.bufferSource.buffer) {
+                                source.bufferSource.buffer = decodeBuffer;
+                                samplesSourceCache[index] = decodeBuffer;
+                                source.connect();
+                                callback.call();
+                            }
+                        }
+                    }, (err) => {
+                        console.error(err);
                     }
-                }
+                );
             });
         }
     };

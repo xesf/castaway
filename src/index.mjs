@@ -1,5 +1,5 @@
-import { drawScreen } from './graphics/index.mjs';
-import { loadResources, loadResourceEntry } from './resources/index.mjs';
+import { drawScreen } from './graphics.mjs';
+import { loadResources, loadResourceEntry } from './resource.mjs';
 import { startProcess, stopProcess } from './scripting/process.mjs';
 
 const run = async () => {
