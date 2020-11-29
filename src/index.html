@@ -7,11 +7,27 @@
         <link rel="manifest" href="manifest.json" />
         <link rel="shortcut icon" href="favicon.ico" />
         <title>Johnny Castaway</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                background-color: #000;
+            }
+            .background {
+                background-color: #000;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -240px;
+                margin-left: -320px;
+                width: 640px;
+                height: 480px;
+            }
+        </style>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         
-        <div id="root" style="display: block; width: 100%; overflow-x: auto">
+        <div id="root" class="background" style="display: block; width: 100%; overflow-x: auto">
             <canvas id="mainCanvas" width="640" height="480" style="position: absolute; z-index: 0"></canvas>
             <canvas id="canvas" width="640" height="480" style="position: absolute; z-index: 1"></canvas>
         </div>

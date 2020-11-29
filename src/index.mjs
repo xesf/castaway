@@ -1,3 +1,4 @@
+import { drawScreen } from './graphics/index.mjs';
 import { loadResources, loadResourceEntry } from './resources/index.mjs';
 import { startProcess, stopProcess } from './scripting/process.mjs';
 
@@ -15,8 +16,16 @@ const run = async () => {
     
     const mainContext = document.getElementById('mainCanvas').getContext('2d');
     mainContext.clearRect(0, 0, 640, 480);
+
+
+    let entry = entries.find(e => e.name === 'INTRO.SCR');
+    if (entry !== undefined) {
+        const introRes = loadResourceEntry(entry);
+        drawScreen(introRes, mainContext);
+        await new Promise(r => setTimeout(r, 3000));
+    }
     
-    const entry = entries.find((e) => e.name === 'BUILDING.ADS');
+    entry = entries.find((e) => e.name === 'BUILDING.ADS');
     const data = loadResourceEntry(entry);
     
     startProcess({
