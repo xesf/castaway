@@ -1,0 +1,39 @@
+import { loadResourceEntry } from '../dgds/resource.mjs';
+import { startProcess } from '../dgds/scripting/process.mjs';
+import { StoryScenes } from './metadata/scenes.mjs';
+
+export default class Story {
+    currentDay = 1;
+
+    constructor(resource, currentDay) {
+        this.currentDay = currentDay;
+        this.resource = resource;
+    }
+
+    getRandomScene() {
+        const numScenes = StoryScenes.length;
+        const randomSceneIndex = Math.floor(Math.random() * Math.floor(numScenes));
+        return StoryScenes[randomSceneIndex];
+    }
+
+    async play() {
+        // get random scenes from metadata
+
+        const context = document.getElementById('canvas').getContext('2d');
+        context.clearRect(0, 0, 640, 480);
+        
+        const mainContext = document.getElementById('mainCanvas').getContext('2d');
+        mainContext.clearRect(0, 0, 640, 480);
+
+        const scene = this.getRandomScene();
+        const data = this.resource.loadEntry(scene.name);
+        
+        startProcess({
+            type: 'ADS',
+            context,
+            mainContext,
+            data,
+            entries: this.resource.entries,
+        });
+    }
+};

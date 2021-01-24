@@ -47,6 +47,14 @@ export const loadResources = (buffer, resbuffer) => {
             size: 0,
             entries: [],
         };
+        res.getEntry = (name) => res.entries.find(e => e.name === name);
+        res.loadEntry = (name) => {
+            const entry = res.getEntry(name);
+            if (entry !== undefined) {
+                return loadResourceEntry(entry);
+            }
+            return null;
+        };
         resources.push(res);
         innerOffset += 15;
 
@@ -80,7 +88,8 @@ export const loadResources = (buffer, resbuffer) => {
 
     return {
         header,
-        resources
+        resources,
+        getResource: (name) => resources.find((r) => r.name === name),
     };
 };
 
