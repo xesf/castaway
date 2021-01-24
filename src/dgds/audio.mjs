@@ -13,12 +13,12 @@ export const sampleOffsets = [
     0x42600, 0x42C00, 0x43400
 ];
 
-function createAudioContext() {
+const createAudioContext = () => {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     return new AudioContext();
-}
+};
 
-function getSoundFxSource(config, context, data) {
+const getSoundFxSource = (config, context, data) => {
     const source = {
         volume: config.soundFxVolume,
         isPlaying: false,
@@ -106,13 +106,13 @@ function getSoundFxSource(config, context, data) {
     };
 
     return source;
-}
+};
 
-export function createAudioManager(config) {
+export const createAudioManager = (config) => {
     const context = createAudioContext();
     const sfxSource = getSoundFxSource(config, context);
     return {
         context,
         getSoundFxSource: () => sfxSource,
     };
-}
+};

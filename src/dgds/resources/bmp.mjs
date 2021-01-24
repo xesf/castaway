@@ -3,7 +3,7 @@ import { decompress } from '../compression.mjs';
 
 import { PALETTE } from '../../scrantic/palette.mjs';
 
-export function loadBMPResourceEntry(entry) {
+export const loadBMPResourceEntry = (entry) => {
     let offset = 0;
     const type = getString(entry.data, offset, 3);
     if (type !== 'BMP') {
@@ -82,4 +82,4 @@ export function loadBMPResourceEntry(entry) {
         numImages,
         images,
     };
-}
+};

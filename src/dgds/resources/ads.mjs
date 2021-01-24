@@ -3,7 +3,7 @@ import { decompress } from '../compression.mjs';
 
 import { ADSCommandType } from '../data/scripting.mjs';
 
-export function loadADSResourceEntry(entry) {
+export const loadADSResourceEntry = (entry) => {
     let offset = 0;
     const type = getString(entry.data, offset, 3);
     if (type !== 'VER') {
@@ -167,4 +167,4 @@ export function loadADSResourceEntry(entry) {
         scripts,
         scenes,
     };
-}
+};

@@ -6,7 +6,7 @@ import { loadResources, loadResourceEntry } from '../resource.mjs';
 import { TTMCommandType, ADSCommandType } from '../data/scripting.mjs';
 import { sampleOffsets } from '../audio.mjs';
 
-export function dumpSamples(filepath, scrbuffer) {
+export const dumpSamples = (filepath, scrbuffer) => {
     let dumppath = path.join(filepath, 'dump');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -24,17 +24,17 @@ export function dumpSamples(filepath, scrbuffer) {
         const buffer = data.buffer.slice(sampleOffsets[index], sampleOffsets[index] + size);
         fs.writeFileSync(path.join(dumppath, `sample${index}.wav`), Buffer.from(buffer), 'utf-8');
     }
-}
+};
 
-export function dumpResourceIndex(filepath, resindex) {
+export const dumpResourceIndex = (filepath, resindex) => {
     const dumppath = path.join(filepath, 'dump');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
     }
     fs.writeFileSync(path.join(dumppath, 'resindex.json'), JSON.stringify(resindex, null, 2), 'utf-8');
-}
+};
 
-export function dumpResourceEntriesCompressed(filepath, resindex) {
+export const dumpResourceEntriesCompressed = (filepath, resindex) => {
     const dumppath = path.join(filepath, 'dump/compressed');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -44,9 +44,9 @@ export function dumpResourceEntriesCompressed(filepath, resindex) {
         const entry = res.entries[e];
         fs.writeFileSync(path.join(dumppath, entry.name), Buffer.from(entry.buffer), 'utf-8');
     }
-}
+};
 
-export function dumpAvailableTypes(filepath, resindex) {
+export const dumpAvailableTypes = (filepath, resindex) => {
     const types = [];
     const res = resindex.resources[0];
     for (let e = 0; e < res.numEntries; e += 1) {
@@ -57,9 +57,9 @@ export function dumpAvailableTypes(filepath, resindex) {
     }
     const dumppath = path.join(filepath, 'dump');
     fs.writeFileSync(path.join(dumppath, 'restypes.json'), JSON.stringify({ types }, null, 2), 'utf-8');
-}
+};
 
-export function dumpImages(filepath, resindex) {
+export const dumpImages = (filepath, resindex) => {
     const dumppath = path.join(filepath, 'dump', 'images');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -75,9 +75,9 @@ export function dumpImages(filepath, resindex) {
             }
         }
     }
-}
+};
 
-export function dumpMovieScripts(filepath, resindex) {
+export const dumpMovieScripts = (filepath, resindex) => {
     const dumppath = path.join(filepath, 'dump', 'scripts');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -123,9 +123,9 @@ export function dumpMovieScripts(filepath, resindex) {
             }
         }
     }
-}
+};
 
-export function dumpADSScripts(filepath, resindex) {
+export const dumpADSScripts = (filepath, resindex) => {
     const dumppath = path.join(filepath, 'dump', 'scripts');
     if (!fs.existsSync(dumppath)) {
         fs.mkdirSync(dumppath);
@@ -183,4 +183,4 @@ export function dumpADSScripts(filepath, resindex) {
             }
         }
     }
-}
+};

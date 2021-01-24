@@ -9,9 +9,9 @@ export const CompressionType = [
     { index: 3, type: 'RLE2', callback: decompressRLE2 },
 ];
 
-export function decompress(type, data, offset, length) {
+export const decompress = (type, data, offset, length) => {
     if (!type) {
         return data;
     }
     return CompressionType[type].callback(data, offset, length);
-}
+};

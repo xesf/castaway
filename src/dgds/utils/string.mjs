@@ -4,7 +4,7 @@
  * @param {*} offset Offset of the current DataView buffer
  * @param {*} length Max size of the string
  */
-export function getString(buffer, offset, length = 100) {
+export const getString = (buffer, offset, length = 100) => {
     let str = '';
     for (let i = 0; i < length; i += 1) {
         const char = buffer.getUint8(offset + i);
@@ -14,4 +14,4 @@ export function getString(buffer, offset, length = 100) {
         str += String.fromCharCode(char);
     }
     return str;
-}
+};

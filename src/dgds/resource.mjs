@@ -22,7 +22,7 @@ export const ResourceType = [
  * @param {*} filepath Full path of the file
  * @param {*} filename File name
  */
-export function loadResources(buffer, resbuffer) {
+export const loadResources = (buffer, resbuffer) => {
     let offset = 0; // current resource offest
     const resources = []; // list of resource files
     const data = new DataView(buffer, offset, buffer.byteLength);
@@ -82,9 +82,9 @@ export function loadResources(buffer, resbuffer) {
         header,
         resources
     };
-}
+};
 
-export function loadResourceEntry(entry) {
+export const loadResourceEntry = (entry) => {
     const resType = ResourceType.find((r) => r.type === entry.type);
     return resType.callback(entry);
-}
+};

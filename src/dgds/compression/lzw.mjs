@@ -1,5 +1,5 @@
 /* eslint-disable */
-function getBits(data, offset, numBits, current, nextBit) {
+const getBits = (data, offset, numBits, current, nextBit) => {
     let value = 0, innerOffset = 0;
     if (numBits === 0) {
         return { value: 0, innerOffset: 0, c: current, nb: nextBit };
@@ -22,7 +22,7 @@ function getBits(data, offset, numBits, current, nextBit) {
     return { value, innerOffset, c: current, nb: nextBit };
 };
 
-export function decompressLZW(data, offset, length) {
+export const decompressLZW = (data, offset, length) => {
     const pdata = [];
     const decodeStack = [];
     const codeTable = [];
@@ -102,5 +102,5 @@ export function decompressLZW(data, offset, length) {
         console.error(error);
     }
     return pdata;
-}
+};
 /* eslint-enable */

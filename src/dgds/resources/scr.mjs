@@ -3,7 +3,7 @@ import { decompress } from '../compression.mjs';
 
 import { PALETTE } from '../../scrantic/palette.mjs';
 
-export function loadSCRResourceEntry(entry) {
+export const loadSCRResourceEntry = (entry) => {
     let offset = 0;
     const type = getString(entry.data, offset, 3);
     if (type !== 'SCR') {
@@ -78,4 +78,4 @@ export function loadSCRResourceEntry(entry) {
         numImages,
         images,
     };
-}
+};

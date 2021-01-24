@@ -1,4 +1,4 @@
-export function decompressRLE(data, offset, length) {
+export const decompressRLE = (data, offset, length) => {
     const pdata = [];
     while (offset < length) {
         const control = data.getUint8(offset, true);
@@ -18,4 +18,4 @@ export function decompressRLE(data, offset, length) {
         }
     }
     return pdata;
-}
+};

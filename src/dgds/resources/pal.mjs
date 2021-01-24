@@ -1,6 +1,6 @@
 import { getString } from '../utils/string.mjs';
 
-export function loadPALResourceEntry(entry) {
+export const loadPALResourceEntry = (entry) => {
     let offset = 0;
     const type = getString(entry.data, offset, 3);
     if (type !== 'PAL') {
@@ -38,4 +38,4 @@ export function loadPALResourceEntry(entry) {
         type,
         palette,
     };
-}
+};

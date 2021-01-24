@@ -3,7 +3,7 @@ import { decompress } from '../compression.mjs';
 
 import { TTMCommandType } from '../data/scripting.mjs';
 
-export function loadTTMResourceEntry(entry) {
+export const loadTTMResourceEntry = (entry) => {
     let offset = 0;
     let type = getString(entry.data, offset, 3);
     if (type !== 'VER') {
@@ -156,4 +156,4 @@ export function loadTTMResourceEntry(entry) {
         scripts,
         scenes,
     };
-}
+};
