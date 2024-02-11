@@ -3,10 +3,9 @@ import { startProcess } from '../dgds/scripting/process.mjs';
 import { StoryScenes } from './metadata/scenes.mjs';
 
 export default class Story {
-    currentDay = 1;
-
-    constructor(resource, currentDay) {
-        this.currentDay = currentDay;
+    constructor(resource) {
+        this.currentDay = localStorage.getItem('currentDay') || 1;
+        this.startDate = localStorage.getItem('startDate') || (new Date()).toLocaleDateString();
         this.resource = resource;
     }
 
@@ -17,7 +16,11 @@ export default class Story {
     }
 
     async play() {
-        // get random scenes from metadata
+        if (this.startDate !== (new Date()).toLocaleDateString()) {
+            this.currentDay += 1;
+        }
+        localStorage.setItem('currentDay', this.currentDay);
+        localStorage.setItem('startDate', this.startDate);
 
         const context = document.getElementById('canvas').getContext('2d');
         context.clearRect(0, 0, 640, 480);

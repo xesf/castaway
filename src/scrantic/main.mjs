@@ -4,8 +4,6 @@ import { startProcess, stopProcess } from '../dgds/scripting/process.mjs';
 import Story from './story.mjs';
 
 export const run = async () => {
-    const currentDay = localStorage.getItem('currentDay') || 1;
-
     const mainContext = document.getElementById('mainCanvas').getContext('2d');
     mainContext.clearRect(0, 0, 640, 480);
 
@@ -22,6 +20,6 @@ export const run = async () => {
 
     await new Promise(r => setTimeout(r, window.location.hostname === 'localhost' ? 1000: 3000));
 
-    const story = new Story(resource, currentDay);
+    const story = new Story(resource);
     await story.play();
 };
